@@ -14,7 +14,7 @@ class program():
                     count+=1
                     logpass=logpass.split(' - ')[0].replace('\n','').replace(' ','')
                     ret.append(logpass)
-                print(f'обнаружено {count} аккаунтов\n')
+                print(f'detected {count} accounts\n')
                 return ret
         except:
             return 0
@@ -27,29 +27,34 @@ class program():
         fn='accounts'
         accounts=self.get_accounts(fn)
         if accounts==0:
-            print('файл "accounts.txt" не найден')
+            print('file "accounts.txt" was not found')
             return
-        else:
-            print('_____________')
-            tofile+='_____________\n'
-            for account in accounts:
-                print(account+'\n\n')
-                tofile+=account+'\n\n'
-                skins=check.skins_en(account)
-                if skins == False:
-                    print('INCORRECT LOGPASS')
-                    tofile+='INCORRECT LOGPASS\n'
-                else:
-                    print(skins)
-                    tofile+=skins+'\n'
-                print('_____________\n')
-                tofile+='_____________\n'
-            saveno=str(input('сохранить вывод в файл "out.txt"? (y/n) >>>'))
-            if saveno=='y':
-                with open ('out.txt', 'w', encoding='UTF-8') as file:
-                    file.write(tofile)
+        print('_____________')
+        tofile+='_____________\n'
+        for account in accounts:
+            print(account+'\n\n')
+            tofile+=account+'\n\n'
+            skins=check.skins_en(account)
+            if skins == False:
+                print('INCORRECT LOGPASS')
+                tofile+='INCORRECT LOGPASS\n'
             else:
-                pass
+                print(skins)
+                tofile+=skins+'\n'
+                rank=check.ranked(account)
+                print(rank)
+                tofile+=rank+'\n'
+                lp=check.lastplayed(account)
+                print('last game was on '+lp+'\n')
+                tofile+='last game was on '+lp+'\n'
+            print('_____________\n')
+            tofile+='_____________\n'
+        saveno=str(input('save data to "out.txt"? (y/n) >>>'))
+        if saveno=='y':
+            with open ('out.txt', 'w', encoding='UTF-8') as file:
+                file.write(tofile)
+        else:
+            pass
     
 pr=program()
 pr.main()

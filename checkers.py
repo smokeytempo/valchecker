@@ -92,3 +92,38 @@ class checkers():
                         skinstr += name + "\n"
 
         return skinstr
+
+    def ranked(self,logpass):
+        entitlement=sys.auth(logpass=logpass, response=2)
+        token=sys.auth(logpass=logpass, response=1)
+        puuid=sys.auth(logpass=logpass, response=3)
+
+        if entitlement==False:
+            return False
+        RankIDtoRank = {"0":"Unranked","1":"Unused1", "2":"Unused2" ,"3":"Iron 1" ,"4":"Iron 2" ,"5":"Iron 3" ,\
+"6":"Bronze 1" ,"7":"Bronze 2" ,"8":"Bronze 3" ,"9":"Silver 1" ,"10":"Silver 2", "11":"Silver 3" ,"12":"Gold 1" ,\
+"13":"Gold 2" ,"14":"Gold 3" ,"15":"Platinum 1" ,"16":"Platinum 2" ,"17":"Plantinum 3" ,"18":"Diamond 1" ,"19":"Diamond 2"\
+ ,"20":"Diamond 3" ,"21":"Ascendant 1" ,"22":"Ascendant 2" ,"23":"Ascendant 3" ,"24":"Immortal 1","25":"Immortal 2","26"\
+:"Immortal 3","27":"Radiant"}
+        headers = {"Content-Type": "application/json","Authorization": \
+f"Bearer {token}","X-Riot-Entitlements-JWT": entitlement,"X-Riot-ClientVersion": \
+"release-01.08-shipping-10-471230","X-Riot-ClientPlatform": "ew0KCSJwbGF0Zm9ybVR5cG\
+UiOiAiUEMiLA0KCSJwbGF0Zm9ybU9TIjogIldpbmRvd3MiLA0KCSJwbGF0Zm9ybU9TVmVyc2lvbiI6ICIxMC4\
+wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9"}
+        ranked = sess.get(f"https://pd.EU.a.pvp.net/mmr/v1/players/{puuid}/competitiveupdates",headers=headers)
+        if '","Matches":[]}' in ranked.text:
+            rank = "UnRanked"
+        else:
+            rankid = ranked.text.split('"TierAfterUpdate":')[1].split(',"')[0]
+            rank = RankIDtoRank[rankid]
+            return rank
+
+    def lastplayed(self,logpass):
+        puuid=sys.auth(logpass=logpass, response=3)
+
+        if puuid==False:
+            return False
+        resp=requests.get('https://api.henrikdev.xyz/valorant/v3/by-puuid/matches/eu/'+puuid)
+        data=resp.json()
+        lastmatch=data['data'][0]['metadata']['game_start_patched']
+        return lastmatch
