@@ -21,8 +21,16 @@ class program():
                 
 
     def main(self):
-        print('VALchecker by liljaba1337')
-        print('https://github.com/LIL-JABA\n')
+        print('''
+
+██╗░░░██╗░█████╗░██╗░░░░░░█████╗░██╗░░██╗███████╗░█████╗░██╗░░██╗███████╗██████╗░
+██║░░░██║██╔══██╗██║░░░░░██╔══██╗██║░░██║██╔════╝██╔══██╗██║░██╔╝██╔════╝██╔══██╗
+╚██╗░██╔╝███████║██║░░░░░██║░░╚═╝███████║█████╗░░██║░░╚═╝█████═╝░█████╗░░██████╔╝
+░╚████╔╝░██╔══██║██║░░░░░██║░░██╗██╔══██║██╔══╝░░██║░░██╗██╔═██╗░██╔══╝░░██╔══██╗
+░░╚██╔╝░░██║░░██║███████╗╚█████╔╝██║░░██║███████╗╚█████╔╝██║░╚██╗███████╗██║░░██║
+░░░╚═╝░░░╚═╝░░╚═╝╚══════╝░╚════╝░╚═╝░░╚═╝╚══════╝░╚════╝░╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝ by liljaba1337
+        ''')
+        print('\nhttps://github.com/LIL-JABA\n')
         tofile=''
         fn='accounts'
         accounts=self.get_accounts(fn)
@@ -38,18 +46,25 @@ class program():
             if skins == False:
                 print('INCORRECT LOGPASS')
                 tofile+='INCORRECT LOGPASS\n'
-            else:
-                print(skins)
-                tofile+=skins+'\n'
-                rank=check.ranked(account)
-                print(rank)
-                tofile+=rank+'\n'
-                lp=check.lastplayed(account)
-                print('last game was on '+lp+'\n')
-                tofile+='last game was on '+lp+'\n'
+                print('_____________\n')
+                tofile+='_____________\n'
+                continue
+            print(skins)
+            tofile+=skins+'\n'
+            print('\n')
+            tofile+='\n'
+            skinsru=check.skins_ru(account)
+            print(skinsru)
+            tofile+=skinsru+'\n'
+            rank=check.ranked(account)
+            print(rank)
+            tofile+=rank+'\n'
+            lp=check.lastplayed(account)
+            print('last game was on '+lp+'\n')
+            tofile+='last game was on '+lp+'\n'
             print('_____________\n')
             tofile+='_____________\n'
-        saveno=str(input('save data to "out.txt"? (y/n) >>>'))
+        saveno=str(input('save output to "out.txt"? (y/n) >>>'))
         if saveno=='y':
             with open ('out.txt', 'w', encoding='UTF-8') as file:
                 file.write(tofile)

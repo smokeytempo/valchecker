@@ -60,7 +60,13 @@ class checkers():
         skinstr=''
         for skin in Skins:
             skinid = skin['ItemID'].lower()
-            for i in range(0,99999):
+            response=response_API.text
+            skin=response.split(skinid)[1].split(',')[1].replace('"displayName":"','').replace('\\"','').replace('"','').replace('u00A0','').split(' уровень')[0]
+            if skin in skinstr:
+                pass
+            else:
+                skinstr += skin + "\n"
+            '''
                 id=data['data'][i]['uuid'].lower()
                 for ii in range(0,20):
                     try:
@@ -89,7 +95,7 @@ class checkers():
                     if name in skinstr:
                         pass
                     else:
-                        skinstr += name + "\n"
+                        skinstr += name + "\n"'''
 
         return skinstr
 
