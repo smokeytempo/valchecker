@@ -1,0 +1,5 @@
+run
+
+$ pip install git+https://github.com/floxay/python-riot-auth.git
+
+first
