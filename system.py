@@ -3,7 +3,7 @@ import asyncio
 import sys
 
 class system():
-    def auth(self,login=None,password=None,logpass=None,response=None):
+    def auth(self,login=None,password=None,logpass=None,response=4):
         '''
     response:\n1 - access token\n2 - entitlements token\n3 - user id
         '''
@@ -34,7 +34,7 @@ class system():
                 return auth.entitlements_token
             elif response==3:
                 return auth.user_id
-            else:
-                return True
+            elif response==4:
+                return auth.access_token, auth.entitlements_token, auth.user_id
         except:
             return False

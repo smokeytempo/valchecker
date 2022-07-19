@@ -1,7 +1,8 @@
+import system
 import checkers
 
 check=checkers.checkers()
-
+sys=system.system()
 
 class program():
     def get_accounts(self,filename):
@@ -42,7 +43,8 @@ class program():
         for account in accounts:
             print(account+'\n\n')
             tofile+=account+'\n\n'
-            skins=check.skins_en(account)
+            acctoken,enttoken,uid=sys.auth(logpass=account,response=4)
+            skins=check.skins_en(enttoken,acctoken,uid)
             if skins == False:
                 print('INCORRECT LOGPASS')
                 tofile+='INCORRECT LOGPASS\n'
@@ -53,15 +55,15 @@ class program():
             tofile+=skins+'\n'
             print('\n')
             tofile+='\n'
-            skinsru=check.skins_ru(account)
+            skinsru=check.skins_ru(enttoken,acctoken,uid)
             print(skinsru)
             tofile+=skinsru+'\n'
-            rank=check.ranked(account)
+            rank=check.ranked(enttoken,acctoken,uid)
             print(rank)
-            tofile+=rank+'\n'
-            lp=check.lastplayed(account)
-            print('last game was on '+lp+'\n')
-            tofile+='last game was on '+lp+'\n'
+            tofile+=f'{rank}\n'
+            lp=check.lastplayed(uid)
+            print(f'last game was on {lp}\n')
+            tofile+=f'last game was on {lp}\n'
             print('_____________\n')
             tofile+='_____________\n'
         saveno=str(input('save output to "out.txt"? (y/n) >>>'))
