@@ -44,6 +44,9 @@ class program():
             print(account+'\n\n')
             tofile+=account+'\n\n'
             acctoken,enttoken,uid=sys.auth(logpass=account,response=4)
+            if enttoken=='err':
+                print(acctoken)
+                return
             skins=check.skins_en(enttoken,acctoken,uid)
             if skins == False:
                 print('INCORRECT LOGPASS')
