@@ -5,7 +5,7 @@ import sys
 class system():
     def auth(self,login=None,password=None,logpass=None,response=4):
         '''
-    response:\n1 - access token\n2 - entitlements token\n3 - user id
+    response: 1 - access token 2 - entitlements token 3 - user id
         '''
         try:
             if login == None and password==None:
@@ -36,5 +36,5 @@ class system():
                 return auth.user_id
             elif response==4:
                 return auth.access_token, auth.entitlements_token, auth.user_id
-        except:
-            return False
+        except Exception as e:
+            return e,'err','err'
