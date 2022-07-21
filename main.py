@@ -46,8 +46,17 @@ class program():
             acctoken,enttoken,uid=sys.auth(logpass=account,response=4)
             if enttoken=='err':
                 print(acctoken)
-                return
-            skins=check.skins_en(enttoken,acctoken,uid)
+                continue
+            region,level=sys.get_region(acctoken)
+            if region==False:
+                print(f"unable to check region\nyou can check it by urself using {level} and type region below\n(leave it empty if u wanna skip this account)")
+                region=input('>>>').replace(' ','')
+                if region=='':
+                    print('_____________\n')
+                    tofile+='_____________\n'
+                    continue
+                level=None
+            skins=check.skins_en(enttoken,acctoken,uid,region)
             if skins == False:
                 print('INCORRECT LOGPASS')
                 tofile+='INCORRECT LOGPASS\n'
@@ -58,13 +67,13 @@ class program():
             tofile+=skins+'\n'
             print('\n')
             tofile+='\n'
-            skinsru=check.skins_ru(enttoken,acctoken,uid)
+            skinsru=check.skins_ru(enttoken,acctoken,uid,region)
             print(skinsru)
             tofile+=skinsru+'\n'
-            rank=check.ranked(enttoken,acctoken,uid)
-            print(rank)
-            tofile+=f'{rank}\n'
-            lp=check.lastplayed(uid)
+            rank=check.ranked(enttoken,acctoken,uid,region)
+            print(f'{rank} ({level} lvl)')
+            tofile+=f'{rank} ({level} lvl)\n'
+            lp=check.lastplayed(uid,region)
             print(f'last game was on {lp}\n')
             tofile+=f'last game was on {lp}\n'
             print('_____________\n')
