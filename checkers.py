@@ -1,7 +1,7 @@
 import requests
-import system
+import systems
 
-sys=system.system()
+sys=systems.system()
 sess=requests.Session()
 
 class checkers():
@@ -18,7 +18,7 @@ class checkers():
 
             r = sess.get(f"https://pd.{region}.a.pvp.net/store/v1/entitlements/{puuid}/e7c63390-eda7-46e0-bb7a-a6abdacd2433",headers=headers)
             Skins = r.json()["Entitlements"]
-            response_API = requests.get('https://raw.githubusercontent.com/CSTCryst/Skin-Api/main/SkinList')
+            response_API = requests.get('https://lil-jaba.github.io/valskins/skinlist.html')
             response=response_API.text
             skinsList = response.splitlines()
             skinstr=''
@@ -92,6 +92,8 @@ wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9"}
             return rank
         except:
             return 'err'
+
+            
     def lastplayed(self,puuid,region='eu'):
         try:
 
