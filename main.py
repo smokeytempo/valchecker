@@ -14,7 +14,7 @@ class program():
         self.checked=0
         self.version='2.0.1'
         try:
-            self.lastver=requests.get('https://lil-jaba.github.io/valchecker/lastver.txt').text
+            self.lastver=requests.get('https://lil-jaba.github.io/valchecker/lastver.html').text.replace(' ','').replace('\n','')
         except:
             self.lastver='err'
 
