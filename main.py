@@ -1,3 +1,4 @@
+from ast import excepthandler
 import requests
 import systems
 import checkers
@@ -11,8 +12,11 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version=2.0
-        self.lastver=float(requests.get('https://lil-jaba.github.io/valchecker/lastver.txt').text)
+        self.version='2.0.1'
+        try:
+            self.lastver=requests.get('https://lil-jaba.github.io/valchecker/lastver.txt').text
+        except:
+            self.lastver='err'
 
     def start(self):
         while True:
@@ -66,8 +70,8 @@ class program():
         if accounts==0:
             print('file "accounts.txt" was not found')
             return
-        ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker {self.version} by liljaba1337 | CHECKED {self.checked}/{self.count}')
         for account in accounts:
+            ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker {self.version} by liljaba1337 | CHECKED {self.checked}/{self.count}')
             print('_____________')
             tofile+='_____________\n'
             print(account+'\n\n')
@@ -75,24 +79,19 @@ class program():
             acctoken,enttoken,uid=sys.auth(logpass=account,response=4)
             if enttoken=='err':
                 print(acctoken)
+                tofile+=f'{acctoken}\n\n'
+                self.checked+=1
                 continue
             region,level=sys.get_region(acctoken)
             if region==False:
-                print(f"unable to check region\nyou can check it by urself using {level} and type region below\n(leave it empty if u wanna skip this account)")
+                print(f"unable to check region\nyou can check it using {level} and type region below\n(leave it empty if u wanna skip this account)")
                 region=input('>>>').replace(' ','')
                 if region=='':
-                    print('_____________\n')
-                    tofile+='SKIPPED\n\n_____________\n'
+                    tofile+='SKIPPED\n\n'
                     self.checked+=1
                     continue
                 level=None
             skins=check.skins_en(enttoken,acctoken,uid,region)
-            if skins == False:
-                print('INCORRECT LOGPASS')
-                tofile+='INCORRECT LOGPASS\n'
-                print('_____________\n')
-                tofile+='_____________\n'
-                continue
             print(skins)
             tofile+=skins+'\n'
             print('\n')
