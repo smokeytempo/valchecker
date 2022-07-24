@@ -60,7 +60,7 @@ class system():
 
     def load_settings(self):
         try:
-            f = open('settings.json')
+            f = open('system\\settings.json')
             data = json.load(f)
             checkru=data['ru_check']
             f.close()
@@ -72,7 +72,7 @@ class system():
     def edit_settings(self):
         while True:
             os.system('cls')
-            f = open('settings.json','r+')
+            f = open('system\\settings.json','r+')
             data = json.load(f)
             checkru=data['ru_check']
             print(f'  [1] check skins in russian: {checkru}')

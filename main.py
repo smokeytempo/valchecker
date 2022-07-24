@@ -1,7 +1,7 @@
 from ast import excepthandler
 import requests
-import systems
-import checkers
+from modules import systems
+from modules import checkers
 import ctypes
 import os
 
@@ -12,11 +12,13 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='2.0.1'
+        self.version='2.0.2'
         try:
-            self.lastver=requests.get('https://lil-jaba.github.io/valchecker/lastver.html').text.replace(' ','').replace('\n','')
+            self.lastver=requests.get('https://lil-jaba.github.io/valchecker/system/lastver.html').text.replace(' ','').replace('\n','')
+            if 'a' in self.lastver:
+                self.lastver=self.version
         except:
-            self.lastver='err'
+            self.lastver=self.version
 
     def start(self):
         while True:

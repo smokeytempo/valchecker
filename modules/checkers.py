@@ -1,5 +1,5 @@
 import requests
-import systems
+from modules import systems
 
 sys=systems.system()
 sess=requests.Session()
@@ -58,7 +58,7 @@ class checkers():
             for skin in Skins:
                 skinid = skin['ItemID'].lower()
                 response=response_API.text
-                skin=response.split(skinid)[1].split(',')[1].replace('"displayName":"','').replace('\\"','').replace('"','').replace('u00A0','').split(' уровень')[0]
+                skin=response.split(skinid)[1].split(',')[1].replace('"displayName":"','').replace('\\"','').replace('"','').replace('u00A0','').replace("'",'').split(' уровень')[0]
                 if skin in skinstr:
                     pass
                 else:
