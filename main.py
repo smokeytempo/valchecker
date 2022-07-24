@@ -1,4 +1,3 @@
-from ast import excepthandler
 import requests
 from modules import systems
 from modules import checkers
