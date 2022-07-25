@@ -1,6 +1,6 @@
-
 import requests
 from modules import systems
+from modules import auth
 from modules import checkers
 import ctypes
 import os
@@ -10,12 +10,13 @@ import json
 
 check=checkers.checkers()
 sys=systems.system()
+authenticate=auth.auth()
 
 class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='2.1.1'
+        self.version='2.1.2'
         try:
             self.lastver=requests.get('https://lil-jaba.github.io/valchecker/system/lastver.html').text.replace(' ','').replace('\n','')
             if 'a' in self.lastver:
@@ -101,10 +102,15 @@ class program():
             tofile+='_____________\n'
             print(account+'\n\n')
             tofile+=account+'\n\n'
-            acctoken,enttoken,uid=sys.auth(logpass=account,response=4)
-            if enttoken=='err':
-                print(acctoken)
-                tofile+=f'{acctoken}\n\n'
+            acctoken,enttoken,uid=authenticate.auth(logpass=account)
+            if enttoken==0:
+                print('banned')
+                tofile+=f'banned\n\n'
+                self.checked+=1
+                continue
+            elif enttoken==1:
+                print('auth failed')
+                tofile+=f'auth failed\n\n'
                 self.checked+=1
                 continue
             region,level=sys.get_region(acctoken)

@@ -1,7 +1,7 @@
 _____________
 ExhaLore:ismaiLxd123
 
-Failed to authenticate. Make sure username and password are correct. `auth_failure`.
+banned
 
 _____________
 ahmetpro1112:ahmet2000
@@ -11,10 +11,11 @@ list index out of range
 _____________
 UNKNOWN:aslan5538
 
-Failed to authenticate. Make sure username and password are correct. `auth_failure`.
+banned
 
 _____________
 yrbn4252:iremforwin123
+
 
 
 
@@ -39,6 +40,17 @@ Couture Stinger
 Couture Marshal
 Kingdom Spectre
 
+
+Bucky Kingdom
+Ghost Вендетта
+Odin dot EXE
+Frenzy Мода
+Phantom Kingdom
+Bulldog Мода
+Ghost dot EXE
+Stinger Мода
+Marshal Мода
+Spectre Kingdom
 
 Unranked (19 lvl)
 last game was on Friday, July 22, 2022 11:34 AM
