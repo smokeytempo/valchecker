@@ -1,4 +1,6 @@
 {
-    "ru_check": "True",
+    "ru_check": "False",
+    "default_file": "None",
+    "saveout": "False",
     "capybaras": "cool"
 }
