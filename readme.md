@@ -2,7 +2,7 @@ pls leave a star if u liked it
 
 ## installation
 
-> pip install git+https://github.com/floxay/python-riot-auth.git
+> pip install urllib3
 > 
 > pip install requests
 
