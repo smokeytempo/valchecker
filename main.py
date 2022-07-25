@@ -15,7 +15,7 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='2.1.0'
+        self.version='2.1.1'
         try:
             self.lastver=requests.get('https://lil-jaba.github.io/valchecker/system/lastver.html').text.replace(' ','').replace('\n','')
             if 'a' in self.lastver:
@@ -108,6 +108,11 @@ class program():
                 self.checked+=1
                 continue
             region,level=sys.get_region(acctoken)
+            if region==False:
+                print(level)
+                tofile+=str(level)+'\n\n'
+                self.checked+=1
+                continue
             if region==False:
                 print(f"unable to check region\nyou can check it using {level} and type region below\n(leave it empty if u wanna skip this account)")
                 region=input('>>>').replace(' ','')

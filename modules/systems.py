@@ -46,8 +46,12 @@ class system():
         user_agent = {'User-agent': 'Mozilla/5.0'}
         headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko","Pragma": "no-cache","Accept": "*/*","Content-Type": "application/json","Authorization":f"Bearer {token}"}
         userinfo = session.post('https://auth.riotgames.com/userinfo',headers=headers)
-        name=userinfo.text.split('game_name":"')[1].split('","')[0]
-        tag=userinfo.text.split('tag_line":"')[1].split('","')[0]
+        #print(userinfo.text)
+        try:
+            name=userinfo.text.split('game_name":"')[1].split('","')[0]
+            tag=userinfo.text.split('tag_line":"')[1].split('","')[0]
+        except Exception as e:
+            return False,e
         #print(f'{name}\{tag}')
         region=session.get(f"https://api.henrikdev.xyz/valorant/v1/account/{name}/{tag}",headers=user_agent)
         regionn=region.text
@@ -56,7 +60,9 @@ class system():
             reg=regionn.split('"region":"')[1].split('","')[0]
             lvl=regionn.split('account_level":')[1].split(',"')[0]
             #print(reg,lvl)
-            return reg,lvl           
+            return reg,lvl
+        elif ',"message":' in regionn:
+            return False,regionn.split('"message":"')[1].split('","')[0]
         else:
             return False,f'{name}#{tag}'
 
