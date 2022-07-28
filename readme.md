@@ -1,6 +1,6 @@
 pls leave a star if u liked it
 
-![image](https://raw.githubusercontent.com/lil-jaba/valchecker/main/.github/images/scr1.jpg)
+![image](https://raw.githubusercontent.com/lil-jaba/valchecker/main/.github/images/scr1.jpg =400x580)
 
 ## installation
 
