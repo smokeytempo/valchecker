@@ -26,6 +26,8 @@ class system():
             lvl=regionn.split('account_level":')[1].split(',"')[0]
             #print(reg,lvl)
             return reg,lvl
+        elif 'Riot Origin Server Rate Limit, try again later' in regionn:
+            return False,'riotlimit'
         elif ',"message":' in regionn:
             return False,regionn.split('"message":"')[1].split('","')[0]
         else:
