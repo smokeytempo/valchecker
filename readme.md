@@ -9,5 +9,7 @@ pls leave a star if u liked it
 > pip install requests
 > 
 > pip install ctypes
+>
+> pip install colorama
 
 text me in discord if u found bugs or have suggests: **LIL JABA#1895**
