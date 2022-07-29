@@ -1,4 +1,4 @@
-## https://discord.gg/r3Y5KhM7kP (free accounts)
+## https://discord.gg/r3Y5KhM7kP
 ## idk if this server will be useful or not, but someone asked me to create it
 
 pls leave a star if u liked it
