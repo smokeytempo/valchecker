@@ -1,3 +1,4 @@
+import random
 import requests
 import json
 import os
@@ -5,12 +6,19 @@ from tkinter import filedialog
 import tkinter
 
 class system():
+    def __init__(self) -> None:
+        self.proxylist=[]
+        self.proxxy={
+                        'http':None,
+                        'https':None
+                    }
+        self.useproxy=self.load_proxy()
 
     def get_region(self,token):
         session=requests.Session()
         user_agent = {'User-agent': 'Mozilla/5.0'}
         headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko","Pragma": "no-cache","Accept": "*/*","Content-Type": "application/json","Authorization":f"Bearer {token}"}
-        userinfo = session.post('https://auth.riotgames.com/userinfo',headers=headers)
+        userinfo = session.post('https://auth.riotgames.com/userinfo',headers=headers,proxies=self.proxxy)
         #print(userinfo.text)
         try:
             name=userinfo.text.split('game_name":"')[1].split('","')[0]
@@ -18,7 +26,7 @@ class system():
         except Exception as e:
             return False,e
         #print(f'{name}\{tag}')
-        region=session.get(f"https://api.henrikdev.xyz/valorant/v1/account/{name}/{tag}",headers=user_agent)
+        region=session.get(f"https://api.henrikdev.xyz/valorant/v1/account/{name}/{tag}",headers=user_agent,proxies=self.proxxy)
         regionn=region.text
         #print(regionn)
         if '{"status":200,' in regionn:
@@ -27,6 +35,12 @@ class system():
             #print(reg,lvl)
             return reg,lvl
         elif 'Riot Origin Server Rate Limit, try again later' in regionn:
+            if self.useproxy==True:
+                np=self.proxy(self.proxxy)
+                self.proxxy={
+                    'http':np,
+                    'https':np
+                }
             return False,'riotlimit'
         elif ',"message":' in regionn:
             return False,regionn.split('"message":"')[1].split('","')[0]
@@ -84,6 +98,25 @@ class system():
             f.truncate()
             f.close()
 
+    def load_proxy(self):
+        with open ('system\\proxy.txt', 'r', encoding='UTF-8') as file:
+            lines=file.readlines()
+            for line in lines:
+                if line !='' and line !=' ' and line != '\n':
+                    if line not in self.proxylist:
+                        self.proxylist.append(line)
+        if len(self.proxylist)<=1:
+            return False
+        else:
+            return True
+    
+    def proxy(self,nowproxy):
+        nextproxy=random.choice(self.proxylist)
+        while nextproxy==nowproxy:
+            nextproxy=random.choice(self.proxylist)
+            if 'default#pleasedonotdeletethis' in nextproxy:
+                nextproxy=None
+        return nextproxy
 
     def center(self,var:str, space:int=None): # From Pycenter
         if not space:
