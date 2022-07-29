@@ -72,7 +72,7 @@ class program():
   [1] - check skins, rank, level, etc
   [2] - i think u understand
   [3] - check valid/invalid/ban and save them to files in simplefolder
-  [4] - returns all accounts from simplefolder\\valid.txt that follow your requirements
+  [4] - sorts all accounts from simplefolder\\valid.txt to simplefolder\\sorted\\...
 
   [~] - press ENTER to return
                 ''')
@@ -132,7 +132,7 @@ class program():
                 tofile+='_____________\n'
                 print(account+'\n\n')
                 tofile+=account+'\n\n'
-                acctoken,enttoken,uid=authenticate.auth(logpass=account)
+                acctoken,enttoken,uid,mailverified=authenticate.auth(logpass=account)
                 if enttoken==0:
                     print('incorrect')
                     tofile+=f'incorrect\n\n'

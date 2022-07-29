@@ -69,7 +69,7 @@ class auth():
                 token = data[0]
 
             elif "auth_failure" in r2.text:
-                return 0,0,0
+                return 0,0,0,0
             elif 'rate_limited' in r2.text:
                 if self.useproxy==True:
                     np=sys.proxy(self.proxy)
@@ -77,9 +77,9 @@ class auth():
                         'http':np,
                         'https':np
                     }
-                return 1,1,1
+                return 1,1,1,1
             elif 'multifactor' in r2.text:
-                return 3,3,3
+                return 3,3,3,3
             headers = {
                 'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
                 'Authorization': f'Bearer {token}'
@@ -99,18 +99,26 @@ class auth():
                 for x in data3:
                     typebanned = x['type']
                 if typebanned == "PERMANENT_BAN" or typebanned=='PERMA_BAN' or typebanned=='TIME_BAN' or typebanned or typebanned=='LEGACY_BAN':
-                    return 4,4,4
+                    return 4,4,4,4
                 else:
                     pass
             except Exception as e:
                 #print(e)
                 #input()
                 pass
-            return token,entitlement,puuid
+            try:
+                mailverif=bool(data['email_verified'])
+            except:
+                mailverif=True
+            if mailverif==True:
+                mailverif=False
+            else:
+                mailverif=True
+            return token,entitlement,puuid,mailverif
             #print(f"Accestoken: {token}")
             #print("-"*50)
             #print(f"Entitlements: {entitlement}")
             #print("-"*50)
             #print(f"Userid: {puuid}")
         except Exception as e:
-            return 2,2,2
+            return 2,2,2,2

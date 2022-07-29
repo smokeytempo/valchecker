@@ -16,7 +16,7 @@ class simplechecker():
         self.valid=0
         self.banned=0
         self.skins=0
-        self.noskins=0
+        self.unverifiedmail=0
         self.err=0
         self.rlimits=0
         self.riotlimitinarow=0
@@ -44,7 +44,7 @@ class simplechecker():
     >                   banned               >[{Fore.LIGHTRED_EX}{self.banned}{Style.RESET_ALL}]<
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     >                   skins                >[{Fore.GREEN}{self.skins}{Style.RESET_ALL}]<
-    >                   noskins              >[{Fore.LIGHTRED_EX}{self.noskins}{Style.RESET_ALL}]<
+    >                   unverified mail      >[{Fore.GREEN}{self.unverifiedmail}{Style.RESET_ALL}]<
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     >                   competitive locked  >[{Fore.LIGHTRED_EX}{self.locked}{Style.RESET_ALL}]<
     >                   unranked            >[{Fore.LIGHTGREEN_EX}{self.ranks['unranked']}{Style.RESET_ALL}]<
@@ -72,7 +72,7 @@ class simplechecker():
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
             ''')
                 try:
-                    token,entt,uuid=authenticate.auth(account)
+                    token,entt,uuid,mailverif=authenticate.auth(account)
                     if token == 2:
                         self.err+=1
                     elif token==1:
@@ -99,6 +99,8 @@ class simplechecker():
                     elif token==4:
                         self.banned+=1
                     else:
+                        if mailverif==True:
+                            self.unverifiedmail+=1
                         while True:
                             reg,lvl=sys.get_region(token)
                             if reg!=False and reg!='':
@@ -112,9 +114,7 @@ class simplechecker():
                                     except:
                                         self.ranks['unknown']+=1
                                 skins=check.skins_en(entt,token,uuid,reg)
-                                if skins == '':
-                                    self.noskins+=1
-                                else:
+                                if skins != '':
                                     skinss=True
                                     self.skins+=1
                                 break
@@ -131,27 +131,28 @@ class simplechecker():
                                     print(sys.center('3 riot limits in a row. skipping'))
                                     self.riotlimitinarow=0
                                     self.ranks['unknown']+=1
-                                    self.noskins+=1
                                     self.regions['unknown']+=1
                                     rank=None
                                     lvl=None
                                     skinss=False
                                     reg=None
+                                    unverifiedmail=True
                                     break
                             else:
                                 self.ranks['unknown']+=1
-                                self.noskins+=1
                                 self.regions['unknown']+=1
                                 rank=None
                                 lvl=None
                                 skinss=False
                                 reg=None
+                                unverifiedmail=True
                                 break
                         with open ('simplefolder\\valid.txt', 'a', encoding='UTF-8') as file:
-                            file.write(f'\n{account} - [rank: {rank}][skins: {skinss}][lvl: {lvl}][server: {reg}]')
+                            file.write(f'\n{account} - [rank: {rank}][skins: {skinss}][lvl: {lvl}][server: {reg}][unverifiedmail: {unverifiedmail}]')
                         self.valid+=1
                 except Exception as e:
-                #    print(e)
+                    #print(e)
+                    #input()
                     self.err+=1
                 self.checked+=1
                 break
@@ -168,7 +169,7 @@ class simplechecker():
     >                   banned               >[{Fore.LIGHTRED_EX}{self.banned}{Style.RESET_ALL}]<
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     >                   skins                >[{Fore.GREEN}{self.skins}{Style.RESET_ALL}]<
-    >                   noskins              >[{Fore.LIGHTRED_EX}{self.noskins}{Style.RESET_ALL}]<
+    >                   unverified mail      >[{Fore.GREEN}{self.unverifiedmail}{Style.RESET_ALL}]<
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     >                   competitive locked  >[{Fore.LIGHTRED_EX}{self.locked}{Style.RESET_ALL}]<
     >                   unranked            >[{Fore.LIGHTGREEN_EX}{self.ranks['unranked']}{Style.RESET_ALL}]<

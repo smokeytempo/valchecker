@@ -36,6 +36,15 @@ class validsort():
                         f.write(line)
             except:
                 pass
+
+            #sort verifmail
+            try:
+                mail=line.split('[unverifiedmail: ')[1].split(']')[0].lower()
+                if mail =='true':
+                    with open(f'simplefolder\\sorted\\unverifiedmail.txt','a',encoding='UTF-8') as f:
+                        f.write(line)
+            except:
+                pass
             sorted+=1
         os.system('cls')
         print(f'sorted {sorted}/{count}')
