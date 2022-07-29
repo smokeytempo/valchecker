@@ -152,8 +152,8 @@ class simplechecker():
                             file.write(f'\n{account} - [rank: {rank}][skins: {skinss}][lvl: {lvl}][server: {reg}][unverifiedmail: {mailverif}]')
                         self.valid+=1
                 except Exception as e:
-                    print(e)
-                    input()
+                    #print(e)
+                    #input()
                     self.err+=1
                 self.checked+=1
                 break
