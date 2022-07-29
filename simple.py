@@ -107,6 +107,7 @@ class simplechecker():
                                 self.regions[reg.lower()]+=1
                                 if int(lvl)<20:
                                     self.locked+=1
+                                    rank='locked'
                                 else:
                                     rank=check.ranked(entt,token,uuid,reg).lower().split(' ')[0]
                                     try:
@@ -117,6 +118,8 @@ class simplechecker():
                                 if skins != '':
                                     skinss=True
                                     self.skins+=1
+                                else:
+                                    skinss=False
                                 break
                             elif reg==False and lvl=='riotlimit':
                                 if self.useproxy==True:
@@ -136,7 +139,6 @@ class simplechecker():
                                     lvl=None
                                     skinss=False
                                     reg=None
-                                    unverifiedmail=True
                                     break
                             else:
                                 self.ranks['unknown']+=1
@@ -145,14 +147,13 @@ class simplechecker():
                                 lvl=None
                                 skinss=False
                                 reg=None
-                                unverifiedmail=True
                                 break
                         with open ('simplefolder\\valid.txt', 'a', encoding='UTF-8') as file:
-                            file.write(f'\n{account} - [rank: {rank}][skins: {skinss}][lvl: {lvl}][server: {reg}][unverifiedmail: {unverifiedmail}]')
+                            file.write(f'\n{account} - [rank: {rank}][skins: {skinss}][lvl: {lvl}][server: {reg}][unverifiedmail: {mailverif}]')
                         self.valid+=1
                 except Exception as e:
-                    #print(e)
-                    #input()
+                    print(e)
+                    input()
                     self.err+=1
                 self.checked+=1
                 break
