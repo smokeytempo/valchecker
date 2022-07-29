@@ -1,5 +1,4 @@
-## https://discord.gg/r3Y5KhM7kP
-## idk if this server will be useful or not, but someone asked me to create it
+## if u need help, found bugs or have suggests: https://discord.gg/r3Y5KhM7kP
 
 pls leave a star if u liked it
 
@@ -14,5 +13,3 @@ pls leave a star if u liked it
 > pip install ctypes
 >
 > pip install colorama
-
-text me in discord if u found bugs or have suggests: **LIL JABA#1895**
