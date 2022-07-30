@@ -1,4 +1,4 @@
-## if u need help, found bugs or have suggests: https://discord.gg/r3Y5KhM7kP
+## if u need help, found bugs or have suggests (or u wanna a free acc): https://discord.gg/r3Y5KhM7kP
 
 pls leave a star if u liked it
 
