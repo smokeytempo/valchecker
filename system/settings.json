@@ -1,6 +1,7 @@
 {
     "ru_check": "False",
     "default_file": "None",
-    "saveout": "False",
+    "saveout": "True",
+    "use_discordrpc": "True",
     "capybaras": "cool"
 }

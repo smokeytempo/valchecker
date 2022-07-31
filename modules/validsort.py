@@ -1,5 +1,3 @@
-import os
-import sys
 class validsort():
     def sort(self):
         with open('simplefolder\\valid.txt','r',encoding='UTF-8') as f:
@@ -7,7 +5,6 @@ class validsort():
         count=len(lines)
         sorted=0
         for line in lines:
-            os.system('cls')
             print(f'sorted {sorted}/{count}')
 
             # sort regions
@@ -46,6 +43,5 @@ class validsort():
             except:
                 pass
             sorted+=1
-        os.system('cls')
         print(f'sorted {sorted}/{count}')
         return
