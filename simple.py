@@ -27,8 +27,6 @@ class simplechecker():
 
         self.regions={'eu':0,'na':0,'ap':0,'br':0,'kr':0,'latam':0,'unknown':0}
 
-        self.useproxy=sys.load_proxy()
-
     def main(self,accounts,count):
         os.system(f'mode con: cols=60 lines=40')
         for account in accounts:
@@ -76,9 +74,6 @@ class simplechecker():
                     if token == 2:
                         self.err+=1
                     elif token==1:
-                        if self.useproxy==True:
-                            print('changing proxy')
-                            continue
                         if self.riotlimitinarow<3:
                             print(sys.center('riot limit. waiting 30 seconds'))
                             time.sleep(30)
@@ -104,7 +99,7 @@ class simplechecker():
                         while True:
                             reg,lvl=sys.get_region(token)
                             if reg!=False and reg!='':
-                                self.regions[reg.lower()]+=1
+                                self.regions[str(reg).lower()]+=1
                                 if int(lvl)<20:
                                     self.locked+=1
                                     rank='locked'
@@ -115,31 +110,31 @@ class simplechecker():
                                     except:
                                         self.ranks['unknown']+=1
                                 skins=check.skins_en(entt,token,uuid,reg)
-                                if skins != '':
+                                if 'a' in skins:
                                     skinss=True
                                     self.skins+=1
                                 else:
                                     skinss=False
+                                lastplayed=check.lastplayed(uuid,reg)
+                                if lastplayed!=False:
+                                    pass
                                 break
-                            elif reg==False and lvl=='riotlimit':
-                                if self.useproxy==True:
-                                    print('changing proxy')
-                                    continue
-                                if self.riotlimitinarow<3:
-                                    print(sys.center('riot limit. waiting 30 seconds'))
-                                    time.sleep(30)
-                                    self.riotlimitinarow+=1
-                                    continue
-                                else:
-                                    print(sys.center('3 riot limits in a row. skipping'))
-                                    self.riotlimitinarow=0
-                                    self.ranks['unknown']+=1
-                                    self.regions['unknown']+=1
-                                    rank=None
-                                    lvl=None
-                                    skinss=False
-                                    reg=None
-                                    break
+                            #elif reg==False and lvl=='riotlimit':
+                            #    if self.riotlimitinarow<3:
+                            #        print(sys.center('riot limit. waiting 30 seconds'))
+                            #        time.sleep(30)
+                            #        self.riotlimitinarow+=1
+                            #        continue
+                            #    else:
+                            #        print(sys.center('3 riot limits in a row. skipping'))
+                            #        self.riotlimitinarow=0
+                            #        self.ranks['unknown']+=1
+                            #        self.regions['unknown']+=1
+                            #        rank=None
+                            #        lvl=None
+                            #        skinss=False
+                            #        reg=None
+                            #        break
                             else:
                                 self.ranks['unknown']+=1
                                 self.regions['unknown']+=1
@@ -152,8 +147,6 @@ class simplechecker():
                             file.write(f'\n{account} - [rank: {rank}][skins: {skinss}][lvl: {lvl}][server: {reg}][unverifiedmail: {mailverif}]')
                         self.valid+=1
                 except Exception as e:
-                    #print(e)
-                    #input()
                     self.err+=1
                 self.checked+=1
                 break

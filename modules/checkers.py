@@ -1,4 +1,5 @@
 import requests
+import valo_api as vapi
 
 from modules import systems
 
@@ -100,9 +101,8 @@ wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9"}
 
             if puuid==False:
                 return False
-            resp=requests.get(f'https://api.henrikdev.xyz/valorant/v3/by-puuid/matches/{region}/'+puuid.replace(' ',''))
-            data=resp.json()
-            lastmatch=data['data'][0]['metadata']['game_start_patched']
+            resp=vapi.get_match_history_by_puuid_v3(region,puuid)
+            lastmatch=resp[0].metadata.game_start_patched
             return lastmatch
-        except:
-            return 'err'
+        except Exception as e:
+            return e

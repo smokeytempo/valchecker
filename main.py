@@ -20,7 +20,7 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='2.3.1'
+        self.version='2.3.2'
         self.riotlimitinarow=0
         try:
             self.lastver=requests.get('https://lil-jaba.github.io/valchecker/system/lastver.html').text.replace(' ','').replace('\n','')
@@ -71,8 +71,8 @@ class program():
 
   [1] - check skins, rank, level, etc
   [2] - i think u understand
-  [3] - check valid/invalid/ban and save them to files in simplefolder
-  [4] - sorts all accounts from simplefolder\\valid.txt to simplefolder\\sorted\\...
+  [3] - check valid/invalid/ban and save them to valid.txt in simplefolder
+  [4] - sorts all accounts from valid.txt to simplefolder\\sorted\\...
 
   [~] - press ENTER to return
                 ''')

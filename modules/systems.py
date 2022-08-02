@@ -4,6 +4,7 @@ import json
 import os
 from tkinter import filedialog
 import tkinter
+import valo_api as vapi
 
 class system():
     def __init__(self) -> None:
@@ -15,8 +16,13 @@ class system():
         self.useproxy=self.load_proxy()
 
     def get_region(self,token):
+        if self.useproxy==True:
+            np=self.proxy(self.proxxy)
+            self.proxxy={
+                'http':np,
+                'https':np
+            }
         session=requests.Session()
-        user_agent = {'User-agent': 'Mozilla/5.0'}
         headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko","Pragma": "no-cache","Accept": "*/*","Content-Type": "application/json","Authorization":f"Bearer {token}"}
         userinfo = session.post('https://auth.riotgames.com/userinfo',headers=headers,proxies=self.proxxy)
         #print(userinfo.text)
@@ -26,26 +32,19 @@ class system():
         except Exception as e:
             return False,e
         #print(f'{name}\{tag}')
-        region=session.get(f"https://api.henrikdev.xyz/valorant/v1/account/{name}/{tag}",headers=user_agent,proxies=self.proxxy)
-        regionn=region.text
-        #print(regionn)
-        if '{"status":200,' in regionn:
-            reg=regionn.split('"region":"')[1].split('","')[0]
-            lvl=regionn.split('account_level":')[1].split(',"')[0]
+        try:
+            regionn=vapi.get_account_details_v1(name,tag)
+        #region=session.get(f"https://api.henrikdev.xyz/valorant/v1/account/{name}/{tag}",headers=user_agent,proxies=self.proxxy)
+            #print(regionn)
+            reg=regionn.region
+            lvl=regionn.account_level
             #print(reg,lvl)
+            #input()
             return reg,lvl
-        elif 'Riot Origin Server Rate Limit, try again later' in regionn:
-            if self.useproxy==True:
-                np=self.proxy(self.proxxy)
-                self.proxxy={
-                    'http':np,
-                    'https':np
-                }
-            return False,'riotlimit'
-        elif ',"message":' in regionn:
-            return False,regionn.split('"message":"')[1].split('","')[0]
-        else:
-            return False,f'{name}#{tag}'
+        except Exception as e:
+            if "Rate Limited" in str(e):
+                return False,'riotlimit'
+            return False,False
 
     def load_settings(self):
         try:
