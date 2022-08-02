@@ -13,6 +13,8 @@ pls leave a star if u liked it
 > pip install ctypes
 >
 > pip install colorama
+>
+> pip install valo_api
 
 
 ## if you want to support this project:
