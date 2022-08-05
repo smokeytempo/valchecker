@@ -1,6 +1,7 @@
 import ctypes
 import json
 import os
+import random
 import tkinter
 from tkinter import filedialog
 
@@ -20,7 +21,7 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='2.3.2'
+        self.version='2.3.3'
         self.riotlimitinarow=0
         try:
             self.lastver=requests.get('https://lil-jaba.github.io/valchecker/system/lastver.html').text.replace(' ','').replace('\n','')
@@ -31,6 +32,9 @@ class program():
 
     def start(self):
         while True:
+            secret=''
+            if random.randint(0,50)==0:
+                secret='\n\ncapybaras ontop!\n\n'
             ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker {self.version} by liljaba1337')
             os.system('cls')
             print(sys.center(f'''
@@ -42,24 +46,24 @@ class program():
 ░░╚██╔╝░░██║░░██║███████╗╚█████╔╝██║░░██║███████╗╚█████╔╝██║░╚██╗███████╗██║░░██║
 ░░░╚═╝░░░╚═╝░░╚═╝╚══════╝░╚════╝░╚═╝░░╚═╝╚══════╝░╚════╝░╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝
             '''))
-            print(sys.center(f'v{self.version}'))
+            print(sys.center(f'v{self.version}{secret}'))
             if self.lastver!=self.version:
                 print(sys.center(f'update to the last version ({self.lastver}) on my GitHub'))
             print(sys.center('\nhttps://github.com/LIL-JABA/valchecker\n'))
             print('  [1] - START CHECKER')
             print('  [2] - EDIT SETTINGS')
-            print('  [3] - SIMPLE CHECKER')
+            print('  [3] - FUNPAY CHECKER')
             print('  [4] - SORT VALID')
-            print('  [5] - INFO')
+            print('  [5] - INFO/HELP')
             res=str(input('\n>>>'))
             if res=='1':
-                os.system('cls')
-                pr.main()
+                self.main(redirect=True)
                 break
             elif res=='2':
                 sys.edit_settings()
             elif res=='3':
-                self.main(redirect=True)
+                os.system('cls')
+                self.main(redirect=False)
                 break
             elif res=='4':
                 valid.sort()
@@ -67,11 +71,15 @@ class program():
                 return
             elif res=='5':
                 os.system('cls')
-                print('''
+                print(f'''
+    valchecker v{self.version} by liljaba1337
 
-  [1] - check skins, rank, level, etc
+    discord: LIL JABA#1895
+    server: https://discord.gg/r3Y5KhM7kP
+
+  [1] - check valid/invalid/ban and save them to valid.txt in simplefolder
   [2] - i think u understand
-  [3] - check valid/invalid/ban and save them to valid.txt in simplefolder
+  [3] - check skins, rank, level, etc (info for funpay.com)
   [4] - sorts all accounts from valid.txt to simplefolder\\sorted\\...
 
   [~] - press ENTER to return

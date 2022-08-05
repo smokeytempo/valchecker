@@ -1,6 +1,9 @@
 import ctypes
+import datetime
 import os
 import time
+import logging
+import traceback
 
 from colorama import Fore, Style
 
@@ -147,16 +150,19 @@ class simplechecker():
                             file.write(f'\n{account} - [rank: {rank}][skins: {skinss}][lvl: {lvl}][server: {reg}][unverifiedmail: {mailverif}]')
                         self.valid+=1
                 except Exception as e:
+                    with open('log.txt','a') as f:
+                        f.write(f'({datetime.datetime.now()}) {str(traceback.format_exc())}\n_________________________________\n')
                     self.err+=1
                 self.checked+=1
                 break
 
         # idk how to better check the last account
         os.system('cls')
+        if self.err>0:
+            print(f'checker has caught {self.err} errors.\nplease send the log.txt file to me (link in my github) so i will be able to improve the checker')
         print(f'''
     {sys.center('https://github.com/LIL-JABA/valchecker')}
     {sys.center('F I N I S H E D')}
-    {sys.center('you can now get full unfo using default checker')}
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     >                   checked              >[{Fore.YELLOW}{self.checked}/{count}{Style.RESET_ALL}]<
     >                   valid                >[{Fore.GREEN}{self.valid}{Style.RESET_ALL}]<
