@@ -9,8 +9,6 @@ pls leave a star if u liked it
 > pip install urllib3
 > 
 > pip install requests
-> 
-> pip install ctypes
 >
 > pip install colorama
 >
