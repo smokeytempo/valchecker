@@ -14,7 +14,9 @@ sys=systems.system()
 authenticate=auth.auth()
 
 class simplechecker():
-    def __init__(self) -> None:
+    def __init__(self,max_rlimits) -> None:
+        self.max_rlimits=max_rlimits
+
         self.checked=0
         self.valid=0
         self.banned=0
@@ -77,13 +79,13 @@ class simplechecker():
                     if token == 2:
                         self.err+=1
                     elif token==1:
-                        if self.riotlimitinarow<3:
+                        if self.riotlimitinarow<self.max_rlimits:
                             print(sys.center('riot limit. waiting 30 seconds'))
                             time.sleep(30)
                             self.riotlimitinarow+=1
                             continue
                         else:
-                            print(sys.center('3 riot limits in a row. skipping'))
+                            print(sys.center(f'{self.max_rlimits} riot limits in a row. skipping'))
                             self.riotlimitinarow=0
                             self.rlimits+=1
                             self.checked+=1
@@ -113,7 +115,7 @@ class simplechecker():
                                     except:
                                         self.ranks['unknown']+=1
                                 skins=check.skins_en(entt,token,uuid,reg)
-                                if 'a' in skins:
+                                if '\n' in skins:
                                     skinss=True
                                     self.skins+=1
                                 else:

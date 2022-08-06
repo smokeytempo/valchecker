@@ -1,6 +1,7 @@
 {
     "ru_check": "False",
-    "default_file": "None",
+    "default_file": "C:/Users/MrBebra/Desktop/valchecker/accounts.txt",
     "saveout": "True",
+    "max_rlimits": 3,
     "capybaras": "cool"
 }

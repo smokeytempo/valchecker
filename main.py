@@ -14,14 +14,13 @@ from modules import auth, checkers, systems, validsort
 check=checkers.checkers()
 sys=systems.system()
 authenticate=auth.auth()
-scheck=simple.simplechecker()
 valid=validsort.validsort()
 
 class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='2.3.3'
+        self.version='2.4.0'
         self.riotlimitinarow=0
         try:
             self.lastver=requests.get('https://lil-jaba.github.io/valchecker/system/lastver.html').text.replace(' ','').replace('\n','')
@@ -54,7 +53,8 @@ class program():
             print('  [2] - EDIT SETTINGS')
             print('  [3] - FUNPAY CHECKER')
             print('  [4] - SORT VALID')
-            print('  [5] - INFO/HELP')
+            print('  [5] - CUSTOM SORT VALID')
+            print('  [6] - INFO/HELP')
             res=str(input('\n>>>'))
             if res=='1':
                 self.main(redirect=True)
@@ -70,6 +70,10 @@ class program():
                 print('done')
                 return
             elif res=='5':
+                valid.customsort()
+                print('done')
+                return
+            elif res=='6':
                 os.system('cls')
                 print(f'''
     valchecker v{self.version} by liljaba1337
@@ -81,6 +85,7 @@ class program():
   [2] - i think u understand
   [3] - check skins, rank, level, etc (info for funpay.com)
   [4] - sorts all accounts from valid.txt to simplefolder\\sorted\\...
+  [5] - sorts all accounts from valid.txt which match your requirements to simplefolder\\sorted\\custom.txt
 
   [~] - press ENTER to return
                 ''')
@@ -128,9 +133,11 @@ class program():
         useproxy=sys.load_proxy()
         checkru=settings['checkru']
         fn=settings['default_file']
+        max_rlimits=int(settings['max_rlimits'])
         tofile=''
         accounts=self.get_accounts(fn)
         if redirect==True:
+            scheck=simple.simplechecker(max_rlimits)
             scheck.main(accounts,self.count)
             return
         for account in accounts:

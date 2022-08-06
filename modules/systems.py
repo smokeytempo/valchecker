@@ -65,11 +65,13 @@ class system():
             checkru=data['ru_check']
             deffile=data['default_file']
             saveout=data['saveout']
-            print(f'  [1] check skins in russian: {checkru}')
+            max_rlimits=data['max_rlimits']
+            print(f'  [1] check skins in russian (funpay checker): {checkru}')
             print(f'  [2] default file: {deffile}')
-            print(f'  [3] always save output to out.txt: {saveout}')
+            print(f'  [3] always save output to out.txt (funpay checker): {saveout}')
+            print(f'  [4] riot limits to skip the acc: {max_rlimits}')
             print(f'\n  [~] enter any other number to exit')
-            edit=str(input('\nenter the number u want to turn on/off >>>')).replace(' ','')
+            edit=str(input('\nenter the number u want to edit >>>')).replace(' ','')
             if edit=='1':
                 if checkru=='True':
                     data['ru_check']='False'
@@ -90,6 +92,13 @@ class system():
                     data['saveout']='False'
                 else:
                     data['saveout']='True'
+            elif edit=='4':
+                new_rlimits=input('enter the number of riot limits to skip this account (min 1) >>>')
+                try:
+                    data['max_rlimits']=int(new_rlimits)
+                except:
+                    print('u have to type a num from 1 to 999 (3 recommended)')
+                    return
             else:
                 return
             f.seek(0)
