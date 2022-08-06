@@ -50,7 +50,7 @@ class system():
         try:
             f = open('system\\settings.json')
             data = json.load(f)
-            out={'checkru':data['ru_check'],'default_file':data['default_file'],'saveout':data['saveout']}
+            out={'checkru':data['ru_check'],'default_file':data['default_file'],'saveout':data['saveout'],'max_rlimits':data['max_rlimits']}
             f.close()
             return out
         except:
