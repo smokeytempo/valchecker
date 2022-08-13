@@ -21,13 +21,17 @@ class TLSAdapter(HTTPAdapter):
 
 class auth():
     def __init__(self) -> None:
-        self.useproxy=sys.load_proxy()
         self.proxy={
             'http':None,
             'https':None
         }
     def auth(self,logpass):
         try:
+            self.nproxy=sys.proxy(self.proxy)
+            self.proxy={
+                'http':self.nproxy,
+                'https':self.nproxy
+            }
             username=logpass.split(':')[0]
             password=logpass.split(':')[1]
             headers = OrderedDict({
@@ -37,7 +41,6 @@ class auth():
             })
             session = sesh()
             session.headers = headers
-            session.proxies = self.proxy
             session.mount('https://', TLSAdapter())
             data = {
                 "acr_values": "urn:riot:bronze",

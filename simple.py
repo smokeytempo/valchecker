@@ -102,7 +102,7 @@ class simplechecker():
                         if mailverif==True:
                             self.unverifiedmail+=1
                         while True:
-                            reg,lvl=sys.get_region(token)
+                            reg,lvl=sys.get_region(token,entt,uuid)
                             if reg!=False and reg!='':
                                 self.regions[str(reg).lower()]+=1
                                 if int(lvl)<20:
@@ -150,6 +150,7 @@ class simplechecker():
                                 break
                         with open ('simplefolder\\valid.txt', 'a', encoding='UTF-8') as file:
                             file.write(f'\n{account} - [rank: {rank}][skins: {skinss}][lvl: {lvl}][server: {reg}][unverifiedmail: {mailverif}]')
+                        # sort
                         self.valid+=1
                 except Exception as e:
                     with open('log.txt','a') as f:

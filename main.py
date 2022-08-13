@@ -20,7 +20,7 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='2.4.1'
+        self.version='2.5.0'
         self.riotlimitinarow=0
         try:
             self.lastver=requests.get('https://lil-jaba.github.io/valchecker/system/lastver.html').text.replace(' ','').replace('\n','')
