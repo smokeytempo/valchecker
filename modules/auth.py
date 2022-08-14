@@ -21,7 +21,6 @@ class TLSAdapter(HTTPAdapter):
 
 class auth():
     def __init__(self) -> None:
-        self.useproxy=sys.load_proxy()
         self.proxy={
             'http':None,
             'https':None
@@ -42,7 +41,6 @@ class auth():
             })
             session = sesh()
             session.headers = headers
-            session.proxies = self.proxy
             session.mount('https://', TLSAdapter())
             data = {
                 "acr_values": "urn:riot:bronze",

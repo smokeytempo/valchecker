@@ -1,9 +1,7 @@
 import requests
 import valo_api as vapi
 
-from modules import systems
 
-sys=systems.system()
 sess=requests.Session()
 
 class checkers():

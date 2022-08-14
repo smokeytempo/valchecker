@@ -102,7 +102,7 @@ class simplechecker():
                         if mailverif==True:
                             self.unverifiedmail+=1
                         while True:
-                            reg,lvl=sys.get_region(token)
+                            reg,lvl=sys.get_region(token,entt,uuid)
                             if reg!=False and reg!='':
                                 self.regions[str(reg).lower()]+=1
                                 if int(lvl)<20:
