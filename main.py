@@ -8,7 +8,7 @@ from tkinter import filedialog
 import time
 import requests
 
-import simple
+import checker
 from modules import auth, checkers, systems, validsort
 
 check=checkers.checkers()
@@ -20,7 +20,7 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='2.4.1'
+        self.version='2.6.0'
         self.riotlimitinarow=0
         try:
             self.lastver=requests.get('https://lil-jaba.github.io/valchecker/system/lastver.html').text.replace(' ','').replace('\n','')
@@ -53,8 +53,7 @@ class program():
             print('  [2] - EDIT SETTINGS')
             print('  [3] - FUNPAY CHECKER')
             print('  [4] - SORT VALID')
-            print('  [5] - CUSTOM SORT VALID')
-            print('  [6] - INFO/HELP')
+            print('  [5] - INFO/HELP')
             res=str(input('\n>>>'))
             if res=='1':
                 self.main(redirect=True)
@@ -66,10 +65,6 @@ class program():
                 self.main(redirect=False)
                 break
             elif res=='4':
-                valid.sort()
-                print('done')
-                return
-            elif res=='5':
                 valid.customsort()
                 print('done')
                 return
@@ -81,11 +76,10 @@ class program():
     discord: LIL JABA#1895
     server: https://discord.gg/r3Y5KhM7kP
 
-  [1] - check valid/invalid/ban and save them to valid.txt in simplefolder
+  [1] - check valid/invalid/ban and save them to valid.txt in output folder
   [2] - i think u understand
   [3] - check skins, rank, level, etc (info for funpay.com)
-  [4] - sorts all accounts from valid.txt to simplefolder\\sorted\\...
-  [5] - sorts all accounts from valid.txt which match your requirements to simplefolder\\sorted\\custom.txt
+  [4] - sorts all accounts from valid.txt which match your requirements to output\\sorted\\custom.txt
 
   [~] - press ENTER to return
                 ''')
@@ -137,7 +131,7 @@ class program():
         tofile=''
         accounts=self.get_accounts(fn)
         if redirect==True:
-            scheck=simple.simplechecker(max_rlimits)
+            scheck=checker.simplechecker(max_rlimits)
             scheck.main(accounts,self.count)
             return
         for account in accounts:
@@ -217,13 +211,13 @@ class program():
                 ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker {self.version} by liljaba1337 | CHECKED {self.checked}/{self.count}')
                 break
         if settings['saveout']=='False':
-            saveno=str(input('save output to "out.txt"? (y/n) >>>'))
+            saveno=str(input('save output to "output\\out.txt"? (y/n) >>>'))
         else:
             saveno='y'
         if saveno=='y' or settings['saveout']=='True':
-            with open ('out.txt', 'w', encoding='UTF-8') as file:
+            with open ('output\\out.txt', 'w', encoding='UTF-8') as file:
                 file.write(tofile)
-            print('saved output to out.txt')
+            print('saved output to output\\out.txt')
         else:
             pass
     

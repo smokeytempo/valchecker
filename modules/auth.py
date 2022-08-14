@@ -28,6 +28,11 @@ class auth():
         }
     def auth(self,logpass):
         try:
+            self.nproxy=sys.proxy(self.proxy)
+            self.proxy={
+                'http':self.nproxy,
+                'https':self.nproxy
+            }
             username=logpass.split(':')[0]
             password=logpass.split(':')[1]
             headers = OrderedDict({

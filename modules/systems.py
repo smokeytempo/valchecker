@@ -5,6 +5,9 @@ import os
 from tkinter import filedialog
 import tkinter
 import valo_api as vapi
+from modules import checkers
+
+check=checkers.checkers()
 
 class system():
     def __init__(self) -> None:
@@ -15,17 +18,16 @@ class system():
                     }
         self.useproxy=self.load_proxy()
 
-    def get_region(self,token):
-        if self.useproxy==True:
-            np=self.proxy(self.proxxy)
-            self.proxxy={
-                'http':np,
-                'https':np
-            }
+    def get_region(self,token,ent,uuid):
+        np=self.proxy(self.proxxy)
+        self.proxxy={
+            'http':np,
+            'https':np
+        }
         session=requests.Session()
         headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko","Pragma": "no-cache","Accept": "*/*","Content-Type": "application/json","Authorization":f"Bearer {token}"}
         userinfo = session.post('https://auth.riotgames.com/userinfo',headers=headers,proxies=self.proxxy)
-        #print(userinfo.text)
+        print(userinfo.text)
         try:
             name=userinfo.text.split('game_name":"')[1].split('","')[0]
             tag=userinfo.text.split('tag_line":"')[1].split('","')[0]
@@ -35,16 +37,19 @@ class system():
         try:
             regionn=vapi.get_account_details_v1(name,tag)
         #region=session.get(f"https://api.henrikdev.xyz/valorant/v1/account/{name}/{tag}",headers=user_agent,proxies=self.proxxy)
-            #print(regionn)
             reg=regionn.region
             lvl=regionn.account_level
-            #print(reg,lvl)
-            #input()
+            print(reg,lvl)
+            input()
             return reg,lvl
         except Exception as e:
-            if "Rate Limited" in str(e):
-                return False,'riotlimit'
-            return False,False
+            regions=['eu','na','ap','kr','latam','br']
+            for region in regions:
+                ranked=check.skins_en(ent,token,uuid,region)
+                print(ranked)
+            input()
+            return False,e
+                
 
     def load_settings(self):
         try:
@@ -120,7 +125,7 @@ class system():
     
     def proxy(self,nowproxy):
         nextproxy=random.choice(self.proxylist)
-        while nextproxy==nowproxy:
+        while nextproxy==nowproxy and nextproxy=='':
             nextproxy=random.choice(self.proxylist)
             if 'default#pleasedonotdeletethis' in nextproxy:
                 nextproxy=None

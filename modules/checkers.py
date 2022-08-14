@@ -7,7 +7,7 @@ sys=systems.system()
 sess=requests.Session()
 
 class checkers():
-    def skins_en(self,entitlement,token,puuid,region='EU'):
+    def skins_en(self,entitlement,token,puuid,region='EU') -> str:
         try:
 
             if entitlement==False:

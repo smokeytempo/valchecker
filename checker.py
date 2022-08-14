@@ -89,7 +89,7 @@ class simplechecker():
                             self.riotlimitinarow=0
                             self.rlimits+=1
                             self.checked+=1
-                            with open ('simplefolder\\riot_limits.txt', 'a', encoding='UTF-8') as file:
+                            with open ('output\\riot_limits.txt', 'a', encoding='UTF-8') as file:
                                 file.write(f'\n{account}')
                             break
                     elif token==3:
@@ -115,7 +115,9 @@ class simplechecker():
                                     except:
                                         self.ranks['unknown']+=1
                                 skins=check.skins_en(entt,token,uuid,reg)
-                                if '\n' in skins:
+                                skinscount=len(skins.split('\n'))
+                                skinscount-=1
+                                if skinscount>0:
                                     skinss=True
                                     self.skins+=1
                                 else:
@@ -143,13 +145,25 @@ class simplechecker():
                             else:
                                 self.ranks['unknown']+=1
                                 self.regions['unknown']+=1
-                                rank=None
-                                lvl=None
-                                skinss=False
-                                reg=None
+                                rank='N/A'
+                                lvl='N/A'
+                                skinscount='N/A'
+                                skins='N/A\n'
+                                reg='N/A'
                                 break
-                        with open ('simplefolder\\valid.txt', 'a', encoding='UTF-8') as file:
-                            file.write(f'\n{account} - [rank: {rank}][skins: {skinss}][lvl: {lvl}][server: {reg}][unverifiedmail: {mailverif}]')
+                        with open (f'output\\valid.txt', 'a', encoding='UTF-8') as file:
+                            file.write(f'''|[{account}]
+|region: {reg}
+|rank: {rank}
+|level: {lvl}
+|lastmatch: {None}
+|unverifiedmail: {mailverif}
+|[ {skinscount} skins ]
+>>>>>>>>>>>>
+{skins}<<<<<<<<<<<<
+###account###
+''')
+                        # sort
                         self.valid+=1
                 except Exception as e:
                     with open('log.txt','a') as f:
