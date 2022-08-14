@@ -77,6 +77,8 @@ class simplechecker():
                 try:
                     token,entt,uuid,mailverif=authenticate.auth(account)
                     if token == 2:
+                        with open('log.txt','a') as f:
+                            f.write(f'({datetime.datetime.now()}) {mailverif}\n_________________________________\n')
                         self.err+=1
                     elif token==1:
                         if self.riotlimitinarow<self.max_rlimits:

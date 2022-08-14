@@ -124,6 +124,8 @@ class system():
             return True
     
     def proxy(self,nowproxy):
+        if self.useproxy==False:
+            return None
         nextproxy=random.choice(self.proxylist)
         while nextproxy==nowproxy and nextproxy=='':
             nextproxy=random.choice(self.proxylist)

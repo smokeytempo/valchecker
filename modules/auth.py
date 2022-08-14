@@ -5,6 +5,7 @@ from msilib import type_binary
 from re import compile
 from ssl import PROTOCOL_TLSv1_2
 from tkinter import *
+import traceback
 
 from requests import session as sesh
 from requests.adapters import HTTPAdapter
@@ -21,13 +22,14 @@ class TLSAdapter(HTTPAdapter):
 
 class auth():
     def __init__(self) -> None:
+        self.nproxy=None
         self.proxy={
             'http':None,
             'https':None
         }
     def auth(self,logpass):
         try:
-            self.nproxy=sys.proxy(self.proxy)
+            self.nproxy=sys.proxy(self.nproxy)
             self.proxy={
                 'http':self.nproxy,
                 'https':self.nproxy
@@ -74,12 +76,6 @@ class auth():
             elif "auth_failure" in r2.text:
                 return 0,0,0,0
             elif 'rate_limited' in r2.text:
-                if self.useproxy==True:
-                    np=sys.proxy(self.proxy)
-                    self.proxy={
-                        'http':np,
-                        'https':np
-                    }
                 return 1,1,1,1
             elif 'multifactor' in r2.text:
                 return 3,3,3,3
@@ -124,4 +120,4 @@ class auth():
             #print("-"*50)
             #print(f"Userid: {puuid}")
         except Exception as e:
-            return 2,2,2,2
+            return 2,2,2,str(traceback.format_exc())
