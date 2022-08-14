@@ -39,15 +39,15 @@ class system():
         #region=session.get(f"https://api.henrikdev.xyz/valorant/v1/account/{name}/{tag}",headers=user_agent,proxies=self.proxxy)
             reg=regionn.region
             lvl=regionn.account_level
-            print(reg,lvl)
-            input()
+            #print(reg,lvl)
+            #input()
             return reg,lvl
         except Exception as e:
-            regions=['eu','na','ap','kr','latam','br']
-            for region in regions:
-                ranked=check.skins_en(ent,token,uuid,region)
-                print(ranked)
-            input()
+            #regions=['eu','na','ap','kr','latam','br']
+            #for region in regions:
+            #    ranked=check.skins_en(ent,token,uuid,region)
+            #    print(ranked)
+            #input()
             return False,e
                 
 
