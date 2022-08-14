@@ -27,7 +27,7 @@ class system():
         session=requests.Session()
         headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko","Pragma": "no-cache","Accept": "*/*","Content-Type": "application/json","Authorization":f"Bearer {token}"}
         userinfo = session.post('https://auth.riotgames.com/userinfo',headers=headers,proxies=self.proxxy)
-        print(userinfo.text)
+        #print(userinfo.text)
         try:
             name=userinfo.text.split('game_name":"')[1].split('","')[0]
             tag=userinfo.text.split('tag_line":"')[1].split('","')[0]
