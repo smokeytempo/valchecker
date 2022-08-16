@@ -18,7 +18,7 @@ class system():
                     }
         self.useproxy=self.load_proxy()
 
-    def get_region(self,token,ent,uuid):
+    def get_region(self,token):
         np=self.proxy(self.proxxy)
         self.proxxy={
             'http':np,
