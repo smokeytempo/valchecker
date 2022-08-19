@@ -21,19 +21,11 @@ class TLSAdapter(HTTPAdapter):
                                        ssl_version=PROTOCOL_TLSv1_2)
 
 class auth():
-    def __init__(self) -> None:
-        self.nproxy=None
-        self.proxy={
-            'http':None,
-            'https':None
-        }
+    def __init__(self,proxylist) -> None:
+        self.proxlist=proxylist
+
     def auth(self,logpass):
         try:
-            self.nproxy=sys.proxy(self.nproxy)
-            self.proxy={
-                'http':self.nproxy,
-                'https':self.nproxy
-            }
             username=logpass.split(':')[0]
             password=logpass.split(':')[1]
             headers = OrderedDict({
@@ -57,13 +49,13 @@ class auth():
                 'Content-Type': 'application/json',
                 'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
             }
-            r = session.post(f'https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=self.proxy)
+            r = session.post(f'https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=sys.getproxy(self.proxlist))
             data = {
                 'type': 'auth',
                 'username': username,
                 'password': password
             }
-            r2 = session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=self.proxy)
+            r2 = session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=sys.getproxy(self.proxlist))
             #print(r2.text)
             data = r2.json()
             #print(data)
@@ -83,9 +75,9 @@ class auth():
                 'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
                 'Authorization': f'Bearer {token}'
             }
-            r = session.post('https://entitlements.auth.riotgames.com/api/token/v1', headers=headers, json={},proxies=self.proxy)
+            r = session.post('https://entitlements.auth.riotgames.com/api/token/v1', headers=headers, json={},proxies=sys.getproxy(self.proxlist))
             entitlement = r.json()['entitlements_token']
-            r = session.post('https://auth.riotgames.com/userinfo', headers=headers, json={},proxies=self.proxy)
+            r = session.post('https://auth.riotgames.com/userinfo', headers=headers, json={},proxies=sys.getproxy(self.proxlist))
             #print(r.text)
             #input()
             data = r.json()

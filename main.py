@@ -13,14 +13,13 @@ from modules import auth, checkers, systems, validsort
 
 check=checkers.checkers()
 sys=systems.system()
-authenticate=auth.auth()
 valid=validsort.validsort()
 
 class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='2.6.4'
+        self.version='2.7.0'
         self.riotlimitinarow=0
         try:
             self.lastver=requests.get('https://lil-jaba.github.io/valchecker/system/lastver.html').text.replace(' ','').replace('\n','')
@@ -124,14 +123,15 @@ class program():
 
     def main(self,redirect=False):
         settings=sys.load_settings()
-        useproxy=sys.load_proxy()
+        proxylist=sys.load_proxy()
         checkru=settings['checkru']
         fn=settings['default_file']
         max_rlimits=int(settings['max_rlimits'])
         tofile=''
         accounts=self.get_accounts(fn)
+        authenticate=auth.auth(proxylist)
         if redirect==True:
-            scheck=checker.simplechecker(max_rlimits)
+            scheck=checker.simplechecker(max_rlimits,proxylist)
             scheck.main(accounts,self.count)
             return
         for account in accounts:

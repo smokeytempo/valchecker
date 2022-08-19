@@ -11,10 +11,10 @@ from modules import auth, checkers, systems
 
 check=checkers.checkers()
 sys=systems.system()
-authenticate=auth.auth()
 
 class simplechecker():
-    def __init__(self,max_rlimits) -> None:
+    def __init__(self,max_rlimits,proxylist) -> None:
+        self.proxylist=proxylist
         self.max_rlimits=max_rlimits
 
         self.checked=0
@@ -33,6 +33,7 @@ class simplechecker():
         self.regions={'eu':0,'na':0,'ap':0,'br':0,'kr':0,'latam':0,'unknown':0}
 
     def main(self,accounts,count):
+        authenticate=auth.auth(self.proxylist)
         os.system(f'mode con: cols=60 lines=40')
         for account in accounts:
             while True:

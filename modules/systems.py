@@ -12,21 +12,12 @@ check=checkers.checkers()
 class system():
     def __init__(self) -> None:
         self.proxylist=[]
-        self.proxxy={
-                        'http':None,
-                        'https':None
-                    }
-        self.useproxy=self.load_proxy()
+        self.proxy = set()
 
     def get_region(self,token):
-        np=self.proxy(self.proxxy)
-        self.proxxy={
-            'http':np,
-            'https':np
-        }
         session=requests.Session()
         headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko","Pragma": "no-cache","Accept": "*/*","Content-Type": "application/json","Authorization":f"Bearer {token}"}
-        userinfo = session.post('https://auth.riotgames.com/userinfo',headers=headers,proxies=self.proxxy)
+        userinfo = session.post('https://auth.riotgames.com/userinfo',headers=headers,proxies=self.getproxy())
         #print(userinfo.text)
         try:
             name=userinfo.text.split('game_name":"')[1].split('","')[0]
@@ -112,25 +103,23 @@ class system():
             f.close()
 
     def load_proxy(self):
-        with open ('system\\proxy.txt', 'r', encoding='UTF-8') as file:
-            lines=file.readlines()
-            for line in lines:
-                if line !='' and line !=' ' and line != '\n':
-                    if line not in self.proxylist:
-                        self.proxylist.append(line)
-        if len(self.proxylist)<=1:
-            return False
-        else:
-            return True
+        with open("system\\proxy.txt", "r") as f:
+            file_lines1 = f.readlines()
+            if len(file_lines1) == 0:
+                return
+            for line1 in file_lines1:
+                self.proxy.add(line1.strip())
+
+        for i in range(10):
+            self.proxylist.append({
+                'http': 'http://EURB56DEGX:2ppZXsga@'+random.choice(list(self.proxy))
+            })
+        return self.proxylist
     
-    def proxy(self,nowproxy):
-        if self.useproxy==False:
+    def getproxy(self,proxlist):
+        if len(proxlist) == 0:
             return None
-        nextproxy=random.choice(self.proxylist)
-        while nextproxy==nowproxy and nextproxy=='':
-            nextproxy=random.choice(self.proxylist)
-            if 'default#pleasedonotdeletethis' in nextproxy:
-                nextproxy=None
+        nextproxy=random.choice(proxlist)
         return nextproxy
 
     def center(self,var:str, space:int=None): # From Pycenter
