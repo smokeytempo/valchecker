@@ -1,5 +1,6 @@
 import requests
 import valo_api as vapi
+import pandas
 
 
 sess=requests.Session()
@@ -94,13 +95,23 @@ wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9"}
             return 'err'
 
             
-    def lastplayed(self,puuid,region='eu'):
+    def lastplayed(self,uuid,region,token,ent):
         try:
-
-            if puuid==False:
-                return False
-            resp=vapi.get_match_history_by_puuid_v3(region,puuid)
-            lastmatch=resp[0].metadata.game_start_patched
-            return lastmatch
-        except Exception as e:
-            return e
+            headers={"Content-Type": "application/json",
+                            "Authorization": f"Bearer {token}",
+                            "X-Riot-Entitlements-JWT": ent,
+                            "X-Riot-ClientVersion": "release-01.08-shipping-10-471230",
+                            "X-Riot-ClientPlatform": "ew0KCSJwbGF0Zm9ybVR5cGUiOiAiUEMiLA0KCSJwbGF0Zm9ybU9TIjogIldpbmRvd3MiLA0KCSJwbGF0Zm9ybU9TVmVyc2lvbiI6ICIxMC4wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9"
+            }
+            r = requests.get(f"https://pd.{region}.a.pvp.net/match-history/v1/history/{uuid}?startIndex=0&endIndex=10",headers=headers)
+            data = r.json()
+            data2 = data["History"]
+            for x in data2:
+                data3 = x['GameStartTime']
+            unix_time1 = data3
+            unix_time1 = int(unix_time1)
+            result_s2 = pandas.to_datetime(unix_time1,unit='ms')
+            time=str(result_s2)
+        except:
+            time = "N/A"
+        return time

@@ -125,7 +125,7 @@ class simplechecker():
                                     self.skins+=1
                                 else:
                                     skinss=False
-                                lastplayed=check.lastplayed(uuid,reg)
+                                lastplayed=check.lastplayed(uuid,reg,token,entt)
                                 if lastplayed!=False:
                                     pass
                                 break
@@ -146,6 +146,7 @@ class simplechecker():
                             #        reg=None
                             #        break
                             else:
+                                lastplayed='N/A'
                                 self.ranks['unknown']+=1
                                 self.regions['unknown']+=1
                                 rank='N/A'
@@ -159,7 +160,7 @@ class simplechecker():
 |region: {reg}
 |rank: {rank}
 |level: {lvl}
-|lastmatch: {None}
+|lastmatch: {lastplayed}
 |unverifiedmail: {mailverif}
 |[ {skinscount} skins ]
 >>>>>>>>>>>>

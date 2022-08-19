@@ -19,7 +19,7 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='2.7.1'
+        self.version='2.8.0'
         self.riotlimitinarow=0
         try:
             self.lastver=requests.get('https://lil-jaba.github.io/valchecker/system/lastver.html').text.replace(' ','').replace('\n','')
@@ -50,9 +50,8 @@ class program():
             print(sys.center('\nhttps://github.com/LIL-JABA/valchecker\n'))
             print('  [1] - START CHECKER')
             print('  [2] - EDIT SETTINGS')
-            print('  [3] - FUNPAY CHECKER')
-            print('  [4] - SORT VALID')
-            print('  [5] - INFO/HELP')
+            print('  [3] - SORT VALID')
+            print('  [4] - INFO/HELP')
             res=str(input('\n>>>'))
             if res=='1':
                 self.main(redirect=True)
@@ -60,14 +59,10 @@ class program():
             elif res=='2':
                 sys.edit_settings()
             elif res=='3':
-                os.system('cls')
-                self.main(redirect=False)
-                break
-            elif res=='4':
                 valid.customsort()
                 print('done')
                 return
-            elif res=='6':
+            elif res=='4':
                 os.system('cls')
                 print(f'''
     valchecker v{self.version} by liljaba1337
@@ -77,8 +72,7 @@ class program():
 
   [1] - check valid/invalid/ban and save them to valid.txt in output folder
   [2] - i think u understand
-  [3] - check skins, rank, level, etc (info for funpay.com)
-  [4] - sorts all accounts from valid.txt which match your requirements to output\\sorted\\custom.txt
+  [3] - sorts all accounts from valid.txt which match your requirements to output\\sorted\\custom.txt
 
   [~] - press ENTER to return
                 ''')
@@ -124,102 +118,13 @@ class program():
     def main(self,redirect=False):
         settings=sys.load_settings()
         proxylist=sys.load_proxy()
-        checkru=settings['checkru']
         fn=settings['default_file']
         max_rlimits=int(settings['max_rlimits'])
-        tofile=''
         accounts=self.get_accounts(fn)
-        authenticate=auth.auth(proxylist)
         if redirect==True:
             scheck=checker.simplechecker(max_rlimits,proxylist)
             scheck.main(accounts,self.count)
             return
-        for account in accounts:
-            while True: # programm will check this account again if there is a riot limit
-                ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker {self.version} by liljaba1337 | CHECKED {self.checked}/{self.count}')
-                print('_____________')
-                tofile+='_____________\n'
-                print(account+'\n\n')
-                tofile+=account+'\n\n'
-                acctoken,enttoken,uid,mailverified=authenticate.auth(logpass=account)
-                if enttoken==0:
-                    print('incorrect')
-                    tofile+=f'incorrect\n\n'
-                    self.checked+=1
-                    break
-                elif enttoken==1:
-                    if useproxy==True:
-                        print('changing proxy')
-                        continue
-                    else:
-                        if self.riotlimitinarow<3:
-                            print('riot limit. waiting 30 seconds')
-                            time.sleep(30)
-                            self.riotlimitinarow+=1
-                            continue
-                        else:
-                            print('3 riot limits in a row. skipping')
-                            tofile+=f'riot limit\n\n'
-                            self.riotlimitinarow=0
-                            self.checked+=1
-                            break
-                        
-                elif enttoken==3:
-                    print('2FA')
-                    tofile+=f'2FA\n\n'
-                    self.checked+=1
-                    break
-                elif enttoken==4:
-                    print('banned')
-                    tofile+=f'banned\n\n'
-                    self.checked+=1
-                    break
-                region,level=sys.get_region(acctoken)
-                if region==False and level=='riotlimit':
-                    if self.riotlimitinarow<3:
-                        print('riot limit. waiting 30 seconds')
-                        time.sleep(30)
-                        self.riotlimitinarow+=1
-                        continue
-                    else:
-                        print('3 riot limits in a row. skipping')
-                        tofile+=f'riot limit\n\n'
-                        self.riotlimitinarow=0
-                        self.checked+=1
-                        break
-                elif region==False:
-                    print(f"unable to check region")
-                    tofile+='unable to check region\n\n'
-                    self.checked+=1
-                    break
-                skins=check.skins_en(enttoken,acctoken,uid,region)
-                print(skins)
-                tofile+=skins+'\n'
-                print('\n')
-                tofile+='\n'
-                if checkru=='True':
-                    skinsru=check.skins_ru(enttoken,acctoken,uid,region)
-                    print(skinsru)
-                    tofile+=skinsru+'\n'
-                rank=check.ranked(enttoken,acctoken,uid,region)
-                print(f'{rank} ({level} lvl)')
-                tofile+=f'{rank} ({level} lvl)\n'
-                lp=check.lastplayed(uid,region)
-                print(f'last game was on {lp}\n')
-                tofile+=f'last game was on {lp}\n'
-                self.checked+=1
-                ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker {self.version} by liljaba1337 | CHECKED {self.checked}/{self.count}')
-                break
-        if settings['saveout']=='False':
-            saveno=str(input('save output to "output\\out.txt"? (y/n) >>>'))
-        else:
-            saveno='y'
-        if saveno=='y' or settings['saveout']=='True':
-            with open ('output\\out.txt', 'w', encoding='UTF-8') as file:
-                file.write(tofile)
-            print('saved output to output\\out.txt')
-        else:
-            pass
     
 pr=program()
 if __name__=='__main__':

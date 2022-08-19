@@ -13,6 +13,8 @@ pls leave a star if u liked it
 > pip install colorama
 >
 > pip install valo_api
+>
+> pip install pandas
 
 
 ## if you want to support this project:
