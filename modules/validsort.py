@@ -42,13 +42,18 @@ class validsort():
                             if skins !='':
                                 try:
                                     skinsam=int(skins)
-                                    skinsacc=int(account.split('|[ ')[1].split(' skins ]')[0])
+                                    if account.split('|[ ')[1].split(' skins ]')[0] == 'n/a':
+                                        sorted+=1
+                                        continue
+                                    else:
+                                        skinsacc=int(account.split('|[ ')[1].split(' skins ]')[0])
                                     #print(skinsacc)
                                 except:
-                                    pass
+                                    skinsacc=1
+                                    skinsam=0
                             else:
                                 skinsacc=1
-                                skins=0
+                                skinsam=0
                             if skinsacc>=skinsam or skins =='':
                                 if f'|unverifiedmail: {mail}' in account:
                                     #print(True)
