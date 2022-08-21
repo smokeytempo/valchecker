@@ -16,6 +16,8 @@ class simplechecker():
     def __init__(self,max_rlimits,proxylist) -> None:
         self.proxylist=proxylist
         self.max_rlimits=max_rlimits
+        path = os.getcwd()
+        self.parentpath=os.path.abspath(os.path.join(path, os.pardir))
 
         self.checked=0
         self.valid=0
@@ -78,7 +80,7 @@ class simplechecker():
                 try:
                     token,entt,uuid,mailverif=authenticate.auth(account)
                     if token == 2:
-                        with open('log.txt','a') as f:
+                        with open(f'{self.parentpath}/log.txt','a') as f:
                             f.write(f'({datetime.datetime.now()}) {mailverif}\n_________________________________\n')
                         self.err+=1
                     elif token==1:
@@ -92,7 +94,7 @@ class simplechecker():
                             self.riotlimitinarow=0
                             self.rlimits+=1
                             self.checked+=1
-                            with open ('output\\riot_limits.txt', 'a', encoding='UTF-8') as file:
+                            with open (f'{self.parentpath}/output/riot_limits.txt', 'a', encoding='UTF-8') as file:
                                 file.write(f'\n{account}')
                             break
                     elif token==3:
@@ -149,13 +151,13 @@ class simplechecker():
                                 lastplayed='N/A'
                                 self.ranks['unknown']+=1
                                 self.regions['unknown']+=1
-                                rank='N/A'
+                                rak='N/A'
                                 lvl='N/A'
                                 skinscount='N/A'
                                 skins='N/A\n'
                                 reg='N/A'
                                 break
-                        with open (f'output\\valid.txt', 'a', encoding='UTF-8') as file:
+                        with open (f'{self.parentpath}/output/valid.txt', 'a', encoding='UTF-8') as file:
                             file.write(f'''|[{account}]
 |region: {reg}
 |rank: {rank}
@@ -170,7 +172,7 @@ class simplechecker():
                         # sort
                         self.valid+=1
                 except Exception as e:
-                    with open('log.txt','a') as f:
+                    with open(f'{self.parentpath}/log.txt','a') as f:
                         f.write(f'({datetime.datetime.now()}) {str(traceback.format_exc())}\n_________________________________\n')
                     self.err+=1
                 self.checked+=1

@@ -1,4 +1,4 @@
-## if u need help, found bugs or have suggests (or u wanna a free acc): https://discord.gg/r3Y5KhM7kP
+## if u need help, found bugs or have suggests: https://discord.gg/r3Y5KhM7kP
 
 pls leave a star if u liked it
 
@@ -6,15 +6,7 @@ pls leave a star if u liked it
 
 ## installation
 
-> pip install urllib3
-> 
-> pip install requests
->
-> pip install colorama
->
-> pip install valo_api
->
-> pip install pandas
+> just run "setup.bat"
 
 
 ## if you want to support this project:

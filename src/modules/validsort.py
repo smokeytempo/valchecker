@@ -1,7 +1,11 @@
 import ctypes
-import traceback
+import os
 
 class validsort():
+
+    def __init__(self) -> None:
+        path=os.getcwd()
+        self.parentpath=os.path.abspath(os.path.join(path, os.pardir))
 
     def customsort(self):
         print('leave the string empty if this setting doesnt matter\n')
@@ -11,7 +15,7 @@ class validsort():
         skins=str(input('enter how many skins should this account has ("10" will search all accounts with skins amount 10 or higher) >>>'))
         mail=str(input('enter if this account should have unverified mail (true; false) >>>'))
 
-        with open('output\\valid.txt','r',encoding='UTF-8') as f:
+        with open(f'{self.parentpath}/output/valid.txt','r',encoding='UTF-8') as f:
             text=f.read()
         accounts=text.split('###account###')
         count=len(accounts)
@@ -57,7 +61,7 @@ class validsort():
                             if skinsacc>=skinsam or skins =='':
                                 if f'|unverifiedmail: {mail}' in account:
                                     #print(True)
-                                    with open(f'output\\sorted.txt','a',encoding='UTF-8') as f:
+                                    with open(f'{self.parentpath}/output/sorted.txt','a',encoding='UTF-8') as f:
                                         f.write(account+'###account###')
                                         matches+=1
             except Exception as e:
