@@ -5,7 +5,7 @@ import os
 from tkinter import filedialog
 import tkinter
 import valo_api as vapi
-from modules import checkers
+from codeparts import checkers
 
 check=checkers.checkers()
 
@@ -39,7 +39,7 @@ class system():
             #    ranked=check.skins_en(ent,token,uuid,region)
             #    print(ranked)
             #input()
-            return False,e
+            return False,'N/A'
                 
 
     def load_settings(self):
@@ -59,8 +59,12 @@ class system():
             data = json.load(f)
             deffile=data['default_file']
             max_rlimits=data['max_rlimits']
+            rlimit_wait=data['rlimit_wait']
+            default_region=data['default_region']
             print(f'  [1] default file: {deffile}')
             print(f'  [2] riot limits to skip the acc: {max_rlimits}')
+            print(f'  [3] wait if there is a riot limit (seconds): {rlimit_wait}')
+            #print(f'  [4] default region (enter 4 to see more): {default_region}')
             print(f'\n  [~] enter any other number to exit')
             edit=str(input('\nenter the number u want to edit >>>')).replace(' ','')
             if edit=='1':
@@ -75,11 +79,25 @@ class system():
                 data['default_file']=filename
             elif edit=='2':
                 new_rlimits=input('enter the number of riot limits to skip this account (min 1) >>>')
+                if new_rlimits<1 or new_rlimits>999:
+                    return
                 try:
                     data['max_rlimits']=int(new_rlimits)
                 except:
                     print('u have to type a num from 1 to 999 (3 recommended)')
                     return
+            elif edit=='3':
+                new_maxrlimits=input('enter the number of seconds to wait if there is a riot limit (min 1) >>>')
+                if int(new_maxrlimits)<1 or int(new_maxrlimits)>99999:
+                    return
+                try:
+                    data['rlimit_wait']=int(new_maxrlimits)
+                except:
+                    print('u have to type a num from 1 to 99999 (30 recommended)')
+                    return
+            elif edit=='4':
+                new_region=input('if region is unknown, the checker will try to check account in default region (eu,na,latam,ap,br,kr) >>>').lower().replace(' ','')
+                data['default_region']=str(new_region)
             else:
                 return
             f.seek(0)

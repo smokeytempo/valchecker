@@ -1,6 +1,4 @@
 import requests
-import valo_api as vapi
-import pandas
 
 
 sess=requests.Session()

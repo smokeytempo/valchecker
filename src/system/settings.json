@@ -1,5 +1,7 @@
 {
     "default_file": "C:/Users/MrBebra/Desktop/valchecker/accounts.txt",
     "max_rlimits": 3,
+    "rlimit_wait": 30,
+    "default_region": "eu",
     "capybaras": "cool"
 }

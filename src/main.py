@@ -9,7 +9,7 @@ import time
 import requests
 
 import checker
-from modules import auth, checkers, systems, validsort
+from codeparts import auth, checkers, systems, validsort
 
 check=checkers.checkers()
 sys=systems.system()
@@ -19,10 +19,10 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='2.8.1'
+        self.version='2.9.0'
         self.riotlimitinarow=0
         try:
-            self.lastver=requests.get('https://lil-jaba.github.io/valchecker/system/lastver.html').text.replace(' ','').replace('\n','')
+            self.lastver=requests.get('https://lil-jaba.github.io/valchecker/src/system/lastver.html').text.replace(' ','').replace('\n','')
             if 'a' in self.lastver:
                 self.lastver=self.version
         except:
@@ -119,10 +119,9 @@ class program():
         settings=sys.load_settings()
         proxylist=sys.load_proxy()
         fn=settings['default_file']
-        max_rlimits=int(settings['max_rlimits'])
         accounts=self.get_accounts(fn)
         if redirect==True:
-            scheck=checker.simplechecker(max_rlimits,proxylist)
+            scheck=checker.simplechecker(settings,proxylist)
             scheck.main(accounts,self.count)
             return
     

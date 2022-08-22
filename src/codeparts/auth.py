@@ -11,7 +11,7 @@ from requests import session as sesh
 from requests.adapters import HTTPAdapter
 from urllib3 import PoolManager
 
-from modules import systems
+from codeparts import systems
 
 sys=systems.system()
 
