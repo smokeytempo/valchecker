@@ -2,7 +2,7 @@
 
 pls leave a star if u liked it
 
-<img src="https://raw.githubusercontent.com/lil-jaba/valchecker/main/.github/images/scr2.jpg" width="500" height="580">
+<img src="https://raw.githubusercontent.com/lil-jaba/valchecker/main/.github/images/scr2.jpg" width="700" height="580">
 
 ## installation
 
