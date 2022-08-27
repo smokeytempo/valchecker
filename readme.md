@@ -2,8 +2,6 @@
 
 pls leave a star if u liked it
 
-<img src="https://raw.githubusercontent.com/lil-jaba/valchecker/main/.github/images/scr2.jpg" width="1600" height="500">
-
 ## installation
 
 > just run "setup.bat"
