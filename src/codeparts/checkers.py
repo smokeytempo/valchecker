@@ -1,5 +1,5 @@
 import requests
-
+import pandas
 
 sess=requests.Session()
 
@@ -17,47 +17,12 @@ class checkers():
 
             r = sess.get(f"https://pd.{region}.a.pvp.net/store/v1/entitlements/{puuid}/e7c63390-eda7-46e0-bb7a-a6abdacd2433",headers=headers)
             Skins = r.json()["Entitlements"]
-            response_API = requests.get('https://lil-jaba.github.io/valskins/skinlist.html')
-            response=response_API.text
-            skinsList = response.splitlines()
-            skinstr=''
-            for skin in Skins:
-                skinid = skin['ItemID']
-                for item in skinsList:
-                    details = item.split("|")
-                    namepart=details[0]
-                    idpart=details[1]
-                    id = idpart.split(":")[0].lower()
-                    name = namepart.split(":")[1].split(' Level')[0]
-                    if id == skinid:
-                        if name in skinstr:
-                            pass
-                        else:
-                            skinstr += name + "\n"
-
-            return skinstr
-        except:
-            return 'err'
-
-    def skins_ru(self,entitlement,token,puuid,region='EU'):
-        try:
-
-            if entitlement==False:
-                return False
-
-            headers ={
-                "X-Riot-Entitlements-JWT": entitlement,
-                "Authorization": f"Bearer {token}"
-                }
-
-            r = sess.get(f"https://pd.{region}.a.pvp.net/store/v1/entitlements/{puuid}/e7c63390-eda7-46e0-bb7a-a6abdacd2433",headers=headers)
-            Skins = r.json()["Entitlements"]
-            response_API = requests.get('https://valorant-api.com/v1/weapons/skins/?language=ru-RU')
+            response_API = requests.get('https://valorant-api.com/v1/weapons/skins/')
             skinstr=''
             for skin in Skins:
                 skinid = skin['ItemID'].lower()
                 response=response_API.text
-                skin=response.split(skinid)[1].split(',')[1].replace('"displayName":"','').replace('\\"','').replace('"','').replace('u00A0','').replace("'",'').split(' уровень')[0]
+                skin=response.split(skinid)[1].split(',')[1].replace('"displayName":"','').replace('\\"','').replace('"','').replace('u00A0','').replace("'",'').split(' Level')[0]
                 if skin in skinstr:
                     pass
                 else:
@@ -67,7 +32,7 @@ class checkers():
         except:
             return 'err'
 
-    def ranked(self,entitlement,token,puuid,region='EU'):
+    def ranked(self,entitlement,token,puuid,region='EU') -> str:
         try:
 
             if entitlement==False:

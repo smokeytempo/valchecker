@@ -6,6 +6,8 @@ from tkinter import filedialog
 import tkinter
 import valo_api as vapi
 from codeparts import checkers
+from InquirerPy import inquirer
+from InquirerPy.separator import Separator
 
 check=checkers.checkers()
 
@@ -23,7 +25,7 @@ class system():
             name=userinfo.text.split('game_name":"')[1].split('","')[0]
             tag=userinfo.text.split('tag_line":"')[1].split('","')[0]
         except Exception as e:
-            return False,e
+            return False,'N/A'
         #print(f'{name}\{tag}')
         try:
             regionn=vapi.get_account_details_v1(name,tag)
@@ -61,13 +63,24 @@ class system():
             max_rlimits=data['max_rlimits']
             rlimit_wait=data['rlimit_wait']
             default_region=data['default_region']
-            print(f'  [1] default file: {deffile}')
-            print(f'  [2] riot limits to skip the acc: {max_rlimits}')
-            print(f'  [3] wait if there is a riot limit (seconds): {rlimit_wait}')
-            #print(f'  [4] default region (enter 4 to see more): {default_region}')
-            print(f'\n  [~] enter any other number to exit')
-            edit=str(input('\nenter the number u want to edit >>>')).replace(' ','')
-            if edit=='1':
+            cooldown=data['cooldown']
+            menu_choices=[
+                Separator(),
+                f'Default File: {deffile}',
+                f'RLimits to skip an acc: {max_rlimits}',
+                f'Wait if there is a RLimit (seconds): {rlimit_wait}',
+                f'Default Region: {default_region}',
+                f'Wait between checking accounts (seconds): {cooldown}',
+                Separator(),
+                'Exit'
+            ]
+            edit = inquirer.select(
+                message="Please select an option you want to edit:",
+                choices=menu_choices,
+                default=menu_choices[0],
+                pointer='>'
+            ).execute()
+            if edit==menu_choices[1]:
                 root = tkinter.Tk()
                 file = filedialog.askopenfile(parent=root, mode='rb', title='select file with accounts (login:password)',
                     filetype=(("txt", "*.txt"), ("All files", "*.txt")))
@@ -77,16 +90,16 @@ class system():
                 else:
                     filename=str(file).split("name='")[1].split("'>")[0]
                 data['default_file']=filename
-            elif edit=='2':
+            elif edit==menu_choices[2]:
                 new_rlimits=input('enter the number of riot limits to skip this account (min 1) >>>')
-                if new_rlimits<1 or new_rlimits>999:
+                if int(new_rlimits)<1 or int(new_rlimits)>999:
                     return
                 try:
                     data['max_rlimits']=int(new_rlimits)
                 except:
                     print('u have to type a num from 1 to 999 (3 recommended)')
                     return
-            elif edit=='3':
+            elif edit==menu_choices[3]:
                 new_maxrlimits=input('enter the number of seconds to wait if there is a riot limit (min 1) >>>')
                 if int(new_maxrlimits)<1 or int(new_maxrlimits)>99999:
                     return
@@ -95,10 +108,15 @@ class system():
                 except:
                     print('u have to type a num from 1 to 99999 (30 recommended)')
                     return
-            elif edit=='4':
+            elif edit==menu_choices[4]:
                 new_region=input('if region is unknown, the checker will try to check account in default region (eu,na,latam,ap,br,kr) >>>').lower().replace(' ','')
                 data['default_region']=str(new_region)
-            else:
+            elif edit==menu_choices[5]:
+                new_cd=input('enter the number of seconds to wait between checking accounts (min 0) >>>')
+                if int(new_cd)<0 or int(new_cd)>99999:
+                    return
+                data['cooldown']=int(new_cd)
+            elif edit==menu_choices[7]:
                 return
             f.seek(0)
             json.dump(data, f, indent=4)

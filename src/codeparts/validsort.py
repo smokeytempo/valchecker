@@ -11,7 +11,7 @@ class validsort():
         print('leave the string empty if this setting doesnt matter\n')
         region=str(input('enter region to search (eu; na; ap; br; kr; latam) >>>'))
         level=str(input('enter minimum level to search ("50" will search all accounts with level 50 or higher) >>>'))
-        rank=str(input('enter rank to search (iron; bronze; silver; gold; platinum; diamond; ascendant; immortal; radiant) >>>'))
+        rank=str(input('enter rank to search (locked; unranked; iron; bronze; silver; gold;\nplatinum; diamond; ascendant; immortal; radiant) >>>'))
         skins=str(input('enter how many skins should this account has ("10" will search all accounts with skins amount 10 or higher) >>>'))
         mail=str(input('enter if this account should have unverified mail (true; false) >>>'))
 

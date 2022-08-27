@@ -3,5 +3,6 @@
     "max_rlimits": 3,
     "rlimit_wait": 30,
     "default_region": "eu",
+    "cooldown": 0,
     "capybaras": "cool"
 }

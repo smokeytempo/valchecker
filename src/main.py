@@ -4,6 +4,8 @@ import os
 import random
 import tkinter
 from tkinter import filedialog
+from InquirerPy import inquirer
+from InquirerPy.separator import Separator
 
 import time
 import requests
@@ -19,7 +21,7 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='2.9.0'
+        self.version='3.0'
         self.riotlimitinarow=0
         try:
             self.lastver=requests.get('https://lil-jaba.github.io/valchecker/src/system/lastver.html').text.replace(' ','').replace('\n','')
@@ -47,22 +49,31 @@ class program():
             print(sys.center(f'v{self.version}{secret}'))
             if self.lastver!=self.version:
                 print(sys.center(f'update to the last version ({self.lastver}) on my GitHub'))
+            menu_choices=[
+                Separator(),
+                'Start Checker',
+                'Edit Settings',
+                'Sort Valid',
+                'Info/Help',
+                Separator(),
+                'Exit'
+            ]
             print(sys.center('\nhttps://github.com/LIL-JABA/valchecker\n'))
-            print('  [1] - START CHECKER')
-            print('  [2] - EDIT SETTINGS')
-            print('  [3] - SORT VALID')
-            print('  [4] - INFO/HELP')
-            res=str(input('\n>>>'))
-            if res=='1':
+            res = inquirer.select(
+                message="Please select an option:",
+                choices=menu_choices,
+                default=menu_choices[0],
+                pointer='>'
+            ).execute()
+            if res==menu_choices[1]:
                 self.main(redirect=True)
                 break
-            elif res=='2':
+            elif res==menu_choices[2]:
                 sys.edit_settings()
-            elif res=='3':
+            elif res==menu_choices[3]:
                 valid.customsort()
-                print('done')
-                return
-            elif res=='4':
+                input('done. press ENTER to exit')
+            elif res==menu_choices[4]:
                 os.system('cls')
                 print(f'''
     valchecker v{self.version} by liljaba1337
@@ -78,8 +89,8 @@ class program():
                 ''')
                 input()
                 continue
-            else:
-                continue
+            elif res==menu_choices[6]:
+                os._exit(0)
 
 
     def get_accounts(self,filename):
@@ -90,10 +101,11 @@ class program():
                     lines = file.readlines()
                     ret=[]
                     for logpass in lines:
-                        self.count+=1
                         logpass=logpass.split(' - ')[0].replace('\n','').replace(' ','')
-                        ret.append(logpass)
-                    print(f'\ndetected {self.count} accounts\n')
+                        # remove doubles
+                        if logpass not in ret:
+                            self.count+=1
+                            ret.append(logpass)
                     return ret
             except:
                 print(f"can't find the default file ({filename})\nplease select a new one")
