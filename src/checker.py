@@ -4,6 +4,7 @@ import os
 import time
 import traceback
 import keyboard
+from os.path import exists
 
 from colorama import Fore, Style
 
@@ -19,6 +20,7 @@ class simplechecker():
         self.rlimit_wait=settings['rlimit_wait']
         self.default_reg=settings['default_region']
         self.cooldown=int(settings['cooldown'])
+        self.autosort=settings['auto_sort']
 
         path = os.getcwd()
         self.parentpath=os.path.abspath(os.path.join(path, os.pardir))
@@ -31,6 +33,11 @@ class simplechecker():
         self.err=0
         self.rlimits=0
         self.riotlimitinarow=0
+
+        if self.proxylist != None:
+            self.proxycount=len(proxylist)
+        else:
+            self.proxycount=0
 
         self.run=True
         self.runningtext=f'{Fore.LIGHTGREEN_EX}Running{Fore.RESET}'
@@ -65,7 +72,7 @@ class simplechecker():
         {reset}
         {sys.center('https://github.com/LIL-JABA/valchecker')}
 
-        {sys.center(f'Accounts: {cyan}{count}{reset}  |  Checked {Fore.YELLOW}{self.checked}{reset}/{Fore.YELLOW}{count}{reset}  |  {self.runningtext}')}
+        {sys.center(f'Proxies: {cyan}{self.proxycount}{reset}  |  Accounts: {cyan}{count}{reset}  |  Checked {Fore.YELLOW}{self.checked}{reset}/{Fore.YELLOW}{count}{reset}  |  {self.runningtext}')}
 {cyan} ┏━ Main ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ ┏━━ Regions ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ ┏━━ Skins ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 {cyan} ┃ [{reset}>{cyan}] {reset}Valid          >>:{cyan}[{green}{self.valid}{cyan}]{space * (12 - len(str(self.valid)))}┃ ┃ [{reset}>{cyan}] {reset}EU            >>:{cyan}[{green}{self.regions['eu']}{cyan}]{space * (18 - len(str(self.regions['eu'])))}┃ ┃ [{reset}>{cyan}] {reset}1-10            >>:{cyan}[{green}{self.skinsam['1-10']}{cyan}]{space * (29 - len(str(self.skinsam['1-10'])))}┃
 {cyan} ┃ [{reset}>{cyan}] {reset}Banned         >>:{cyan}[{red}{self.banned}{cyan}]{space * (12 - len(str(self.banned)))}┃ ┃ [{reset}>{cyan}] {reset}NA            >>:{cyan}[{green}{self.regions['na']}{cyan}]{space * (18 - len(str(self.regions['na'])))}┃ ┃ [{reset}>{cyan}] {reset}10-20           >>:{cyan}[{green}{self.skinsam['10-20']}{cyan}]{space * (29 - len(str(self.skinsam['10-20'])))}┃
@@ -86,7 +93,9 @@ class simplechecker():
 {cyan} ┃                                     ┃ ┃ [{reset}>{cyan}] {reset}Immortal      >>:{cyan}[{green}{self.ranks['immortal']}{cyan}]{space * (18 - len(str(self.ranks['immortal'])))}┃ ┃                                                       ┃
 {cyan} ┃                                     ┃ ┃ [{reset}>{cyan}] {reset}Radiant       >>:{cyan}[{green}{self.ranks['radiant']}{cyan}]{space * (18 - len(str(self.ranks['radiant'])))}┃ ┃                                                       ┃
 {cyan} ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛{reset}
-            ''')
+
+locked: {self.locked}
+            ''') # i'm too lazy to remake it for locked lmao
                 try:
                     token,entt,uuid,mailverif=authenticate.auth(account)
                     if token == 2:
@@ -203,6 +212,24 @@ class simplechecker():
 ''')
                         # sort
                         self.valid+=1
+                        if self.autosort=='True' and rank != 'N/A' and reg != 'N/A':
+                            if not exists(f'{self.parentpath}/output/regions/'):
+                                os.mkdir(f'{self.parentpath}/output/regions/')
+                            if not exists(f'{self.parentpath}/output/regions/{reg}/'):
+                                os.mkdir(f'{self.parentpath}/output/regions/{reg}/')
+                            with open(f'{self.parentpath}/output/regions/{reg}/{rank}.txt','a',encoding='UTF-8') as file:
+                                file.write(f'''|[{account}]
+|region: {reg}
+|rank: {rank}
+|level: {lvl}
+|lastmatch: {lastplayed}
+|unverifiedmail: {mailverif}
+|[ {skinscount} skins ]
+>>>>>>>>>>>>
+{skins}<<<<<<<<<<<<
+###account###
+
+''')
                 except Exception as e:
                     with open(f'{self.parentpath}/log.txt','a') as f:
                         f.write(f'({datetime.datetime.now()}) {str(traceback.format_exc())}\n_________________________________\n')

@@ -10,6 +10,12 @@ class validsort():
         self.parentpath=os.path.abspath(os.path.join(path, os.pardir))
 
     def customsort(self):
+        clearno=[
+            Separator(),
+            'Yes',
+            'No'
+        ]
+
         regions=[
             Separator(),
             'EU',
@@ -43,6 +49,13 @@ class validsort():
             'Any'
         ]
 
+        clear = inquirer.select(
+            message="You want to clear the sorted.txt file?",
+            choices=clearno,
+            default=clearno[0],
+            pointer='>'
+        ).execute()
+
         region = inquirer.select(
             message="region to search:",
             choices=regions,
@@ -73,6 +86,10 @@ class validsort():
         rank=rank.lower().replace('any','')
 
         print(region,rank,level,skins,mail)
+
+        if clear=='Yes':
+            with open(f'{self.parentpath}/output/sorted.txt', 'w'):
+                pass
 
         with open(f'{self.parentpath}/output/valid.txt','r',encoding='UTF-8') as f:
             text=f.read()

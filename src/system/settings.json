@@ -4,5 +4,6 @@
     "rlimit_wait": 30,
     "default_region": "eu",
     "cooldown": 0,
+    "auto_sort": "True",
     "capybaras": "cool"
 }

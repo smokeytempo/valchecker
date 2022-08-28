@@ -16,6 +16,9 @@ class system():
         self.proxylist=[]
         self.proxy = set()
 
+        path = os.getcwd()
+        self.parentpath=os.path.abspath(os.path.join(path, os.pardir))
+
     def get_region(self,token):
         session=requests.Session()
         headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko","Pragma": "no-cache","Accept": "*/*","Content-Type": "application/json","Authorization":f"Bearer {token}"}
@@ -64,6 +67,7 @@ class system():
             rlimit_wait=data['rlimit_wait']
             default_region=data['default_region']
             cooldown=data['cooldown']
+            auto_sort=data['auto_sort']
             menu_choices=[
                 Separator(),
                 f'Default File: {deffile}',
@@ -71,6 +75,7 @@ class system():
                 f'Wait if there is a RLimit (seconds): {rlimit_wait}',
                 f'Default Region: {default_region}',
                 f'Wait between checking accounts (seconds): {cooldown}',
+                f'Auto sort accounts after checking: {auto_sort}',
                 Separator(),
                 'Exit'
             ]
@@ -116,7 +121,20 @@ class system():
                 if int(new_cd)<0 or int(new_cd)>99999:
                     return
                 data['cooldown']=int(new_cd)
-            elif edit==menu_choices[7]:
+            elif edit==menu_choices[6]:
+                autosortlist=[
+                    Separator(),
+                    'Yes',
+                    'No'
+                ]
+                newautosort= inquirer.select(
+                    message='should checker automatically sort valid accounts?',
+                    choices=autosortlist,
+                    default=autosortlist[0],
+                    pointer='>'
+            ).execute().replace('Yes','True').replace('No','False')
+                data['auto_sort']=newautosort
+            elif edit==menu_choices[8]:
                 return
             f.seek(0)
             json.dump(data, f, indent=4)
@@ -124,7 +142,7 @@ class system():
             f.close()
 
     def load_proxy(self):
-        with open("system\\proxy.txt", "r") as f:
+        with open(f"{self.parentpath}\\proxy.txt", "r") as f:
             file_lines1 = f.readlines()
             if len(file_lines1) == 0:
                 return
@@ -132,17 +150,20 @@ class system():
                 self.proxy.add(line1.strip())
 
         for i in list(self.proxy):
-            if 'http' in i:
-                self.proxylist.append({
-                    'http': i
-                })
-            else:
-                self.proxylist.append({
-                    'http': 'http://EURB56DEGX:2ppZXsga@'+i
-                })
+            if '.' in i:
+                if 'http' in i:
+                    self.proxylist.append({
+                        'http': i
+                    })
+                else:
+                    self.proxylist.append({
+                        'http': 'http://EURB56DEGX:2ppZXsga@'+i
+                    })
         return self.proxylist
     
     def getproxy(self,proxlist):
+        if proxlist == None:
+            return None
         if len(proxlist) <= 1:
             return None
         nextproxy=random.choice(proxlist)
