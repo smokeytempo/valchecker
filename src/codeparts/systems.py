@@ -132,13 +132,18 @@ class system():
                 self.proxy.add(line1.strip())
 
         for i in list(self.proxy):
-            self.proxylist.append({
-                'http': 'http://EURB56DEGX:2ppZXsga@'+i
-            })
+            if 'http' in i:
+                self.proxylist.append({
+                    'http': i
+                })
+            else:
+                self.proxylist.append({
+                    'http': 'http://EURB56DEGX:2ppZXsga@'+i
+                })
         return self.proxylist
     
     def getproxy(self,proxlist):
-        if len(proxlist) == 0:
+        if len(proxlist) <= 1:
             return None
         nextproxy=random.choice(proxlist)
         return nextproxy

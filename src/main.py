@@ -21,7 +21,7 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='3.0'
+        self.version='3.0.1'
         self.riotlimitinarow=0
         try:
             self.lastver=requests.get('https://lil-jaba.github.io/valchecker/src/system/lastver.html').text.replace(' ','').replace('\n','')
@@ -101,7 +101,7 @@ class program():
                     lines = file.readlines()
                     ret=[]
                     for logpass in lines:
-                        logpass=logpass.split(' - ')[0].replace('\n','').replace(' ','')
+                        logpass=logpass.split(' ')[0].replace('\n','').replace(' ','')
                         # remove doubles
                         if logpass not in ret:
                             self.count+=1

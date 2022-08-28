@@ -35,7 +35,12 @@ class validsort():
                         if level!='':
                             try:
                                 level=int(level)
-                                levelacc=int(account.split('level: ')[1].split('|')[0].replace('\n',''))
+                                levelacc=account.split('level: ')[1].split('|')[0].replace('\n','')
+                                if levelacc == 'n/a':
+                                    sorted+=1
+                                    continue
+                                else:
+                                    levelacc=int(levelacc)
                                 #print(levelacc)
                             except:
                                 pass
