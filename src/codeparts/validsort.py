@@ -1,5 +1,7 @@
 import ctypes
 import os
+from InquirerPy import inquirer
+from InquirerPy.separator import Separator
 
 class validsort():
 
@@ -8,12 +10,69 @@ class validsort():
         self.parentpath=os.path.abspath(os.path.join(path, os.pardir))
 
     def customsort(self):
-        print('leave the string empty if this setting doesnt matter\n')
-        region=str(input('enter region to search (eu; na; ap; br; kr; latam) >>>'))
+        regions=[
+            Separator(),
+            'EU',
+            'NA',
+            'AP',
+            'BR',
+            'KR',
+            'LATAM',
+            'Any'
+        ]
+        ranks=[
+            Separator(),
+            'locked',
+            'unranked',
+            'iron',
+            'bronze',
+            'silver',
+            'gold',
+            'platinum',
+            'diamond',
+            'ascendant',
+            'immortal',
+            'radiant',
+            'Any'
+        ]
+
+        mails=[
+            Separator(),
+            'True',
+            'False',
+            'Any'
+        ]
+
+        region = inquirer.select(
+            message="region to search:",
+            choices=regions,
+            default=regions[0],
+            pointer='>'
+        ).execute()
+
+        rank = inquirer.select(
+            message="rank to search:",
+            choices=ranks,
+            default=ranks[0],
+            pointer='>'
+        ).execute()
+
         level=str(input('enter minimum level to search ("50" will search all accounts with level 50 or higher) >>>'))
-        rank=str(input('enter rank to search (locked; unranked; iron; bronze; silver; gold;\nplatinum; diamond; ascendant; immortal; radiant) >>>'))
-        skins=str(input('enter how many skins should this account has ("10" will search all accounts with skins amount 10 or higher) >>>'))
-        mail=str(input('enter if this account should have unverified mail (true; false) >>>'))
+
+        skins=str(input('enter how many skins should this account have ("10" will search all accounts with skins amount 10 or higher) >>>'))
+
+        mail = inquirer.select(
+            message="unverified mail:",
+            choices=mails,
+            default=mails[0],
+            pointer='>'
+        ).execute()
+
+        region=region.lower().replace('any','')
+        mail=mail.lower().replace('any','')
+        rank=rank.lower().replace('any','')
+
+        print(region,rank,level,skins,mail)
 
         with open(f'{self.parentpath}/output/valid.txt','r',encoding='UTF-8') as f:
             text=f.read()
@@ -23,7 +82,6 @@ class validsort():
         matches=0
         for account in accounts:
             ctypes.windll.kernel32.SetConsoleTitleW(f'sorted {sorted}/{count}  {matches} matches')
-            print(f'sorted {sorted}/{count}')
             account=account.lower()
 
             # sort regions
@@ -69,8 +127,10 @@ class validsort():
                                     with open(f'{self.parentpath}/output/sorted.txt','a',encoding='UTF-8') as f:
                                         f.write(account+'###account###')
                                         matches+=1
+                                        print(f'sorted {sorted}/{count} MATCH')
             except Exception as e:
                 pass
+            print(f'sorted {sorted}/{count}')
             sorted+=1
         print(f'sorted {sorted}/{count}')
         return
