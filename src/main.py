@@ -21,7 +21,7 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='3.2'
+        self.version='3.3'
         self.riotlimitinarow=0
         try:
             self.lastver=requests.get('https://lil-jaba.github.io/valchecker/src/system/lastver.html').text.replace(' ','').replace('\n','')
@@ -32,6 +32,12 @@ class program():
 
     def start(self):
         while True:
+            try:
+                print('internet check')
+                requests.get('https://github.com')
+            except requests.exceptions.ConnectionError:
+                print('no internet connection')
+                os._exit(0)
             secret=''
             if random.randint(0,50)==0:
                 secret='\n\ncapybaras ontop!\n\n'

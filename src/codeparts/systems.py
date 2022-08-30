@@ -68,6 +68,7 @@ class system():
             default_region=data['default_region']
             cooldown=data['cooldown']
             auto_sort=data['auto_sort']
+            webhook=data['webhook']
             menu_choices=[
                 Separator(),
                 f'Default File: {deffile}',
@@ -76,6 +77,7 @@ class system():
                 f'Default Region: {default_region}',
                 f'Wait between checking accounts (seconds): {cooldown}',
                 f'Auto sort accounts after checking: {auto_sort}',
+                f'Discord Webhook: {webhook}',
                 Separator(),
                 'Exit'
             ]
@@ -134,7 +136,10 @@ class system():
                     pointer='>'
             ).execute().replace('Yes','True').replace('No','False')
                 data['auto_sort']=newautosort
-            elif edit==menu_choices[8]:
+            elif edit==menu_choices[7]:
+                newwebhook=input('ented the discotd webhook to use (leave it empty if u dont wanna use it): ')
+                data['webhook']=newwebhook
+            elif edit==menu_choices[9]:
                 return
             f.seek(0)
             json.dump(data, f, indent=4)
