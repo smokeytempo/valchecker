@@ -155,6 +155,7 @@ class simplechecker():
                                     except:
                                         self.ranks['unknown']+=1
                                 skins=check.skins_en(entt,token,uuid,reg)
+                                vp,rp=check.balance(entt,token,uuid,reg)
                                 skinscount=len(skins.split('\n'))
                                 skinscount-=1
                                 if skinscount>0:
@@ -215,14 +216,16 @@ class simplechecker():
                                 break
                         with open (f'{self.parentpath}/output/valid.txt', 'a', encoding='UTF-8') as file:
                             file.write(f'''|[{account}]
-|region: {reg}
-|rank: {rank}
-|level: {lvl}
-|lastmatch: {lastplayed}
-|unverifiedmail: {mailverif}
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓          
+|region---------> {reg}
+|rank-----------> {rank}
+|level----------> {lvl}
+|lastmatch------> {lastplayed}
+|unverifiedmail-> {mailverif}
+|vp-------------> {vp}
+|rp-------------> {rp}
 |[ {skinscount} skins ]
->>>>>>>>>>>>
-{skins}<<<<<<<<<<<<
+{skins}┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 ###account###
 
 ''')
@@ -235,15 +238,16 @@ class simplechecker():
                                 os.mkdir(f'{self.parentpath}/output/regions/{reg}/')
                             with open(f'{self.parentpath}/output/regions/{reg}/{rank}.txt','a',encoding='UTF-8') as file:
                                 file.write(f'''|[{account}]
-                        
-|region: {reg}
-|rank: {rank}
-|level: {lvl}
-|lastmatch: {lastplayed}
-|unverifiedmail: {mailverif}
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓          
+|region---------> {reg}
+|rank-----------> {rank}
+|level----------> {lvl}
+|lastmatch------> {lastplayed}
+|unverifiedmail-> {mailverif}
+|vp-------------> {vp}
+|rp-------------> {rp}
 |[ {skinscount} skins ]
->>>>>>>>>>>>
-{skins}<<<<<<<<<<<<
+{skins}┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 ###account###
 
 ''')
@@ -259,7 +263,9 @@ class simplechecker():
                             embed.add_embed_field(name='Level', value=lvl)
                             embed.add_embed_field(name='Lastmatch', value=lastplayed)
                             embed.add_embed_field(name='Unverifiedmail', value=mailverif)
-                            embed.add_embed_field(name=f'Skins', value=skinscount)
+                            embed.add_embed_field(name=f'VP', value=vp)
+                            embed.add_embed_field(name=f'RP', value=rp)
+                            embed.add_embed_field(name=f'Skins ({skinscount})',value=skins)
                             dcwebhook.add_embed(embed)
                             response=dcwebhook.execute()
                 except Exception as e:

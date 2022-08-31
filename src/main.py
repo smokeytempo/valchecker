@@ -21,7 +21,7 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='3.3'
+        self.version='3.4'
         self.riotlimitinarow=0
         try:
             self.lastver=requests.get('https://lil-jaba.github.io/valchecker/src/system/lastver.html').text.replace(' ','').replace('\n','')
@@ -101,7 +101,6 @@ class program():
 
     def get_accounts(self,filename):
         while True:
-            os.system('cls')
             try:
                 with open (str(filename), 'r', encoding='UTF-8') as file:
                     lines = file.readlines()
@@ -109,7 +108,7 @@ class program():
                     for logpass in lines:
                         logpass=logpass.split(' ')[0].replace('\n','').replace(' ','')
                         # remove doubles
-                        if logpass not in ret:
+                        if logpass not in ret and ':' in logpass:
                             self.count+=1
                             ret.append(logpass)
                     return ret
@@ -119,6 +118,7 @@ class program():
                 file = filedialog.askopenfile(parent=root, mode='rb', title='select file with accounts (login:password)',
                     filetype=(("txt", "*.txt"), ("All files", "*.txt")))
                 root.destroy()
+                os.system('cls')
                 if file==None:
                     print('u chose nothing')
                     input('press ENTER to choose again')
@@ -134,9 +134,12 @@ class program():
 
 
     def main(self,redirect=False):
+        print('loading settings')
         settings=sys.load_settings()
+        print('loading proxies')
         proxylist=sys.load_proxy()
         fn=settings['default_file']
+        print('loading accounts')
         accounts=self.get_accounts(fn)
         if redirect==True:
             scheck=checker.simplechecker(settings,proxylist)
@@ -145,4 +148,5 @@ class program():
     
 pr=program()
 if __name__=='__main__':
+    print('starting')
     pr.start()

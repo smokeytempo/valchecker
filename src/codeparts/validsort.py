@@ -74,6 +74,10 @@ class validsort():
 
         skins=str(input('enter how many skins should this account have ("10" will search all accounts with skins amount 10 or higher) >>>'))
 
+        vp=str(input('enter how many VP should this account have ("1000" will search all accounts with VP amount 1000 or higher) >>>'))
+
+        rp=str(input('enter how many RP should this account have ("1000" will search all accounts with RP amount 1000 or higher) >>>'))
+
         mail = inquirer.select(
             message="unverified mail:",
             choices=mails,
@@ -103,14 +107,14 @@ class validsort():
 
             # sort regions
             try:
-                if f'region: {region}' in account:
+                if f'region-------> {region}' in account:
                     #print(True)
-                    if f'rank: {rank}' in account:
+                    if f'rank---------> {rank}' in account:
                         #print(True)
                         if level!='':
                             try:
                                 level=int(level)
-                                levelacc=account.split('level: ')[1].split('|')[0].replace('\n','')
+                                levelacc=account.split('level--------> ')[1].split('|')[0].replace('\n','')
                                 if levelacc == 'n/a':
                                     sorted+=1
                                     continue
@@ -139,12 +143,42 @@ class validsort():
                                 skinsacc=1
                                 skinsam=0
                             if skinsacc>=skinsam or skins =='':
-                                if f'|unverifiedmail: {mail}' in account:
-                                    #print(True)
-                                    with open(f'{self.parentpath}/output/sorted.txt','a',encoding='UTF-8') as f:
-                                        f.write(account+'###account###')
-                                        matches+=1
-                                        print(f'sorted {sorted}/{count} MATCH')
+                                if vp != '':
+                                    try:
+                                        vpam=int(vp)
+                                        if account.split('|vp-------------> ')[1].split('|')[0].replace('\n','') == 'n/a':
+                                            sorted+=1
+                                            continue
+                                        else:
+                                            vpacc=account.split('|vp-------------> ')[1].split('|')[0].replace('\n','')
+                                    except:
+                                        vpam=0
+                                        vpacc=1
+                                else:
+                                    vpam=0
+                                    vpacc=1
+                                if vpacc>=vpam or vp =='':
+                                    if rp != '':
+                                        try:
+                                            rpam=int(vp)
+                                            if account.split('|rp-------------> ')[1].split('|')[0].replace('\n','') == 'n/a':
+                                                sorted+=1
+                                                continue
+                                            else:
+                                                vpacc=account.split('|rp-------------> ')[1].split('|')[0].replace('\n','')
+                                        except:
+                                            rpam=0
+                                            rpacc=1
+                                    else:
+                                        rpam=0
+                                        rpacc=1
+                                    if rpacc>=rpam or rp =='':
+                                        if f'unverifiedmail-> {mail}' in account:
+                                            #print(True)
+                                            with open(f'{self.parentpath}/output/sorted.txt','a',encoding='UTF-8') as f:
+                                                f.write(account+'###account###')
+                                                matches+=1
+                                                print(f'sorted {sorted}/{count} MATCH')
             except Exception as e:
                 pass
             print(f'sorted {sorted}/{count}')

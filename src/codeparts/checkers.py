@@ -1,3 +1,4 @@
+from typing import Literal
 import requests
 import pandas
 
@@ -31,6 +32,21 @@ class checkers():
             return skinstr
         except:
             return 'err'
+
+    def balance(self,ent,token,puuid,region) -> int:
+        headers = {"Content-Type": "application/json",
+                            "Authorization": f"Bearer {token}",
+                            "X-Riot-Entitlements-JWT": ent,
+                    }
+        try:
+            r = requests.get(f"https://pd.{region}.a.pvp.net/store/v1/wallet/{puuid}",headers=headers)
+
+            vp = int(r.json()["Balances"]["85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741"])
+            rp = int(r.json()["Balances"]["e59aa87c-4cbf-517a-5983-6e81511be9b7"])
+        except:
+            vp = 'N/A'
+            rp = 'N/A'
+        return vp,rp
 
     def ranked(self,entitlement,token,puuid,region='EU') -> str:
         try:
