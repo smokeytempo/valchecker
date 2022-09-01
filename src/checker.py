@@ -143,17 +143,23 @@ class simplechecker():
                             self.unverifiedmail+=1
                         while True:
                             reg,lvl=sys.get_region(token)
+                            if reg==False:
+                                reg=sys.get_region2(token)
                             if reg!=False and reg!='' and reg != 'False':
                                 self.regions[str(reg).lower()]+=1
-                                if int(lvl)<20:
-                                    self.locked+=1
-                                    rank='locked'
-                                else:
+                                rank=None
+                                try:
+                                    if int(lvl)<20:
+                                        self.locked+=1
+                                        rank='locked'
+                                except ValueError:
+                                    pass
+                                if rank == None:
                                     rank=check.ranked(entt,token,uuid,reg).lower().split(' ')[0]
-                                    try:
-                                        self.ranks[rank]+=1
-                                    except:
-                                        self.ranks['unknown']+=1
+                                try:
+                                    self.ranks[rank]+=1
+                                except:
+                                    self.ranks['unknown']+=1
                                 skins=check.skins_en(entt,token,uuid,reg)
                                 vp,rp=check.balance(entt,token,uuid,reg)
                                 skinscount=len(skins.split('\n'))
@@ -205,7 +211,9 @@ class simplechecker():
                                     else:
                                         self.skinsam['1-10']+=1
                                     lastplayed=check.lastplayed(uuid,reg,token,entt)
+                                    vp,rp=check.balance(entt,token,uuid,reg)
                                 else:
+                                    vp,rp='N/A','N/A'
                                     lastplayed='N/A'
                                     self.ranks['unknown']+=1
                                     self.regions['unknown']+=1
@@ -273,6 +281,7 @@ class simplechecker():
                         f.write(f'({datetime.datetime.now()}) {str(traceback.format_exc())}\n_________________________________\n')
                     self.err+=1
                 self.checked+=1
+                self.riotlimitinarow=0
                 time.sleep(self.cooldown)
                 break
 

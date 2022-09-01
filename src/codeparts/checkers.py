@@ -64,6 +64,7 @@ f"Bearer {token}","X-Riot-Entitlements-JWT": entitlement,"X-Riot-ClientVersion":
 UiOiAiUEMiLA0KCSJwbGF0Zm9ybU9TIjogIldpbmRvd3MiLA0KCSJwbGF0Zm9ybU9TVmVyc2lvbiI6ICIxMC4\
 wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9"}
             ranked = sess.get(f"https://pd.{region}.a.pvp.net/mmr/v1/players/{puuid}/competitiveupdates",headers=headers)
+            #input(ranked.text)
             if '","Matches":[]}' in ranked.text:
                 rank = "UnRanked"
             else:

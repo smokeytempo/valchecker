@@ -21,7 +21,7 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='3.4'
+        self.version='3.4.1'
         self.riotlimitinarow=0
         try:
             self.lastver=requests.get('https://lil-jaba.github.io/valchecker/src/system/lastver.html').text.replace(' ','').replace('\n','')
@@ -112,7 +112,7 @@ class program():
                             self.count+=1
                             ret.append(logpass)
                     return ret
-            except:
+            except FileNotFoundError:
                 print(f"can't find the default file ({filename})\nplease select a new one")
                 root = tkinter.Tk()
                 file = filedialog.askopenfile(parent=root, mode='rb', title='select file with accounts (login:password)',

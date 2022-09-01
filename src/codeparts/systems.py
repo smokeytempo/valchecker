@@ -1,13 +1,16 @@
-import random
-import requests
 import json
 import os
-from tkinter import filedialog
+import random
 import tkinter
+from tkinter import filedialog
+
+import requests
 import valo_api as vapi
-from codeparts import checkers
 from InquirerPy import inquirer
 from InquirerPy.separator import Separator
+
+from codeparts import checkers
+from codeparts.data import Constants
 
 check=checkers.checkers()
 
@@ -45,7 +48,21 @@ class system():
             #    print(ranked)
             #input()
             return False,'N/A'
-                
+
+    def get_region2(self,token):
+        session=requests.Session()
+        headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko",
+        "Pragma": "no-cache",
+        "Accept": "*/*",
+        "Content-Type": "application/json",
+        "Authorization":f"Bearer {token}"}
+        userinfo = session.post(Constants.USERINFO,headers=headers,proxies=self.getproxy(self.proxylist)).json()
+        try:
+            region = userinfo['region']['id']
+            fixedregion = Constants.LOL2REG[region]
+        except:
+            fixedregion=False
+        return fixedregion
 
     def load_settings(self):
         try:

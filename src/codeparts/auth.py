@@ -58,7 +58,6 @@ class auth():
             r2 = session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=sys.getproxy(self.proxlist))
             #print(r2.text)
             data = r2.json()
-            #print(data)
             if "access_token" in r2.text:
                 pattern = compile(
                     'access_token=((?:[a-zA-Z]|\d|\.|-|_)*).*id_token=((?:[a-zA-Z]|\d|\.|-|_)*).*expires_in=(\d*)')
