@@ -6,6 +6,7 @@ from re import compile
 from ssl import PROTOCOL_TLSv1_2
 from tkinter import *
 import traceback
+import pandas
 
 from requests import session as sesh
 from requests.adapters import HTTPAdapter
@@ -63,13 +64,14 @@ class auth():
                     'access_token=((?:[a-zA-Z]|\d|\.|-|_)*).*id_token=((?:[a-zA-Z]|\d|\.|-|_)*).*expires_in=(\d*)')
                 data = pattern.findall(data['response']['parameters']['uri'])[0]
                 token = data[0]
+                token_id=data[1]
 
             elif "auth_failure" in r2.text:
-                return 0,0,0,0
+                return 0,0,0,0,0
             elif 'rate_limited' in r2.text:
-                return 1,1,1,1
+                return 1,1,1,1,1
             elif 'multifactor' in r2.text:
-                return 3,3,3,3
+                return 3,3,3,3,3
             headers = {
                 'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
                 'Authorization': f'Bearer {token}'
@@ -85,30 +87,43 @@ class auth():
             puuid = data['sub']
             try:
                 data2=data['ban']
+                #input(data2)
                 data3 = data2['restrictions']
                 for x in data3:
                     typebanned = x['type']
-                if typebanned == "PERMANENT_BAN" or typebanned=='PERMA_BAN' or typebanned=='TIME_BAN' or typebanned or typebanned=='LEGACY_BAN':
-                    return 4,4,4,4
+                if typebanned == "PERMANENT_BAN" or typebanned=='PERMA_BAN':
+                    return 4,4,4,4,4
+                elif typebanned=='TIME_BAN' or typebanned=='LEGACY_BAN':
+                    expire=x['dat']['expirationMillis']
+                    expirepatched = pandas.to_datetime(int(expire),unit='ms')
+                    #input(expire)
+                    banuntil=expirepatched
                 else:
+                    banuntil=None
                     pass
             except Exception as e:
                 #print(e)
                 #input()
+                banuntil=None
                 pass
             try:
-                mailverif=bool(data['email_verified'])
-            except:
+                headers={
+                    'Authorization': f'Bearer {token}',
+                    'Content-Type': 'application/json',
+                    'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
+                }
+                #get mailverif
+                r=session.get('https://email-verification.riotgames.com/api/v1/account/status',headers=headers,json={},proxies=sys.getproxy(self.proxlist)).text
+                #input(r)
+                mailverif=r.split(',"emailVerified":')[1].split('}')[0]
+                #input(mailverif)
+            except Exception as e:
+                #input(e)
                 mailverif=True
             if mailverif==True:
                 mailverif=False
             else:
                 mailverif=True
-            return token,entitlement,puuid,mailverif
-            #print(f"Accestoken: {token}")
-            #print("-"*50)
-            #print(f"Entitlements: {entitlement}")
-            #print("-"*50)
-            #print(f"Userid: {puuid}")
+            return token,entitlement,puuid,mailverif,banuntil
         except Exception as e:
-            return 2,2,2,str(traceback.format_exc())
+            return 2,2,2,str(traceback.format_exc()),2

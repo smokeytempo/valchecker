@@ -62,6 +62,12 @@ class system():
             fixedregion = Constants.LOL2REG[region]
         except:
             fixedregion=False
+
+        #headers = {'Content-Type': 'application/json', 'Authorization': f'Bearer {token}'}
+        #body = {"id_token": 1}
+        #r=session.put('https://riot-geo.pas.si.riotgames.com/pas/v1/product/valorant',headers=headers,json=body).text
+        #input(r)
+
         return fixedregion
 
     def load_settings(self):

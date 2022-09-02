@@ -107,14 +107,12 @@ class validsort():
 
             # sort regions
             try:
-                if f'region-------> {region}' in account:
-                    #print(True)
-                    if f'rank---------> {rank}' in account:
-                        #print(True)
+                if f'region---------> {region}' in account:
+                    if f'rank-----------> {rank}' in account:
                         if level!='':
                             try:
                                 level=int(level)
-                                levelacc=account.split('level--------> ')[1].split('|')[0].replace('\n','')
+                                levelacc=account.split('level----------> ')[1].split('|')[0].replace('\n','')
                                 if levelacc == 'n/a':
                                     sorted+=1
                                     continue
@@ -150,7 +148,7 @@ class validsort():
                                             sorted+=1
                                             continue
                                         else:
-                                            vpacc=account.split('|vp-------------> ')[1].split('|')[0].replace('\n','')
+                                            vpacc=int(account.split('|vp-------------> ')[1].split('|')[0].replace('\n',''))
                                     except:
                                         vpam=0
                                         vpacc=1
@@ -160,13 +158,14 @@ class validsort():
                                 if vpacc>=vpam or vp =='':
                                     if rp != '':
                                         try:
-                                            rpam=int(vp)
+                                            rpam=int(rp)
                                             if account.split('|rp-------------> ')[1].split('|')[0].replace('\n','') == 'n/a':
                                                 sorted+=1
                                                 continue
                                             else:
-                                                vpacc=account.split('|rp-------------> ')[1].split('|')[0].replace('\n','')
-                                        except:
+                                                rpacc=int(account.split('|rp-------------> ')[1].split('|')[0].replace('\n',''))
+                                        except Exception as e:
+                                            input(e)
                                             rpam=0
                                             rpacc=1
                                     else:

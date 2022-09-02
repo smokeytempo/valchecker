@@ -7,11 +7,10 @@ from tkinter import filedialog
 from InquirerPy import inquirer
 from InquirerPy.separator import Separator
 
-import time
 import requests
 
 import checker
-from codeparts import auth, checkers, systems, validsort
+from codeparts import checkers, systems, validsort
 
 check=checkers.checkers()
 sys=systems.system()
@@ -21,7 +20,7 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='3.4.1'
+        self.version='3.5'
         self.riotlimitinarow=0
         try:
             self.lastver=requests.get('https://lil-jaba.github.io/valchecker/src/system/lastver.html').text.replace(' ','').replace('\n','')
