@@ -1,5 +1,5 @@
 <h1 align="center">
-  [ValKeker](https://discord.gg/r3Y5KhM7kP)
+  ValKeker
 </h1>
 
 <h2 align="center">
