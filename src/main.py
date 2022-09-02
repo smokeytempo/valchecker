@@ -20,7 +20,7 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='3.5.1'
+        self.version='3.5.2'
         self.riotlimitinarow=0
         try:
             self.lastver=requests.get('https://lil-jaba.github.io/valchecker/src/system/lastver.html').text.replace(' ','').replace('\n','')
@@ -103,13 +103,13 @@ class program():
             try:
                 with open (str(filename), 'r', encoding='UTF-8') as file:
                     lines = file.readlines()
-                    ret=[]
-                    for logpass in lines:
-                        logpass=logpass.split(' ')[0].replace('\n','').replace(' ','')
-                        # remove doubles
-                        if logpass not in ret and ':' in logpass:
-                            self.count+=1
-                            ret.append(logpass)
+                    ret=list(set(lines))
+                    #for logpass in lines:
+                    #    logpass=logpass.split(' ')[0].replace('\n','').replace(' ','')
+                    #    # remove doubles
+                    #    if logpass not in ret and ':' in logpass:
+                    #        self.count+=1
+                    #        ret.append(logpass)
                     return ret
             except FileNotFoundError:
                 print(f"can't find the default file ({filename})\nplease select a new one")

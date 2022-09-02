@@ -37,6 +37,7 @@ class auth():
             session = sesh()
             session.headers = headers
             session.mount('https://', TLSAdapter())
+            session.mount('http://', TLSAdapter())
             data = {
                 "acr_values": "urn:riot:bronze",
                 "claims": "",
@@ -57,7 +58,7 @@ class auth():
                 'password': password
             }
             r2 = session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=sys.getproxy(self.proxlist))
-            #print(r2.text)
+            print(r2.text)
             data = r2.json()
             if "access_token" in r2.text:
                 pattern = compile(
@@ -66,12 +67,16 @@ class auth():
                 token = data[0]
                 token_id=data[1]
 
+            elif 'invalid_session_id' in r2.text:
+                return 0,0,0,0,None
             elif "auth_failure" in r2.text:
-                return 0,0,0,0,0
+                return 0,0,0,0,None
             elif 'rate_limited' in r2.text:
-                return 1,1,1,1,1
+                return 1,1,1,1,None
             elif 'multifactor' in r2.text:
-                return 3,3,3,3,3
+                return 3,3,3,3,None
+            elif 'cloudflare' in r2.text:
+                return 5,5,5,5,None
             headers = {
                 'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
                 'Authorization': f'Bearer {token}'
@@ -92,7 +97,7 @@ class auth():
                 for x in data3:
                     typebanned = x['type']
                 if typebanned == "PERMANENT_BAN" or typebanned=='PERMA_BAN':
-                    return 4,4,4,4,4
+                    return 4,4,4,4,None
                 elif typebanned=='TIME_BAN' or typebanned=='LEGACY_BAN':
                     expire=x['dat']['expirationMillis']
                     expirepatched = pandas.to_datetime(int(expire),unit='ms')
@@ -107,16 +112,18 @@ class auth():
                 banuntil=None
                 pass
             try:
-                headers={
-                    'Authorization': f'Bearer {token}',
-                    'Content-Type': 'application/json',
-                    'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
-                }
-                #get mailverif
-                r=session.get('https://email-verification.riotgames.com/api/v1/account/status',headers=headers,json={},proxies=sys.getproxy(self.proxlist)).text
-                #input(r)
-                mailverif=r.split(',"emailVerified":')[1].split('}')[0]
-                #input(mailverif)
+                #headers={
+                #    'Authorization': f'Bearer {token}',
+                #    'Content-Type': 'application/json',
+                #    'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
+                #}
+
+                #r=session.get('https://email-verification.riotgames.com/api/v1/account/status',headers=headers,json={},proxies=sys.getproxy(self.proxlist)).text
+
+                #mailverif=r.split(',"emailVerified":')[1].split('}')[0]
+
+                mailverif=bool(data['email_verified'])
+
             except Exception as e:
                 #input(e)
                 mailverif=True
@@ -126,4 +133,5 @@ class auth():
                 mailverif=True
             return token,entitlement,puuid,mailverif,banuntil
         except Exception as e:
-            return 2,2,2,str(traceback.format_exc()),2
+            print(str(traceback.format_exc()))
+            return 2,2,2,str(traceback.format_exc()),None

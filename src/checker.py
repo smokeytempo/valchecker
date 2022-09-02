@@ -8,10 +8,11 @@ from os.path import exists
 
 from colorama import Fore, Style
 
-from codeparts import auth, checkers, systems
+from codeparts import auth, checkers, systems,staff
 
 check=checkers.checkers()
 sys=systems.system()
+stff=staff.staff()
 
 class simplechecker():
     def __init__(self,settings:list,proxylist) -> None:
@@ -115,6 +116,9 @@ class simplechecker():
             ''')
                 try:
                     token,entt,uuid,mailverif,banuntil=authenticate.auth(account)
+                    if banuntil!=None:
+                        banuntil=stff.checkban(banuntil)
+
                     if token == 2:
                         with open(f'{self.parentpath}/log.txt','a') as f:
                             f.write(f'({datetime.datetime.now()}) {mailverif}\n_________________________________\n')
@@ -139,6 +143,8 @@ class simplechecker():
                         pass
                     elif token==4:
                         self.banned+=1
+                    elif token==5:
+                        continue
                     else:
                         if mailverif==True:
                             self.unverifiedmail+=1
@@ -282,8 +288,8 @@ class simplechecker():
 {skins}┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 ###account###
 
-''')
-                        if self.webhook != '' and reg != 'N/A':
+''')                    
+                        if self.webhook != '' and reg != 'N/A' and int(lvl)>=20: #enter your requirements for sending a webhook (...!= 'N/A' HERE)
                             from discord_webhook import DiscordWebhook, DiscordEmbed
                             dcwebhook = DiscordWebhook(url=self.webhook)
                             embed = DiscordEmbed(title='New valid account', color='34eb43')
