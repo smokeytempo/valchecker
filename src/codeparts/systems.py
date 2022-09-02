@@ -181,11 +181,13 @@ class system():
             if '.' in i:
                 if 'http' in i:
                     self.proxylist.append({
-                        'http': i
+                        'http': i,
+                        'https': i
                     })
                 else:
                     self.proxylist.append({
-                        'http': 'http://EURB56DEGX:2ppZXsga@'+i
+                        'http': 'http://'+i,
+                        'https':'http://'+i,
                     })
         return self.proxylist
     
