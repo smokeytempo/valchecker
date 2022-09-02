@@ -1,7 +1,6 @@
 # https://github.com/xharky/Valorant-auth-example
 
 from collections import OrderedDict
-from msilib import type_binary
 from re import compile
 from ssl import PROTOCOL_TLSv1_2
 from tkinter import *
@@ -25,10 +24,11 @@ class auth():
     def __init__(self,proxylist) -> None:
         self.proxlist=proxylist
 
-    def auth(self,logpass):
+    def auth(self,logpass=None,username=None,password=None):
         try:
-            username=logpass.split(':')[0]
-            password=logpass.split(':')[1]
+            if username ==None:
+                username=logpass.split(':')[0]
+                password=logpass.split(':')[1]
             headers = OrderedDict({
                 "Accept-Language": "en-US,en;q=0.9",
                 "Accept": "application/json, text/plain, */*",
@@ -58,8 +58,11 @@ class auth():
                 'password': password
             }
             r2 = session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=sys.getproxy(self.proxlist))
-            print(r2.text)
-            data = r2.json()
+            #print(r2.text)
+            try:
+                data = r2.json()
+            except:
+                return 6,6,6,6,None
             if "access_token" in r2.text:
                 pattern = compile(
                     'access_token=((?:[a-zA-Z]|\d|\.|-|_)*).*id_token=((?:[a-zA-Z]|\d|\.|-|_)*).*expires_in=(\d*)')
@@ -133,5 +136,5 @@ class auth():
                 mailverif=True
             return token,entitlement,puuid,mailverif,banuntil
         except Exception as e:
-            print(str(traceback.format_exc()))
+            #print(str(traceback.format_exc()))
             return 2,2,2,str(traceback.format_exc()),None
