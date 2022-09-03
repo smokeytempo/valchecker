@@ -78,6 +78,8 @@ class validsort():
 
         rp=str(input('enter how many RP should this account have ("1000" will search all accounts with RP amount 1000 or higher) >>>'))
 
+        skin=str(input('enter what skin should be in this accounts (for example, prime vandal) >>>'))
+
         mail = inquirer.select(
             message="unverified mail:",
             choices=mails,
@@ -173,11 +175,11 @@ class validsort():
                                         rpacc=1
                                     if rpacc>=rpam or rp =='':
                                         if f'unverifiedmail-> {mail}' in account:
-                                            #print(True)
-                                            with open(f'{self.parentpath}/output/sorted.txt','a',encoding='UTF-8') as f:
-                                                f.write(account+'###account###')
-                                                matches+=1
-                                                print(f'sorted {sorted}/{count} MATCH')
+                                            if skin in account:
+                                                with open(f'{self.parentpath}/output/sorted.txt','a',encoding='UTF-8') as f:
+                                                    f.write(account+'###account###')
+                                                    matches+=1
+                                                    print(f'sorted {sorted}/{count} MATCH')
             except Exception as e:
                 pass
             print(f'sorted {sorted}/{count}')

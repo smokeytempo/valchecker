@@ -20,7 +20,7 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='3.5.4'
+        self.version='3.5.5'
         self.riotlimitinarow=0
         try:
             self.lastver=requests.get('https://lil-jaba.github.io/valchecker/src/system/lastver.html').text.replace(' ','').replace('\n','')
@@ -59,6 +59,7 @@ class program():
                 'Start Checker',
                 'Edit Settings',
                 'Sort Valid',
+                'Test Proxy',
                 'Info/Help',
                 Separator(),
                 'Exit'
@@ -79,6 +80,8 @@ class program():
                 valid.customsort()
                 input('done. press ENTER to exit')
             elif res==menu_choices[4]:
+                sys.checkproxy()
+            elif res==menu_choices[5]:
                 os.system('cls')
                 print(f'''
     valchecker v{self.version} by liljaba1337
@@ -89,12 +92,13 @@ class program():
   [1] - check valid/invalid/ban and save them to valid.txt in output folder
   [2] - i think u understand
   [3] - sorts all accounts from valid.txt which match your requirements to output\\sorted\\custom.txt
+  [4] - test your proxies
 
   [~] - press ENTER to return
                 ''')
                 input()
                 continue
-            elif res==menu_choices[6]:
+            elif res==menu_choices[7]:
                 os._exit(0)
 
 

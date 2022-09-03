@@ -192,16 +192,40 @@ class system():
         return self.proxylist
     
     def getproxy(self,proxlist):
-        if proxlist == None:
-            return None
-        if len(proxlist) <= 1:
-            return None
-        nextproxy=random.choice(proxlist)
+        try:
+            if proxlist == None:
+                return None
+            if len(proxlist) <= 1:
+                return None
+            nextproxy=random.choice(proxlist)
+        except:
+            nextproxy=None
         return nextproxy
 
     def center(self,var:str, space:int=None): # From Pycenter
         if not space:
             space = (os.get_terminal_size().columns - len(var.splitlines()[int(len(var.splitlines())/2)])) / 2
         return "\n".join((' ' * int(space)) + var for var in var.splitlines())
+
+    def checkproxy(self):
+        session=requests.Session()
+        try:
+            with open(f"{self.parentpath}\\proxy.txt", "r") as f:
+                proxylist = f.readlines()
+        except FileNotFoundError:
+            input('cant find your proxy file. press enter to return')
+        for proxy in proxylist:
+            proxy=proxy.replace('\n','')
+            proxxy={
+                'http':f'http://{proxy}',
+                'https':f'http://{proxy}',
+            }
+            print(f'using: {proxxy}')
+            try:
+                resp=session.get('https://api.myip.com/',proxies=proxxy).text
+            except:
+                resp='bad response. delete this proxy'
+            print(f'response: {resp}\n')
+        input('press enter to return')
 
 syss=system()
