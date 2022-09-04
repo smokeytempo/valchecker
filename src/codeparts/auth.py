@@ -97,12 +97,14 @@ class auth():
                 data2=data['ban']
                 #input(data2)
                 data3 = data2['restrictions']
-                for x in data3:
-                    typebanned = x['type']
+                #input(data3)
+                typebanned = data3[0]['type']
+                #input(typebanned)
                 if typebanned == "PERMANENT_BAN" or typebanned=='PERMA_BAN':
+                    #input(True)
                     return 4,4,4,4,None
                 elif typebanned=='TIME_BAN' or typebanned=='LEGACY_BAN':
-                    expire=x['dat']['expirationMillis']
+                    expire=data3[0]['dat']['expirationMillis']
                     expirepatched = pandas.to_datetime(int(expire),unit='ms')
                     #input(expire)
                     banuntil=expirepatched
@@ -111,7 +113,7 @@ class auth():
                     pass
             except Exception as e:
                 #print(e)
-                #input()
+                #input(e)
                 banuntil=None
                 pass
             try:

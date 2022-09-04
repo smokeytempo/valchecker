@@ -28,7 +28,7 @@ class simplechecker():
             import discord_webhook
         except ModuleNotFoundError:
             if self.webhook != '':
-                print('use "pip install discord_webhook" to use your webhook')
+                print('"pip install discord_webhook" to use your webhook')
                 input('press enter to continue without using the webhook')
                 self.webhook=''
             else:
@@ -137,6 +137,8 @@ class simplechecker():
                             with open (f'{self.parentpath}/output/riot_limits.txt', 'a', encoding='UTF-8') as file:
                                 file.write(f'\n{account}')
                             break
+                    elif token==6:
+                        continue
                     elif token==3:
                         pass
                     elif token==0:
@@ -289,7 +291,7 @@ class simplechecker():
 ###account###
 
 ''')                    
-                        if self.webhook != '' and reg != 'N/A' and int(lvl)>=20: #enter your requirements for sending a webhook (...!= 'N/A' HERE)
+                        if self.webhook != '' and reg != 'N/A' and skins != '': #enter your requirements for sending a webhook here
                             from discord_webhook import DiscordWebhook, DiscordEmbed
                             dcwebhook = DiscordWebhook(url=self.webhook)
                             embed = DiscordEmbed(title='New valid account', color='34eb43')
