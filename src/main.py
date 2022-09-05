@@ -21,7 +21,7 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='3.6'
+        self.version='3.6.1'
         self.riotlimitinarow=0
         try:
             self.lastver=requests.get('https://lil-jaba.github.io/valchecker/src/system/lastver.html').text.replace(' ','').replace('\n','')
@@ -54,7 +54,7 @@ class program():
             '''))
             print(sys.center(f'v{self.version}{secret}'))
             if self.lastver!=self.version:
-                print(sys.center(f'new update ({self.lastver}) available!'))
+                print(sys.center(f'new update ({self.lastver}) is available!'))
             menu_choices=[
                 Separator(),
                 'Start Checker',

@@ -94,10 +94,10 @@ class validsort():
         print(region,rank,level,skins,mail)
 
         if clear=='Yes':
-            with open(f'{self.parentpath}/output/sorted.txt', 'w'):
+            with open(f'{self.parentpath}/output/sorted.txt', 'w',encoding='UTF-8'):
                 pass
 
-        with open(f'{self.parentpath}/output/valid.txt','r',encoding='UTF-8') as f:
+        with open(f'{self.parentpath}/output/valid.txt','r',encoding='UTF-8',errors='ignore') as f:
             text=f.read()
         accounts=text.split('###account###')
         count=len(accounts)

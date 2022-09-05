@@ -260,7 +260,7 @@ class simplechecker():
                         self.tempbanned+=1
                         with open (f'{self.parentpath}/output/tempbanned.txt', 'a', encoding='UTF-8') as file:
                             file.write(f'''|[{account}]
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓     
+------------------------------------  
 |ban until------> {banuntil}     
 |region---------> {reg}
 |rank-----------> {rank}
@@ -270,14 +270,14 @@ class simplechecker():
 |vp-------------> {vp}
 |rp-------------> {rp}
 |[ {skinscount} skins ]
-{skins}┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+{skins}------------------------------------
 ###account###
 
 ''')
                     else:
                         with open (f'{self.parentpath}/output/valid.txt', 'a', encoding='UTF-8') as file:
                             file.write(f'''|[{account}]
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓          
+------------------------------------       
 |region---------> {reg}
 |rank-----------> {rank}
 |level----------> {lvl}
@@ -286,7 +286,7 @@ class simplechecker():
 |vp-------------> {vp}
 |rp-------------> {rp}
 |[ {skinscount} skins ]
-{skins}┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+{skins}------------------------------------
 ###account###
 
 ''')
