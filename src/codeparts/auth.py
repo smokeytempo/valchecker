@@ -1,5 +1,3 @@
-# https://github.com/xharky/Valorant-auth-example
-
 from collections import OrderedDict
 from re import compile
 from ssl import PROTOCOL_TLSv1_2
@@ -51,13 +49,16 @@ class auth():
                 'Content-Type': 'application/json',
                 'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
             }
-            r = session.post(f'https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=sys.getproxy(self.proxlist))
-            data = {
-                'type': 'auth',
-                'username': username,
-                'password': password
-            }
-            r2 = session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=sys.getproxy(self.proxlist))
+            try:
+                r = session.post(f'https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=sys.getproxy(self.proxlist))
+                data = {
+                    'type': 'auth',
+                    'username': username,
+                    'password': password
+                }
+                r2 = session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=sys.getproxy(self.proxlist))
+            except:
+                return 6,6,6,6,None
             #print(r2.text)
             try:
                 data = r2.json()
@@ -71,9 +72,9 @@ class auth():
                 token_id=data[1]
 
             elif 'invalid_session_id' in r2.text:
-                return 0,0,0,0,None
+                return 6,6,6,6,None
             elif "auth_failure" in r2.text:
-                return 0,0,0,0,None
+                return 6,6,6,6,None
             elif 'rate_limited' in r2.text:
                 return 1,1,1,1,None
             elif 'multifactor' in r2.text:

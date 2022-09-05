@@ -7,6 +7,7 @@ from tkinter import filedialog
 from InquirerPy import inquirer
 from InquirerPy.separator import Separator
 
+
 import requests
 
 import checker
@@ -20,7 +21,7 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='3.5.6'
+        self.version='3.6'
         self.riotlimitinarow=0
         try:
             self.lastver=requests.get('https://lil-jaba.github.io/valchecker/src/system/lastver.html').text.replace(' ','').replace('\n','')

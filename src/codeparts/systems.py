@@ -3,6 +3,7 @@ import os
 import random
 import tkinter
 from tkinter import filedialog
+import time
 
 import requests
 import valo_api as vapi
@@ -206,6 +207,9 @@ class system():
         if not space:
             space = (os.get_terminal_size().columns - len(var.splitlines()[int(len(var.splitlines())/2)])) / 2
         return "\n".join((' ' * int(space)) + var for var in var.splitlines())
+
+    def getmillis(self):
+        return round(time.time() * 1000)
 
     def checkproxy(self):
         session=requests.Session()
