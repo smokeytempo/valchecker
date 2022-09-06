@@ -21,7 +21,7 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='3.6.1'
+        self.version='3.6.2'
         self.riotlimitinarow=0
         try:
             self.lastver=requests.get('https://lil-jaba.github.io/valchecker/src/system/lastver.html').text.replace(' ','').replace('\n','')
@@ -115,6 +115,7 @@ class program():
                         # remove doubles
                         if logpass not in ret and ':' in logpass:
                             self.count+=1
+                            ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker {self.version} by liljaba1337 | Loading Accounts ({self.count})')
                             ret.append(logpass)
                     return ret
             except FileNotFoundError:
@@ -139,8 +140,10 @@ class program():
 
 
     def main(self,redirect=False):
+        ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker {self.version} by liljaba1337 | Loading Settings')
         print('loading settings')
         settings=sys.load_settings()
+        ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker {self.version} by liljaba1337 | Loading Proxies')
         print('loading proxies')
         proxylist=sys.load_proxy()
         fn=settings['default_file']

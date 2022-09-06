@@ -5,6 +5,7 @@ import tkinter
 from tkinter import filedialog
 import time
 
+from colorama import Fore, Style
 import requests
 import valo_api as vapi
 from InquirerPy import inquirer
@@ -224,12 +225,13 @@ class system():
                 'http':f'http://{proxy}',
                 'https':f'http://{proxy}',
             }
-            print(f'using: {proxxy}')
+            #print(f'using: {proxxy}')
             try:
-                resp=session.get('https://api.myip.com/',proxies=proxxy).text
+                resp=session.get('https://auth.riotgames.com/api/v1/authorization/',proxies=proxxy).text
+                resp=f'{Fore.GREEN}[Good]{Fore.RESET} {proxy}'
             except:
-                resp='bad response. delete this proxy'
-            print(f'response: {resp}\n')
+                resp=f'{Fore.RED}[Bad]{Fore.RESET} {proxy}'
+            print(f'{resp}')
         input('press enter to return')
 
 syss=system()

@@ -6,6 +6,8 @@ sess=requests.Session()
 
 class checkers():
     def skins_en(self,entitlement,token,puuid,region='EU') -> str:
+        if region.lower()=='latam' or region.lower()=='br':
+            region='na'
         try:
 
             if entitlement==False:
@@ -17,6 +19,7 @@ class checkers():
                 }
 
             r = sess.get(f"https://pd.{region}.a.pvp.net/store/v1/entitlements/{puuid}/e7c63390-eda7-46e0-bb7a-a6abdacd2433",headers=headers)
+            #input(r.text)
             Skins = r.json()["Entitlements"]
             response_API = requests.get('https://valorant-api.com/v1/weapons/skins/')
             skinstr=''
@@ -30,10 +33,13 @@ class checkers():
                     skinstr += skin + "\n"
 
             return skinstr
-        except:
+        except Exception as e:
+            #input(e)
             return 'err'
 
     def balance(self,ent,token,puuid,region) -> int:
+        if region.lower()=='latam' or region.lower()=='br':
+            region='na'
         headers = {"Content-Type": "application/json",
                             "Authorization": f"Bearer {token}",
                             "X-Riot-Entitlements-JWT": ent,
@@ -49,6 +55,8 @@ class checkers():
         return vp,rp
 
     def ranked(self,entitlement,token,puuid,region='EU') -> str:
+        if region.lower()=='latam' or region.lower()=='br':
+            region='na'
         try:
 
             if entitlement==False:
@@ -76,6 +84,8 @@ wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9"}
 
             
     def lastplayed(self,uuid,region,token,ent):
+        if region.lower()=='latam' or region.lower()=='br':
+            region='na'
         try:
             headers={"Content-Type": "application/json",
                             "Authorization": f"Bearer {token}",
