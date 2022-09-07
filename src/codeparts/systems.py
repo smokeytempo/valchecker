@@ -37,6 +37,7 @@ class system():
         #print(f'{name}\{tag}')
         try:
             regionn=vapi.get_account_details_v1(name,tag)
+            #input(regionn)
         #region=session.get(f"https://api.henrikdev.xyz/valorant/v1/account/{name}/{tag}",headers=user_agent,proxies=self.proxxy)
             reg=regionn.region
             lvl=regionn.account_level
@@ -44,11 +45,6 @@ class system():
             #input()
             return reg,lvl
         except Exception as e:
-            #regions=['eu','na','ap','kr','latam','br']
-            #for region in regions:
-            #    ranked=check.skins_en(ent,token,uuid,region)
-            #    print(ranked)
-            #input()
             return False,'N/A'
 
     def get_region2(self,token):
@@ -61,6 +57,7 @@ class system():
         userinfo = session.post(Constants.USERINFO,headers=headers,proxies=self.getproxy(self.proxylist)).json()
         try:
             region = userinfo['region']['id']
+            #input(region)
             fixedregion = Constants.LOL2REG[region]
         except:
             fixedregion=False
@@ -71,6 +68,8 @@ class system():
         #input(r)
 
         return fixedregion
+
+    #def get_level(self,token):
 
     def load_settings(self):
         try:
@@ -197,10 +196,10 @@ class system():
         try:
             if proxlist == None:
                 return None
-            if len(proxlist) <= 1:
+            elif len(proxlist) <= 1:
                 return None
             nextproxy=random.choice(proxlist)
-        except:
+        except Exception as e:
             nextproxy=None
         return nextproxy
 

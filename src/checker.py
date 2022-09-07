@@ -177,8 +177,8 @@ class simplechecker():
                         self.unverifiedmail+=1
                     while True:
                         reg,lvl=sys.get_region(token)
-                        if reg==False:
-                            reg=sys.get_region2(token)
+                        reg2=sys.get_region2(token)
+                        reg=reg2 if reg2 != False else reg
                         if reg!=False and reg!='' and reg != 'False':
                             self.regions[str(reg).lower()]+=1
                             rank=None
