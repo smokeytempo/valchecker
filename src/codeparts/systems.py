@@ -228,8 +228,8 @@ class system():
             try:
                 resp=session.get('https://auth.riotgames.com/api/v1/authorization/',proxies=proxxy).text
                 resp=f'{Fore.GREEN}[Good]{Fore.RESET} {proxy}'
-            except:
-                resp=f'{Fore.RED}[Bad]{Fore.RESET} {proxy}'
+            except Exception as e:
+                resp=f'{Fore.RED}[Bad]{Fore.RESET} {proxy} ({e})'
             print(f'{resp}')
         input('press enter to return')
 

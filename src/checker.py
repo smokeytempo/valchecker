@@ -51,6 +51,7 @@ class simplechecker():
         self.skins=0
         self.unverifiedmail=0
         self.err=0
+        self.retries=0
         self.rlimits=0
         self.riotlimitinarow=0
         self.count=0
@@ -84,6 +85,15 @@ class simplechecker():
             'GUI',
             'LOG (works better with threads)'
         ]
+        #if inquirer.confirm(
+        #    message="Do you want to see the system log?", default=True
+        #).execute() == True:
+        #    #self.log=staff.log()
+        #    #self.log.log('capybaras')
+        #    pass
+        #else:
+        #    self.log=False
+        
         #res = inquirer.select(
         #    message="Please select mode:",
         #    choices=menu_choices,
@@ -94,7 +104,10 @@ class simplechecker():
         self.uselog=True if res==menu_choices[2] else False
         #threadam=10000
         num=0
-        running=[]
+        #if log:
+        #    input(1)
+        #else:
+        #    input(0)
         self.startedtesting=sys.getmillis()
         if self.uselog==False:
             self.printinfo()
@@ -133,6 +146,7 @@ class simplechecker():
         authenticate=auth.auth(self.proxylist)
         #self.printinfo()
         while True:
+            #self.printinfo()
             if self.run==False:
                 self.runningtext=f'{Fore.YELLOW}Paused{reset}'
                 while True:
@@ -156,6 +170,7 @@ class simplechecker():
                         continue
                     else:
                         print(sys.center(f'{self.max_rlimits} riot limits in a row. skipping'))
+                        self.printinfo()
                         self.riotlimitinarow=0
                         self.rlimits+=1
                         self.checked+=1
@@ -163,14 +178,22 @@ class simplechecker():
                             file.write(f'\n{account}')
                         break
                 elif token==6:
+                    self.retries+=1
+                    time.sleep(1)
                     continue
                 elif token==3:
-                    pass
+                    self.printinfo()
+                    self.checked+=1
+                    break
                 elif token==0:
-                    pass
+                    self.printinfo()
+                    self.checked+=1
+                    break
                 elif token==4:
                     self.banned+=1
                 elif token==5:
+                    self.retries+=1
+                    time.sleep(1)
                     continue
                 else:
                     if mailverif==True:
@@ -321,7 +344,7 @@ class simplechecker():
                         dcwebhook = DiscordWebhook(url=self.webhook)
                         embed = DiscordEmbed(title='New valid account', color='34eb43')
                         if banuntil!=None:
-                            embed = DiscordEmbed(title='New tempbanned valid account', color='ff4400')
+                            embed = DiscordEmbed(title='New tempbanned account', color='ff4400')
                             embed.add_embed_field(name='Ban Until',value=str(banuntil))
                         embed.set_author(name='valkeker')
                         embed.set_timestamp()
@@ -378,7 +401,7 @@ class simplechecker():
 {cyan} ┃ [{reset}>{cyan}] {reset}TempBanned     >>:{cyan}[{Fore.YELLOW}{self.tempbanned}{cyan}]{space * (12 - len(str(self.tempbanned)))}┃ ┃ [{reset}>{cyan}] {reset}AP            >>:{cyan}[{green}{self.regions['ap']}{cyan}]{space * (18 - len(str(self.regions['ap'])))}┃ ┃ [{reset}>{cyan}] {reset}20-35           >>:{cyan}[{green}{self.skinsam['20-35']}{cyan}]{space * (29 - len(str(self.skinsam['20-35'])))}┃
 {cyan} ┃ [{reset}>{cyan}] {reset}Riot Limits    >>:{cyan}[{red}{self.rlimits}{cyan}]{space * (12 - len(str(self.rlimits)))}┃ ┃ [{reset}>{cyan}] {reset}BR            >>:{cyan}[{green}{self.regions['br']}{cyan}]{space * (18 - len(str(self.regions['br'])))}┃ ┃ [{reset}>{cyan}] {reset}35-40           >>:{cyan}[{green}{self.skinsam['35-40']}{cyan}]{space * (29 - len(str(self.skinsam['35-40'])))}┃
 {cyan} ┃ [{reset}>{cyan}] {reset}Errors         >>:{cyan}[{red}{self.err}{cyan}]{space * (12 - len(str(self.err)))}┃ ┃ [{reset}>{cyan}] {reset}KR            >>:{cyan}[{green}{self.regions['kr']}{cyan}]{space * (18 - len(str(self.regions['kr'])))}┃ ┃ [{reset}>{cyan}] {reset}40-70           >>:{cyan}[{green}{self.skinsam['40-70']}{cyan}]{space * (29 - len(str(self.skinsam['40-70'])))}┃
-{cyan} ┃                                     ┃ ┃ [{reset}>{cyan}] {reset}LATAM         >>:{cyan}[{green}{self.regions['latam']}{cyan}]{space * (18 - len(str(self.regions['latam'])))}┃ ┃ [{reset}>{cyan}] {reset}70+             >>:{cyan}[{green}{self.skinsam['70+']}{cyan}]{space * (29 - len(str(self.skinsam['70+'])))}┃
+{cyan} ┃ [{reset}>{cyan}] {reset}Retries        >>:{cyan}[{Fore.YELLOW}{self.retries}{cyan}]{space * (12 - len(str(self.retries)))}┃ ┃ [{reset}>{cyan}] {reset}LATAM         >>:{cyan}[{green}{self.regions['latam']}{cyan}]{space * (18 - len(str(self.regions['latam'])))}┃ ┃ [{reset}>{cyan}] {reset}70+             >>:{cyan}[{green}{self.skinsam['70+']}{cyan}]{space * (29 - len(str(self.skinsam['70+'])))}┃
 {cyan} ┃                                     ┃ ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ ┃{space * (56 - len(str(self.skinsam['1-10'])))}┃
 {cyan} ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ ┏━━ Ranks ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ ┃{space * (56 - len(str(self.skinsam['1-10'])))}┃
 {cyan} ┏━ Not main ━━━━━━━━━━━━━━━━━━━━━━━━━━┓ ┃ [{reset}>{cyan}] {reset}Unranked      >>:{cyan}[{green}{self.ranks['unranked']}{cyan}]{space * (18 - len(str(self.ranks['unranked'])))}┃ ┃{space * (56 - len(str(self.skinsam['1-10'])))}┃

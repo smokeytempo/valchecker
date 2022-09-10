@@ -47,7 +47,7 @@ class auth():
             }
             headers = {
                 'Content-Type': 'application/json',
-                'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
+                'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)'
             }
             try:
                 r = session.post(f'https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=sys.getproxy(self.proxlist))
@@ -57,6 +57,7 @@ class auth():
                     'password': password
                 }
                 r2 = session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=sys.getproxy(self.proxlist))
+                #input(r2.text)
             except:
                 return 6,6,6,6,None
             #print(r2.text)
@@ -74,7 +75,7 @@ class auth():
             elif 'invalid_session_id' in r2.text:
                 return 6,6,6,6,None
             elif "auth_failure" in r2.text:
-                return 6,6,6,6,None
+                return 3,3,3,3,None
             elif 'rate_limited' in r2.text:
                 return 1,1,1,1,None
             elif 'multifactor' in r2.text:
