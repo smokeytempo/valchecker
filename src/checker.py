@@ -148,7 +148,7 @@ class simplechecker():
         authenticate=auth.auth()
         #self.printinfo()
         while True:
-            self.printinfo()
+            #self.printinfo()
             if self.run==False:
                 self.runningtext=f'{Fore.YELLOW}Paused{reset}'
                 while True:
