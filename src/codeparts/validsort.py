@@ -119,6 +119,7 @@ class validsort():
                                 levelacc=account.split('level----------> ')[1].split('|')[0].replace('\n','')
                                 if levelacc == 'n/a':
                                     sorted+=1
+                                    print(f'sorted {sorted}/{count}')
                                     continue
                                 else:
                                     levelacc=int(levelacc)
@@ -134,6 +135,7 @@ class validsort():
                                     skinsam=int(skins)
                                     if account.split('|[ ')[1].split(' skins ]')[0] == 'n/a':
                                         sorted+=1
+                                        print(f'sorted {sorted}/{count}')
                                         continue
                                     else:
                                         skinsacc=int(account.split('|[ ')[1].split(' skins ]')[0])
@@ -150,6 +152,7 @@ class validsort():
                                         vpam=int(vp)
                                         if account.split('|vp-------------> ')[1].split('|')[0].replace('\n','') == 'n/a':
                                             sorted+=1
+                                            print(f'sorted {sorted}/{count}')
                                             continue
                                         else:
                                             vpacc=int(account.split('|vp-------------> ')[1].split('|')[0].replace('\n',''))
@@ -165,11 +168,12 @@ class validsort():
                                             rpam=int(rp)
                                             if account.split('|rp-------------> ')[1].split('|')[0].replace('\n','') == 'n/a':
                                                 sorted+=1
+                                                print(f'sorted {sorted}/{count}')
                                                 continue
                                             else:
                                                 rpacc=int(account.split('|rp-------------> ')[1].split('|')[0].replace('\n',''))
                                         except Exception as e:
-                                            input(e)
+                                            #input(e)
                                             rpam=0
                                             rpacc=1
                                     else:
@@ -183,6 +187,7 @@ class validsort():
                                                     matches+=1
                                                     print(f'sorted {sorted}/{count} MATCH')
             except Exception as e:
+                #input(e)
                 pass
             print(f'sorted {sorted}/{count}')
             sorted+=1

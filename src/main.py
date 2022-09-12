@@ -21,7 +21,7 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='3.6.4'
+        self.version='3.6.5'
         self.riotlimitinarow=0
         try:
             self.lastver=requests.get('https://lil-jaba.github.io/valchecker/src/system/lastver.html').text.replace(' ','').replace('\n','')
@@ -44,6 +44,7 @@ class program():
             ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker {self.version} by liljaba1337')
             os.system('cls')
             print(sys.center(f'''
+
 
 ██╗░░░██╗░█████╗░██╗░░░░░░█████╗░██╗░░██╗███████╗░█████╗░██╗░░██╗███████╗██████╗░
 ██║░░░██║██╔══██╗██║░░░░░██╔══██╗██║░░██║██╔════╝██╔══██╗██║░██╔╝██╔════╝██╔══██╗
@@ -106,7 +107,7 @@ class program():
     def get_accounts(self,filename):
         while True:
             try:
-                with open (str(filename), 'r', encoding='UTF-8') as file:
+                with open (str(filename), 'r', encoding='UTF-8',errors='replace') as file:
                     lines = file.readlines()
                     #ret=list(set(lines))
                     ret=[]

@@ -1,11 +1,10 @@
 import json
 import os
-import random
 import tkinter
 from tkinter import filedialog
 import time
 
-from colorama import Fore, Style
+from colorama import Fore,Back
 import requests
 import valo_api as vapi
 from InquirerPy import inquirer
@@ -18,6 +17,7 @@ check=checkers.checkers()
 
 class system():
     def __init__(self) -> None:
+        self.num=0
         self.proxylist=[]
         self.proxy = set()
 
@@ -93,6 +93,7 @@ class system():
             cooldown=data['cooldown']
             auto_sort=data['auto_sort']
             webhook=data['webhook']
+            print_sys=data['print_sys']
             menu_choices=[
                 Separator(),
                 f'Default File: {deffile}',
@@ -102,6 +103,7 @@ class system():
                 f'Wait between checking accounts (seconds): {cooldown}',
                 f'Auto sort accounts after checking: {auto_sort}',
                 f'Discord Webhook: {webhook}',
+                f'Print system info: {print_sys}',
                 Separator(),
                 'Exit'
             ]
@@ -163,7 +165,20 @@ class system():
             elif edit==menu_choices[7]:
                 newwebhook=input('ented the discotd webhook to use (leave it empty if u dont wanna use it): ')
                 data['webhook']=newwebhook
-            elif edit==menu_choices[9]:
+            elif edit==menu_choices[8]:
+                printinfo=[
+                    Separator(),
+                    'Yes',
+                    'No'
+                ]
+                newinfo= inquirer.select(
+                    message='print system info (e.g. riot limits)?',
+                    choices=printinfo,
+                    default=printinfo[0],
+                    pointer='>'
+                ).execute().replace('Yes','True').replace('No','False')
+                data['print_sys']=newinfo
+            else:
                 return
             f.seek(0)
             json.dump(data, f, indent=4)
@@ -198,8 +213,12 @@ class system():
                 return None
             elif len(proxlist) <= 1:
                 return None
-            nextproxy=random.choice(proxlist)
+            if self.num>len(proxlist)-1:
+                self.num=0
+            nextproxy=proxlist[self.num]
+            self.num+=1
         except Exception as e:
+            input(e)
             nextproxy=None
         return nextproxy
 
@@ -218,6 +237,7 @@ class system():
                 proxylist = f.readlines()
         except FileNotFoundError:
             input('cant find your proxy file. press enter to return')
+        good=[]
         for proxy in proxylist:
             proxy=proxy.replace('\n','')
             proxxy={
@@ -228,9 +248,16 @@ class system():
             try:
                 resp=session.get('https://auth.riotgames.com/api/v1/authorization/',proxies=proxxy).text
                 resp=f'{Fore.GREEN}[Good]{Fore.RESET} {proxy}'
+                good.append(proxy)
             except Exception as e:
                 resp=f'{Fore.RED}[Bad]{Fore.RESET} {proxy} ({e})'
             print(f'{resp}')
+        if inquirer.confirm(
+            message="Do you want to delete the bad ones?", default=True
+        ).execute():
+            with open(f"{self.parentpath}\\proxy.txt", "w") as f:
+                f.write('\n'.join(good))
+        print(f'{Back.RED}THIS TOOL CHECKS WHETHER THE CHECKER CAN CONNECT TO YOUR PROXIES OR NOT.\nIT DOES NOT GUARANTEE THEY WILL WORK IN THE MAIN CHECKER{Back.RESET}')
         input('press enter to return')
 
 syss=system()

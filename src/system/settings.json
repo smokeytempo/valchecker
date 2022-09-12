@@ -1,10 +1,11 @@
 {
-    "default_file": "C:/Users/MrBebra/Desktop/valchecker/accounts.txt",
+    "default_file": "C:/Users/MrBebra/Downloads/message.txt",
     "max_rlimits": 3,
     "rlimit_wait": 30,
     "default_region": "eu",
     "cooldown": 0,
     "auto_sort": "True",
     "webhook": "",
+    "print_sys": "True",
     "capybaras": "cool"
 }

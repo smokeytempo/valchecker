@@ -19,10 +19,10 @@ class TLSAdapter(HTTPAdapter):
                                        ssl_version=PROTOCOL_TLSv1_2)
 
 class auth():
-    def __init__(self,proxylist) -> None:
-        self.proxlist=proxylist
+    def __init__(self) -> None:
+        pass
 
-    def auth(self,logpass=None,username=None,password=None):
+    def auth(self,logpass=None,username=None,password=None,proxy=None):
         try:
             if username ==None:
                 username=logpass.split(':')[0]
@@ -50,13 +50,13 @@ class auth():
                 'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)'
             }
             try:
-                r = session.post(f'https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=sys.getproxy(self.proxlist))
+                r = session.post(f'https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=proxy)
                 data = {
                     'type': 'auth',
                     'username': username,
                     'password': password
                 }
-                r2 = session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=sys.getproxy(self.proxlist))
+                r2 = session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=proxy)
                 #input(r2.text)
             except:
                 return 6,6,6,6,None
@@ -86,9 +86,9 @@ class auth():
                 'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
                 'Authorization': f'Bearer {token}'
             }
-            r = session.post('https://entitlements.auth.riotgames.com/api/token/v1', headers=headers, json={},proxies=sys.getproxy(self.proxlist))
+            r = session.post('https://entitlements.auth.riotgames.com/api/token/v1', headers=headers, json={},proxies=proxy)
             entitlement = r.json()['entitlements_token']
-            r = session.post('https://auth.riotgames.com/userinfo', headers=headers, json={},proxies=sys.getproxy(self.proxlist))
+            r = session.post('https://auth.riotgames.com/userinfo', headers=headers, json={},proxies=proxy)
             #print(r.text)
             #input()
             data = r.json()
@@ -140,5 +140,6 @@ class auth():
                 mailverif=True
             return token,entitlement,puuid,mailverif,banuntil
         except Exception as e:
+            #input(e)
             #print(str(traceback.format_exc()))
             return 2,2,2,str(traceback.format_exc()),None

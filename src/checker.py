@@ -27,6 +27,7 @@ class simplechecker():
         self.cooldown=int(settings['cooldown'])
         self.autosort=settings['auto_sort']
         self.webhook=settings['webhook'].replace(' ','')
+        self.print_sys=bool(settings['print_sys'])
 
         try:
             import discord_webhook
@@ -137,16 +138,17 @@ class simplechecker():
             #    print("Checked all")
 
     def checker(self,username,password):
+        proxy=sys.getproxy(self.proxylist)
         account=f'{username}:{password}'
         reset = Fore.RESET
         cyan = Fore.CYAN
         green = Fore.LIGHTGREEN_EX
         red = Fore.LIGHTRED_EX
         space  = " "
-        authenticate=auth.auth(self.proxylist)
+        authenticate=auth.auth()
         #self.printinfo()
         while True:
-            #self.printinfo()
+            self.printinfo()
             if self.run==False:
                 self.runningtext=f'{Fore.YELLOW}Paused{reset}'
                 while True:
@@ -155,7 +157,7 @@ class simplechecker():
                         self.run=True
                         break
             try:
-                token,entt,uuid,mailverif,banuntil=authenticate.auth(account)
+                token,entt,uuid,mailverif,banuntil=authenticate.auth(account,proxy=proxy)
                 if banuntil!=None:
                     banuntil=stff.checkban(banuntil)
                 if token == 2:
@@ -164,12 +166,14 @@ class simplechecker():
                     self.err+=1
                 elif token==1:
                     if self.riotlimitinarow<self.max_rlimits:
-                        print(sys.center(f'riot limit. waiting {self.rlimit_wait} seconds'))
+                        if self.print_sys==True:
+                            print(sys.center(f'riot limit. waiting {self.rlimit_wait} seconds'))
                         time.sleep(self.rlimit_wait)
                         self.riotlimitinarow+=1
                         continue
                     else:
-                        print(sys.center(f'{self.max_rlimits} riot limits in a row. skipping'))
+                        if self.print_sys==True:
+                            print(sys.center(f'{self.max_rlimits} riot limits in a row. skipping'))
                         self.printinfo()
                         self.riotlimitinarow=0
                         self.rlimits+=1
@@ -387,7 +391,9 @@ class simplechecker():
         green = Fore.LIGHTGREEN_EX
         red = Fore.LIGHTRED_EX
         space = " "
-        ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker by liljaba1337 | Checked {self.checked}/{self.count} | {self.cpmtext} CPM')
+        percent=self.valid/self.checked if self.checked !=0 else 0
+        percent=f'{str(round(percent,1))}%'
+        ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker by liljaba1337  |  Checked {self.checked}/{self.count}  |  {self.cpmtext} CPM  |  Hitrate {percent}')
         os.system('cls')
         print(f'''
     {reset}
@@ -396,7 +402,7 @@ class simplechecker():
     {sys.center(f'Proxies: {cyan}{self.proxycount}{reset} | Threads:  {cyan}{self.threadam}{reset} | Accounts: {cyan}{self.count}{reset} | Checked {Fore.YELLOW}{self.checked}{reset}/{Fore.YELLOW}{self.count}{reset} | {self.runningtext} | {self.whtext}')}
     {reset}
 {cyan} ┏━ Main ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ ┏━━ Regions ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ ┏━━ Skins ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-{cyan} ┃ [{reset}>{cyan}] {reset}Valid          >>:{cyan}[{green}{self.valid}{cyan}]{space * (12 - len(str(self.valid)))}┃ ┃ [{reset}>{cyan}] {reset}EU            >>:{cyan}[{green}{self.regions['eu']}{cyan}]{space * (18 - len(str(self.regions['eu'])))}┃ ┃ [{reset}>{cyan}] {reset}1-10            >>:{cyan}[{green}{self.skinsam['1-10']}{cyan}]{space * (29 - len(str(self.skinsam['1-10'])))}┃
+{cyan} ┃ [{reset}>{cyan}] {reset}Valid          >>:{cyan}[{green}{self.valid}{cyan}] ({percent}){space * (9 - len(str(self.valid))-len(percent))}┃ ┃ [{reset}>{cyan}] {reset}EU            >>:{cyan}[{green}{self.regions['eu']}{cyan}]{space * (18 - len(str(self.regions['eu'])))}┃ ┃ [{reset}>{cyan}] {reset}1-10            >>:{cyan}[{green}{self.skinsam['1-10']}{cyan}]{space * (29 - len(str(self.skinsam['1-10'])))}┃
 {cyan} ┃ [{reset}>{cyan}] {reset}Banned         >>:{cyan}[{red}{self.banned}{cyan}]{space * (12 - len(str(self.banned)))}┃ ┃ [{reset}>{cyan}] {reset}NA            >>:{cyan}[{green}{self.regions['na']}{cyan}]{space * (18 - len(str(self.regions['na'])))}┃ ┃ [{reset}>{cyan}] {reset}10-20           >>:{cyan}[{green}{self.skinsam['10-20']}{cyan}]{space * (29 - len(str(self.skinsam['10-20'])))}┃
 {cyan} ┃ [{reset}>{cyan}] {reset}TempBanned     >>:{cyan}[{Fore.YELLOW}{self.tempbanned}{cyan}]{space * (12 - len(str(self.tempbanned)))}┃ ┃ [{reset}>{cyan}] {reset}AP            >>:{cyan}[{green}{self.regions['ap']}{cyan}]{space * (18 - len(str(self.regions['ap'])))}┃ ┃ [{reset}>{cyan}] {reset}20-35           >>:{cyan}[{green}{self.skinsam['20-35']}{cyan}]{space * (29 - len(str(self.skinsam['20-35'])))}┃
 {cyan} ┃ [{reset}>{cyan}] {reset}Riot Limits    >>:{cyan}[{red}{self.rlimits}{cyan}]{space * (12 - len(str(self.rlimits)))}┃ ┃ [{reset}>{cyan}] {reset}BR            >>:{cyan}[{green}{self.regions['br']}{cyan}]{space * (18 - len(str(self.regions['br'])))}┃ ┃ [{reset}>{cyan}] {reset}35-40           >>:{cyan}[{green}{self.skinsam['35-40']}{cyan}]{space * (29 - len(str(self.skinsam['35-40'])))}┃
