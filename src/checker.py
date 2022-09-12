@@ -391,7 +391,7 @@ class simplechecker():
         green = Fore.LIGHTGREEN_EX
         red = Fore.LIGHTRED_EX
         space = " "
-        percent=self.valid/self.checked if self.checked !=0 else 0
+        percent=self.valid/self.checked*100 if self.checked !=0 else 0
         percent=f'{str(round(percent,1))}%'
         ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker by liljaba1337  |  Checked {self.checked}/{self.count}  |  {self.cpmtext} CPM  |  Hitrate {percent}')
         os.system('cls')

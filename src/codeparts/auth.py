@@ -105,6 +105,9 @@ class auth():
                 if typebanned == "PERMANENT_BAN" or typebanned=='PERMA_BAN':
                     #input(True)
                     return 4,4,4,4,None
+                elif 'PERMANENT_BAN' in str(data3) or 'PERMA_BAN' in str(data3):
+                    #input(True)
+                    return 4,4,4,4,None
                 elif typebanned=='TIME_BAN' or typebanned=='LEGACY_BAN':
                     expire=data3[0]['dat']['expirationMillis']
                     expirepatched = pandas.to_datetime(int(expire),unit='ms')
