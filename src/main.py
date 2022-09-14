@@ -21,14 +21,15 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='3.6.6'
+        self.version='3.6.7'
         self.riotlimitinarow=0
         try:
-            self.lastver=requests.get('https://lil-jaba.github.io/valchecker/src/system/lastver.html').text.replace(' ','').replace('\n','')
-            if 'a' in self.lastver:
-                self.lastver=self.version
+            response=requests.get('https://api.github.com/repos/lil-jaba/valchecker/releases').json()
+            self.lastver=response[0]['tag_name']
+            self.changelog=response[0]['body']
         except:
             self.lastver=self.version
+            self.changelog=''
 
     def start(self):
         while True:
@@ -55,7 +56,8 @@ class program():
             '''))
             print(sys.center(f'v{self.version}{secret}'))
             if self.lastver!=self.version:
-                print(sys.center(f'new update ({self.lastver}) is available!'))
+                print(sys.center(f'\nnew update ({self.lastver}) is available!'))
+                print(sys.center(f'What\'s new: {self.changelog}'))
             menu_choices=[
                 Separator(),
                 'Start Checker',
@@ -71,7 +73,7 @@ class program():
                 message="Please select an option:",
                 choices=menu_choices,
                 default=menu_choices[0],
-                pointer='>'
+                pointer='>',
             ).execute()
             if res==menu_choices[1]:
                 self.main(redirect=True)

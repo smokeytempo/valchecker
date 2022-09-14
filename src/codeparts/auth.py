@@ -1,11 +1,15 @@
 from collections import OrderedDict
 from re import compile
+import re
 from ssl import PROTOCOL_TLSv1_2
 from tkinter import *
 import traceback
 import pandas
+import urllib3.exceptions
+import http,http.client
 
-from requests import session as sesh
+from requests import session as sesh,exceptions
+import requests
 from requests.adapters import HTTPAdapter
 from urllib3 import PoolManager
 
@@ -58,7 +62,15 @@ class auth():
                 }
                 r2 = session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=proxy)
                 #input(r2.text)
-            except:
+            except requests.exceptions.ConnectTimeout:
+                return 6,6,6,True,None
+            except requests.exceptions.ProxyError:
+                return 6,6,6,True,None
+            except urllib3.exceptions.MaxRetryError:
+                return 6,6,6,True,None
+            except http.client.RemoteDisconnected:
+                return 6,6,6,True,None
+            except Exception as e:
                 return 6,6,6,6,None
             #print(r2.text)
             try:

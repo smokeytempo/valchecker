@@ -6,9 +6,12 @@ import time
 
 from colorama import Fore,Back
 import requests
+from requests import exceptions
 import valo_api as vapi
 from InquirerPy import inquirer
 from InquirerPy.separator import Separator
+import traceback
+import ctypes
 
 from codeparts import checkers
 from codeparts.data import Constants
@@ -218,7 +221,7 @@ class system():
             nextproxy=proxlist[self.num]
             self.num+=1
         except Exception as e:
-            input(e)
+            #input(e)
             nextproxy=None
         return nextproxy
 
@@ -238,6 +241,9 @@ class system():
         except FileNotFoundError:
             input('cant find your proxy file. press enter to return')
         good=[]
+        count=len(proxylist)
+        checked=0
+        goodc,bad=0,0
         for proxy in proxylist:
             proxy=proxy.replace('\n','')
             proxxy={
@@ -249,9 +255,13 @@ class system():
                 resp=session.get('https://auth.riotgames.com/api/v1/authorization/',proxies=proxxy).text
                 resp=f'{Fore.GREEN}[Good]{Fore.RESET} {proxy}'
                 good.append(proxy)
+                goodc+=1
             except Exception as e:
                 resp=f'{Fore.RED}[Bad]{Fore.RESET} {proxy} ({e})'
+                bad+=1
             print(f'{resp}')
+            checked+=1
+            ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker by liljaba1337 | Checking Proxies ({checked}/{count}) | Good {goodc} | Bad {bad}')
         if inquirer.confirm(
             message="Do you want to delete the bad ones?", default=True
         ).execute():

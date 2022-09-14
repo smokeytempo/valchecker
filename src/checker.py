@@ -9,6 +9,7 @@ from threading import Thread
 import threading
 from InquirerPy import inquirer
 from InquirerPy.separator import Separator
+import json
 
 from colorama import Fore, Style
 
@@ -38,6 +39,14 @@ class simplechecker():
                 self.webhook=''
             else:
                 pass
+        
+        #try:
+        #    from pypresence import Presence
+        #    from pypresence.exceptions import DiscordNotFound, InvalidID
+        #    self.rpc = Presence("1019363739859963915")
+        #    self.rpc.connect()
+        #except ModuleNotFoundError:
+        #    pass
 
         path = os.getcwd()
         self.parentpath=os.path.abspath(os.path.join(path, os.pardir))
@@ -79,7 +88,7 @@ class simplechecker():
             self.whtext=f'{Fore.LIGHTGREEN_EX}Using the webhook{Fore.RESET}'
         self.count=count
         os.system(f'mode con: cols=150 lines=32')
-        self.threadam=int(input('input number if threads (min 1 max 1000) >>>'))
+        self.threadam=int(input(f'input number if threads (min 1 max 1000) (proxies: {self.proxycount}) >>>'))
         self.threadam= self.threadam if 1000>self.threadam>0 else self.proxycount if self.proxycount > 1 else 3
         menu_choices=[
             Separator(),
@@ -138,6 +147,7 @@ class simplechecker():
             #    print("Checked all")
 
     def checker(self,username,password):
+        riotlimitinarow=0
         proxy=sys.getproxy(self.proxylist)
         account=f'{username}:{password}'
         reset = Fore.RESET
@@ -165,23 +175,25 @@ class simplechecker():
                         f.write(f'({datetime.datetime.now()}) {mailverif}\n_________________________________\n')
                     self.err+=1
                 elif token==1:
-                    if self.riotlimitinarow<self.max_rlimits:
+                    if riotlimitinarow<self.max_rlimits:
                         if self.print_sys==True:
                             print(sys.center(f'riot limit. waiting {self.rlimit_wait} seconds'))
                         time.sleep(self.rlimit_wait)
-                        self.riotlimitinarow+=1
+                        riotlimitinarow+=1
                         continue
                     else:
                         if self.print_sys==True:
                             print(sys.center(f'{self.max_rlimits} riot limits in a row. skipping'))
                         self.printinfo()
-                        self.riotlimitinarow=0
+                        riotlimitinarow=0
                         self.rlimits+=1
                         self.checked+=1
                         with open (f'{self.parentpath}/output/riot_limits.txt', 'a', encoding='UTF-8') as file:
                             file.write(f'\n{account}')
                         break
                 elif token==6:
+                    if mailverif==True:
+                        proxy=sys.getproxy(self.proxylist)
                     self.retries+=1
                     time.sleep(1)
                     continue
@@ -302,6 +314,14 @@ class simplechecker():
 
 ''')
                     else:
+                        #with open(f'{self.parentpath}/output/valid.json','r+',encoding='utf-8') as f:
+                        #    data=json.load(f)
+                        #    temp=data['valid']
+                        #    toadd={'LogPass':account,'region':reg,'rank':rank,'level':lvl,'lastmatch':lastplayed,'unverifiedmail':mailverif,'vp':vp,'rp':rp,'skinscount':skinscount,f'skins':skins.strip('\n').split('\n')}
+                        #    temp.append(toadd)
+                        #    f.seek(0)
+                        #    json.dump(data, f, indent=4)
+                        #    f.truncate()
                         with open (f'{self.parentpath}/output/valid.txt', 'a', encoding='UTF-8') as file:
                             file.write(f'''|[{account}]
 ------------------------------------       
@@ -363,12 +383,14 @@ class simplechecker():
                         dcwebhook.add_embed(embed)
                         response=dcwebhook.execute()
                         #input(response)
+
             except Exception as e:
+                #input(e)
                 with open(f'{self.parentpath}/log.txt','a') as f:
                     f.write(f'({datetime.datetime.now()}) {str(traceback.format_exc())}\n_________________________________\n')
                 self.err+=1
             self.checked+=1
-            self.riotlimitinarow=0
+            riotlimitinarow=0
             if self.uselog==False:
                 self.printinfo()
             else:
@@ -385,6 +407,19 @@ class simplechecker():
             self.startedtesting=sys.getmillis()
             self.startedcount=self.checked
             self.cpmtext = f'↑ {self.cpm}' if self.cpm>prevcpm else f'↓ {self.cpm}'
+        #elif finishedtesting-self.startedtesting>10000:
+        #    try:
+        #        self.rpc.update(
+        #            details=f'Checking {self.checked}/{self.count} accounts',
+        #            state=f"{self.valid} valid ({str(round(self.valid/self.checked*100 if self.checked !=0 else 0,1))}%)",
+        #            #large_image=mapImage,
+        #            #large_text=mapText,
+        #            #small_image=agent_img,
+        #            #small_text=agent,
+        #            buttons=[{"label": "What's this? 👀", "url": "https://github.com/LIL-JABA/valchecker"}]
+        #        )
+        #    except:
+        #        pass
 
         reset = Fore.RESET
         cyan = Fore.CYAN
