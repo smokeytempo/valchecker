@@ -198,16 +198,10 @@ class system():
 
         for i in list(self.proxy):
             if '.' in i:
-                if 'http' in i:
-                    self.proxylist.append({
-                        'http': i,
-                        'https': i
-                    })
-                else:
-                    self.proxylist.append({
-                        'http': 'http://'+i,
-                        'https':'http://'+i,
-                    })
+                self.proxylist.append({
+                    'http': i,
+                    'https':i,
+                })
         return self.proxylist
     
     def getproxy(self,proxlist):
@@ -247,12 +241,12 @@ class system():
         for proxy in proxylist:
             proxy=proxy.replace('\n','')
             proxxy={
-                'http':f'http://{proxy}',
-                'https':f'http://{proxy}',
+                'http':f'{proxy}',
+                'https':f'{proxy}',
             }
             #print(f'using: {proxxy}')
             try:
-                resp=session.get('https://auth.riotgames.com/api/v1/authorization/',proxies=proxxy).text
+                resp=session.get('https://auth.riotgames.com/api/v1/authorization/',proxies=proxxy,timeout=10).text
                 resp=f'{Fore.GREEN}[Good]{Fore.RESET} {proxy}'
                 good.append(proxy)
                 goodc+=1
@@ -269,5 +263,13 @@ class system():
                 f.write('\n'.join(good))
         print(f'{Back.RED}THIS TOOL CHECKS WHETHER THE CHECKER CAN CONNECT TO YOUR PROXIES OR NOT.\nIT DOES NOT GUARANTEE THEY WILL WORK IN THE MAIN CHECKER{Back.RESET}')
         input('press enter to return')
+
+    def convert_to_preferred_format(self,sec):
+        sec = sec % (24 * 3600)
+        hour = sec // 3600
+        sec %= 3600
+        min = sec // 60
+        sec %= 60
+        return "%02d:%02d:%02d" % (hour, min, sec)
 
 syss=system()

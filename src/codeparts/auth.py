@@ -11,6 +11,7 @@ import http,http.client
 from requests import session as sesh,exceptions
 import requests
 from requests.adapters import HTTPAdapter
+import urllib3.exceptions
 from urllib3 import PoolManager
 
 from codeparts import systems
@@ -54,24 +55,28 @@ class auth():
                 'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)'
             }
             try:
-                r = session.post(f'https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=proxy)
+                r = session.post(f'https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=proxy,timeout=20)
                 data = {
                     'type': 'auth',
                     'username': username,
                     'password': password
                 }
-                r2 = session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=proxy)
+                r2 = session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=proxy,timeout=20)
                 #input(r2.text)
-            except requests.exceptions.ConnectTimeout:
-                return 6,6,6,True,None
-            except requests.exceptions.ProxyError:
-                return 6,6,6,True,None
-            except urllib3.exceptions.MaxRetryError:
-                return 6,6,6,True,None
-            except http.client.RemoteDisconnected:
-                return 6,6,6,True,None
+            #except requests.exceptions.ConnectTimeout:
+            #    return 6,6,6,True,None
+            #except requests.exceptions.ProxyError:
+            #    return 6,6,6,True,None
+            #except urllib3.exceptions.MaxRetryError:
+            #    return 6,6,6,True,None
+            #except http.client.RemoteDisconnected:
+            #    return 6,6,6,True,None
+            #except urllib3.exceptions.ConnectTimeoutError:
+            #    return 6,6,6,True,None
+            #except urllib3.exceptions.TimeoutError:
+            #    return 6,6,6,True,None
             except Exception as e:
-                return 6,6,6,6,None
+                return 6,6,6,True,None
             #print(r2.text)
             try:
                 data = r2.json()
@@ -98,9 +103,12 @@ class auth():
                 'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
                 'Authorization': f'Bearer {token}'
             }
-            r = session.post('https://entitlements.auth.riotgames.com/api/token/v1', headers=headers, json={},proxies=proxy)
-            entitlement = r.json()['entitlements_token']
-            r = session.post('https://auth.riotgames.com/userinfo', headers=headers, json={},proxies=proxy)
+            try:
+                r = session.post('https://entitlements.auth.riotgames.com/api/token/v1', headers=headers, json={},proxies=proxy)
+                entitlement = r.json()['entitlements_token']
+                r = session.post('https://auth.riotgames.com/userinfo', headers=headers, json={},proxies=proxy)
+            except:
+                return 6,6,6,True,None
             #print(r.text)
             #input()
             data = r.json()

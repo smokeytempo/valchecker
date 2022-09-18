@@ -9,7 +9,6 @@ from threading import Thread
 import threading
 from InquirerPy import inquirer
 from InquirerPy.separator import Separator
-import json
 
 from colorama import Fore, Style
 
@@ -29,6 +28,7 @@ class simplechecker():
         self.autosort=settings['auto_sort']
         self.webhook=settings['webhook'].replace(' ','')
         self.print_sys=bool(settings['print_sys'])
+        self.esttime='99 years'
 
         try:
             import discord_webhook
@@ -154,7 +154,7 @@ class simplechecker():
         cyan = Fore.CYAN
         green = Fore.LIGHTGREEN_EX
         red = Fore.LIGHTRED_EX
-        space  = " "
+        space = " "
         authenticate=auth.auth()
         #self.printinfo()
         while True:
@@ -407,6 +407,7 @@ class simplechecker():
             self.startedtesting=sys.getmillis()
             self.startedcount=self.checked
             self.cpmtext = f'↑ {self.cpm}' if self.cpm>prevcpm else f'↓ {self.cpm}'
+            self.esttime=sys.convert_to_preferred_format(round((self.count-self.checked)/self.cpm*60))
         #elif finishedtesting-self.startedtesting>10000:
         #    try:
         #        self.rpc.update(
@@ -428,7 +429,7 @@ class simplechecker():
         space = " "
         percent=self.valid/self.checked*100 if self.checked !=0 else 0
         percent=f'{str(round(percent,1))}%'
-        ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker by liljaba1337  |  Checked {self.checked}/{self.count}  |  {self.cpmtext} CPM  |  Hitrate {percent}')
+        ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker by liljaba1337  |  Checked {self.checked}/{self.count}  |  {self.cpmtext} CPM  |  Hitrate {percent}  |  Est. time: {self.esttime}')
         os.system('cls')
         print(f'''
     {reset}
@@ -457,5 +458,6 @@ class simplechecker():
 {cyan} ┃                                     ┃ ┃ [{reset}>{cyan}] {reset}Radiant       >>:{cyan}[{green}{self.ranks['radiant']}{cyan}]{space * (18 - len(str(self.ranks['radiant'])))}┃ ┃                                                       ┃
 {cyan} ┃                                     ┃ ┃ [{reset}>{cyan}] {reset}Locked        >>:{cyan}[{green}{self.locked}{cyan}]{space * (18 - len(str(self.locked)))}┃ ┃                                                       ┃
 {cyan} ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛{reset}
+{Fore.LIGHTCYAN_EX} Estimated remaining time: {self.esttime}{reset}
 
         ''')
