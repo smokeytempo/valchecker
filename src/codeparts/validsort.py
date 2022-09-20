@@ -108,84 +108,79 @@ class validsort():
         for account in accounts:
             ctypes.windll.kernel32.SetConsoleTitleW(f'sorted {sorted}/{count}  {matches} matches')
             account=account.lower()
+            gothis=True
 
             # sort regions
             try:
-                if f'region---------> {region}' in account:
-                    if f'rank-----------> {rank}' in account:
-                        if level!='':
-                            try:
-                                level=int(level)
-                                levelacc=account.split('level----------> ')[1].split('|')[0].replace('\n','')
-                                if levelacc == 'n/a':
-                                    sorted+=1
-                                    print(f'sorted {sorted}/{count}')
-                                    continue
-                                else:
-                                    levelacc=int(levelacc)
-                                #print(levelacc)
-                            except:
-                                pass
+                if f'region---------> {region}' not in account:
+                    gothis=False
+
+                if f'rank-----------> {rank}' not in account:
+                    gothis=False
+
+                if level!='':
+                    try:
+                        level=int(level)
+                        levelacc=account.split('level----------> ')[1].split('|')[0].replace('\n','')
+                        if levelacc == 'n/a':
+                            gothis=False
                         else:
-                            levelacc=1
-                            level=0
-                        if levelacc>=level or level=='':
-                            if skins !='':
-                                try:
-                                    skinsam=int(skins)
-                                    if account.split('|[ ')[1].split(' skins ]')[0] == 'n/a':
-                                        sorted+=1
-                                        print(f'sorted {sorted}/{count}')
-                                        continue
-                                    else:
-                                        skinsacc=int(account.split('|[ ')[1].split(' skins ]')[0])
-                                    #print(skinsacc)
-                                except:
-                                    skinsacc=1
-                                    skinsam=0
-                            else:
-                                skinsacc=1
-                                skinsam=0
-                            if skinsacc>=skinsam or skins =='':
-                                if vp != '':
-                                    try:
-                                        vpam=int(vp)
-                                        if account.split('|vp-------------> ')[1].split('|')[0].replace('\n','') == 'n/a':
-                                            sorted+=1
-                                            print(f'sorted {sorted}/{count}')
-                                            continue
-                                        else:
-                                            vpacc=int(account.split('|vp-------------> ')[1].split('|')[0].replace('\n',''))
-                                    except:
-                                        vpam=0
-                                        vpacc=1
-                                else:
-                                    vpam=0
-                                    vpacc=1
-                                if vpacc>=vpam or vp =='':
-                                    if rp != '':
-                                        try:
-                                            rpam=int(rp)
-                                            if account.split('|rp-------------> ')[1].split('|')[0].replace('\n','') == 'n/a':
-                                                sorted+=1
-                                                print(f'sorted {sorted}/{count}')
-                                                continue
-                                            else:
-                                                rpacc=int(account.split('|rp-------------> ')[1].split('|')[0].replace('\n',''))
-                                        except Exception as e:
-                                            #input(e)
-                                            rpam=0
-                                            rpacc=1
-                                    else:
-                                        rpam=0
-                                        rpacc=1
-                                    if rpacc>=rpam or rp =='':
-                                        if f'unverifiedmail-> {mail}' in account:
-                                            if skin in account:
-                                                with open(f'{self.parentpath}/output/sorted.txt','a',encoding='UTF-8') as f:
-                                                    f.write(account+'###account###')
-                                                    matches+=1
-                                                    print(f'sorted {sorted}/{count} MATCH')
+                            levelacc=int(levelacc)
+                            if levelacc<level:
+                                gothis=False
+                    except:
+                        pass
+
+                if skins !='':
+                    try:
+                        skinsam=int(skins)
+                        if account.split('|[ ')[1].split(' skins ]')[0] == 'n/a':
+                            gothis=False
+                        else:
+                            skinsacc=int(account.split('|[ ')[1].split(' skins ]')[0])
+                            if skinsacc<skinsam:
+                                gothis=False
+                    except:
+                        pass
+                
+                if vp != '':
+                    try:
+                        vpam=int(vp)
+                        if account.split('|vp-------------> ')[1].split('|')[0].replace('\n','') == 'n/a':
+                            gothis=False
+                        else:
+                            vpacc=int(account.split('|vp-------------> ')[1].split('|')[0].replace('\n',''))
+                            if vpacc<vpam:
+                                gothis=False
+                    except:
+                        pass
+
+                if rp != '':
+                    try:
+                        rpam=int(rp)
+                        if account.split('|rp-------------> ')[1].split('|')[0].replace('\n','') == 'n/a':
+                            gothis=False
+                        else:
+                            rpacc=int(account.split('|rp-------------> ')[1].split('|')[0].replace('\n',''))
+                            if rpacc<rpam:
+                                gothis=False
+                    except Exception as e:
+                        pass
+
+                if f'unverifiedmail-> {str(mail)}' not in account:
+                    gothis=False
+
+                if skin not in account:
+                    gothis=False
+                
+                if gothis==True:
+                    with open(f'{self.parentpath}/output/sorted.txt','a',encoding='UTF-8') as f:
+                        f.write(account+'###account###')
+                        matches+=1
+                        
+                sorted+=1
+                print(f'sorted {sorted}/{count} MATCH')
+
             except Exception as e:
                 #input(e)
                 pass

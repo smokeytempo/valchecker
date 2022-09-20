@@ -246,7 +246,7 @@ class system():
             }
             #print(f'using: {proxxy}')
             try:
-                resp=session.get('https://auth.riotgames.com/api/v1/authorization/',proxies=proxxy,timeout=10).text
+                resp=session.get('https://auth.riotgames.com/api/v1/authorization/',proxies=proxxy,timeout=20).text
                 resp=f'{Fore.GREEN}[Good]{Fore.RESET} {proxy}'
                 good.append(proxy)
                 goodc+=1
