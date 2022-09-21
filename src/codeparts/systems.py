@@ -92,21 +92,20 @@ class system():
             deffile=data['default_file']
             max_rlimits=data['max_rlimits']
             rlimit_wait=data['rlimit_wait']
-            default_region=data['default_region']
             cooldown=data['cooldown']
-            auto_sort=data['auto_sort']
             webhook=data['webhook']
             print_sys=data['print_sys']
+            create_folder=data['new_folder']
             menu_choices=[
                 Separator(),
                 f'Default File: {deffile}',
                 f'RLimits to skip an acc: {max_rlimits}',
                 f'Wait if there is a RLimit (seconds): {rlimit_wait}',
-                f'Default Region: {default_region}',
                 f'Wait between checking accounts (seconds): {cooldown}',
-                f'Auto sort accounts after checking: {auto_sort}',
+                f'Create folder for every check: {create_folder}',
                 f'Discord Webhook: {webhook}',
                 f'Print system info: {print_sys}',
+                'Discord Webhook Settings',
                 Separator(),
                 'Exit'
             ]
@@ -145,30 +144,27 @@ class system():
                     print('u have to type a num from 1 to 99999 (30 recommended)')
                     return
             elif edit==menu_choices[4]:
-                new_region=input('if region is unknown, the checker will try to check account in default region (eu,na,latam,ap,br,kr) >>>').lower().replace(' ','')
-                data['default_region']=str(new_region)
-            elif edit==menu_choices[5]:
                 new_cd=input('enter the number of seconds to wait between checking accounts (min 0) >>>')
                 if int(new_cd)<0 or int(new_cd)>99999:
                     return
                 data['cooldown']=int(new_cd)
-            elif edit==menu_choices[6]:
-                autosortlist=[
+            elif edit==menu_choices[5]:
+                createfolder=[
                     Separator(),
                     'Yes',
                     'No'
                 ]
-                newautosort= inquirer.select(
-                    message='should checker automatically sort valid accounts?',
-                    choices=autosortlist,
-                    default=autosortlist[0],
+                newfolder= inquirer.select(
+                    message='do you want to create a new folder every time u start the checker?',
+                    choices=createfolder,
+                    default=createfolder[0],
                     pointer='>'
             ).execute().replace('Yes','True').replace('No','False')
-                data['auto_sort']=newautosort
-            elif edit==menu_choices[7]:
+                data['new_folder']=newfolder
+            elif edit==menu_choices[6]:
                 newwebhook=input('ented the discotd webhook to use (leave it empty if u dont wanna use it): ')
                 data['webhook']=newwebhook
-            elif edit==menu_choices[8]:
+            elif edit==menu_choices[7]:
                 printinfo=[
                     Separator(),
                     'Yes',
@@ -181,6 +177,18 @@ class system():
                     pointer='>'
                 ).execute().replace('Yes','True').replace('No','False')
                 data['print_sys']=newinfo
+            elif edit==menu_choices[8]:
+                dwsttngs = [
+                    inquirer.checkbox(
+                        "What to send in discord webhook?",
+                        choices=["tempbanned accounts", "accounts without skins", "accounts with only wayfinder shorty", "stats (once per minute)", "accounts with unknown region"],
+                        long_instruction="space to pick. enter to finish",
+                        disabled_symbol='[X]',
+                        enabled_symbol=f"[Y]",
+                        pointer='>'
+                    ).execute()
+                ]
+                data['dw_settings']=dwsttngs
             else:
                 return
             f.seek(0)
@@ -246,8 +254,10 @@ class system():
             }
             #print(f'using: {proxxy}')
             try:
-                resp=session.get('https://auth.riotgames.com/api/v1/authorization/',proxies=proxxy,timeout=20).text
-                resp=f'{Fore.GREEN}[Good]{Fore.RESET} {proxy}'
+                resp=session.get('https://auth.riotgames.com/api/v1/authorization/',proxies=proxxy,timeout=20)
+                try: country=resp.json()['country']
+                except: country='N/A'
+                resp=f'{Fore.GREEN}[Good]{Fore.RESET} {proxy} (country: {country})'
                 good.append(proxy)
                 goodc+=1
             except Exception as e:

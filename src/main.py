@@ -21,7 +21,7 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='3.6.9'
+        self.version='3.7'
         self.riotlimitinarow=0
         try:
             response=requests.get('https://api.github.com/repos/lil-jaba/valchecker/releases').json()
@@ -39,22 +39,26 @@ class program():
             except requests.exceptions.ConnectionError:
                 print('no internet connection')
                 os._exit(0)
-            secret=''
-            if random.randint(0,50)==0:
-                secret='\n\ncapybaras ontop!\n\n'
             ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker {self.version} by liljaba1337')
             os.system('cls')
-            print(sys.center(f'''
+            introtext='''
 
+██╗░░░██╗░█████╗░██╗░░░░░██╗░░██╗███████╗██╗░░██╗███████╗██████╗░
+██║░░░██║██╔══██╗██║░░░░░██║░██╔╝██╔════╝██║░██╔╝██╔════╝██╔══██╗
+╚██╗░██╔╝███████║██║░░░░░█████═╝░█████╗░░█████═╝░█████╗░░██████╔╝
+░╚████╔╝░██╔══██║██║░░░░░██╔═██╗░██╔══╝░░██╔═██╗░██╔══╝░░██╔══██╗
+░░╚██╔╝░░██║░░██║███████╗██║░╚██╗███████╗██║░╚██╗███████╗██║░░██║
+░░░╚═╝░░░╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝''' if random.randint(0,5)==0 else '''
 
 ██╗░░░██╗░█████╗░██╗░░░░░░█████╗░██╗░░██╗███████╗░█████╗░██╗░░██╗███████╗██████╗░
 ██║░░░██║██╔══██╗██║░░░░░██╔══██╗██║░░██║██╔════╝██╔══██╗██║░██╔╝██╔════╝██╔══██╗
 ╚██╗░██╔╝███████║██║░░░░░██║░░╚═╝███████║█████╗░░██║░░╚═╝█████═╝░█████╗░░██████╔╝
 ░╚████╔╝░██╔══██║██║░░░░░██║░░██╗██╔══██║██╔══╝░░██║░░██╗██╔═██╗░██╔══╝░░██╔══██╗
 ░░╚██╔╝░░██║░░██║███████╗╚█████╔╝██║░░██║███████╗╚█████╔╝██║░╚██╗███████╗██║░░██║
-░░░╚═╝░░░╚═╝░░╚═╝╚══════╝░╚════╝░╚═╝░░╚═╝╚══════╝░╚════╝░╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝
-            '''))
-            print(sys.center(f'v{self.version}{secret}'))
+░░░╚═╝░░░╚═╝░░╚═╝╚══════╝░╚════╝░╚═╝░░╚═╝╚══════╝░╚════╝░╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝'''
+            print(sys.center(introtext))
+            print(sys.center(f'v{self.version}'))
+            print(sys.center('capybaras ontop!' if random.randint(0,50)==0 else ' '))
             if self.lastver!=self.version:
                 print(sys.center(f'\nnew update ({self.lastver}) is available!'))
                 print(sys.center(f'What\'s new: {self.changelog}'))
@@ -153,6 +157,8 @@ class program():
         print('loading accounts')
         accounts=self.get_accounts(fn)
         if redirect==True:
+            print('loading checker')
+            ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker {self.version} by liljaba1337 | Loading Checker')
             scheck=checker.simplechecker(settings,proxylist)
             scheck.main(accounts,self.count)
             return

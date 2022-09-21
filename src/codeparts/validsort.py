@@ -12,6 +12,21 @@ class validsort():
         self.parentpath=os.path.abspath(os.path.join(path, os.pardir))
 
     def customsort(self):
+        self.allfolders=[Separator(),"default file (output/valid.txt)",Separator()]
+        for file in os.listdir(f'{self.parentpath}\\output'):
+            if not '.txt' in file and not 'regions' in file:
+                self.allfolders.append(file)
+        
+        folder = inquirer.select(
+            message="Valid.txt from which folder do you want to sort?",
+            choices=self.allfolders,
+            default=self.allfolders[0],
+            pointer='>'
+        ).execute()
+
+        if folder==self.allfolders[1]: folder=f'{self.parentpath}/output/valid.txt'
+        else: folder=f'{self.parentpath}/output/{folder}/valid.txt'
+
         clearno=[
             Separator(),
             'Yes',
@@ -93,16 +108,17 @@ class validsort():
         mail=mail.lower().replace('any','')
         rank=rank.lower().replace('any','')
 
-        print(region,rank,level,skins,mail)
+        #print(region,rank,level,skins,mail)
 
         if clear=='Yes':
             with open(f'{self.parentpath}/output/sorted.txt', 'w',encoding='UTF-8'):
                 pass
 
-        with open(f'{self.parentpath}/output/valid.txt','r',encoding='UTF-8',errors='ignore') as f:
+        with open(folder,'r',encoding='UTF-8',errors='ignore') as f:
             text=f.read()
         accounts=text.split('###account###')
         count=len(accounts)
+        #print(count)
         sorted=0
         matches=0
         for account in accounts:
@@ -173,18 +189,17 @@ class validsort():
                 if skin not in account:
                     gothis=False
                 
+                sorted+=1
                 if gothis==True:
                     with open(f'{self.parentpath}/output/sorted.txt','a',encoding='UTF-8') as f:
                         f.write(account+'###account###')
-                        matches+=1
-                        
-                sorted+=1
-                print(f'sorted {sorted}/{count} MATCH')
+                    matches+=1
+                    print(f'sorted {sorted}/{count} MATCH')
+                else:
+                    print(f'sorted {sorted}/{count}')
 
             except Exception as e:
-                #input(e)
+                sorted+=1
+                print(f'sorted {sorted}/{count} (error)')
                 pass
-            print(f'sorted {sorted}/{count}')
-            sorted+=1
-        print(f'sorted {sorted}/{count}')
         return
