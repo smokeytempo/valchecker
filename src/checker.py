@@ -197,22 +197,22 @@ class simplechecker():
                     banuntil=stff.checkban(banuntil)
                 if token == 2:
                     with open(f'{self.parentpath}/log.txt','a') as f:
-                        f.write(f'({datetime.datetime.now()}) {mailverif}\n_________________________________\n')
+                        f.write(f'({datetime.now()}) {mailverif}\n_________________________________\n')
                     self.err+=1
                 elif token==1:
                     if riotlimitinarow<self.max_rlimits:
-                        if self.print_sys==True:
-                            print(sys.center(f'riot limit. waiting {self.rlimit_wait} seconds'))
+                        #if self.print_sys==True:
+                        #    print(sys.center(f'riot limit. waiting {self.rlimit_wait} seconds'))
                         time.sleep(self.rlimit_wait)
                         riotlimitinarow+=1
                         continue
                     else:
-                        if self.print_sys==True:
-                            print(sys.center(f'{self.max_rlimits} riot limits in a row. skipping'))
-                        self.printinfo()
+                        #if self.print_sys==True:
+                        #    print(sys.center(f'{self.max_rlimits} riot limits in a row. skipping'))
                         riotlimitinarow=0
                         self.rlimits+=1
                         self.checked+=1
+                        self.printinfo()
                         with open (f'{self.parentpath}/output/riot_limits.txt', 'a', encoding='UTF-8') as file:
                             file.write(f'\n{account}')
                         break
@@ -398,7 +398,7 @@ class simplechecker():
             except Exception as e:
                 #input(e)
                 with open(f'{self.parentpath}/log.txt','a') as f:
-                    f.write(f'({datetime.datetime.now()}) {str(traceback.format_exc())}\n_________________________________\n')
+                    f.write(f'({datetime.now()}) {str(traceback.format_exc())}\n_________________________________\n')
                 self.err+=1
             self.checked+=1
             riotlimitinarow=0
@@ -452,6 +452,7 @@ class simplechecker():
     {sys.center('https://github.com/LIL-JABA/valchecker')}
 
     {sys.center(f'Proxies: {cyan}{self.proxycount}{reset} | Threads:  {cyan}{self.threadam}{reset} | Accounts: {cyan}{self.count}{reset} | Checked {Fore.YELLOW}{self.checked}{reset}/{Fore.YELLOW}{self.count}{reset} | {self.runningtext} | {self.whtext}')}
+                {sys.progressbar(self.checked,self.count)}
     {reset}
 {cyan} ┏━ Main ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ ┏━━ Regions ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ ┏━━ Skins ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 {cyan} ┃ [{reset}>{cyan}] {reset}Valid          >>:{cyan}[{green}{self.valid}{cyan}] ({percent}){space * (9 - len(str(self.valid))-len(percent))}┃ ┃ [{reset}>{cyan}] {reset}EU            >>:{cyan}[{green}{self.regions['eu']}{cyan}]{space * (18 - len(str(self.regions['eu'])))}┃ ┃ [{reset}>{cyan}] {reset}1-10            >>:{cyan}[{green}{self.skinsam['1-10']}{cyan}]{space * (29 - len(str(self.skinsam['1-10'])))}┃

@@ -257,13 +257,15 @@ class system():
                 resp=session.get('https://auth.riotgames.com/api/v1/authorization/',proxies=proxxy,timeout=20)
                 try: country=resp.json()['country']
                 except: country='N/A'
-                resp=f'{Fore.GREEN}[Good]{Fore.RESET} {proxy} (country: {country})'
-                good.append(proxy)
-                goodc+=1
+                if proxy in good: resp=f'{Fore.LIGHTRED_EX}[Double]{Fore.RESET} {proxy}'; bad+=1
+                else:
+                    resp=f'{Fore.GREEN}[Good]{Fore.RESET} {proxy} (country: {country})'
+                    good.append(proxy)
+                    goodc+=1
             except Exception as e:
                 resp=f'{Fore.RED}[Bad]{Fore.RESET} {proxy} ({e})'
                 bad+=1
-            print(f'{resp}')
+            print(resp)
             checked+=1
             ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker by liljaba1337 | Checking Proxies ({checked}/{count}) | Good {goodc} | Bad {bad}')
         if inquirer.confirm(
@@ -281,5 +283,10 @@ class system():
         min = sec // 60
         sec %= 60
         return "%02d:%02d:%02d" % (hour, min, sec)
+
+    def progressbar(self,pr,ttl):
+        percent=100*(pr/ttl)
+        bar=f'{Fore.LIGHTGREEN_EX}━{Fore.RESET}'*int(percent)+f'{Fore.LIGHTRED_EX}━{Fore.RESET}'*int(100-percent)
+        return f'{Fore.LIGHTCYAN_EX}[{bar}{Fore.LIGHTCYAN_EX}]{Fore.LIGHTCYAN_EX} {percent:.2f}%{Fore.RESET}'
 
 syss=system()

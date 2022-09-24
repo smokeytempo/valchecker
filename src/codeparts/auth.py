@@ -5,8 +5,9 @@ from ssl import PROTOCOL_TLSv1_2
 from tkinter import *
 import traceback
 import pandas
-import urllib3.exceptions
+import asyncio
 import http,http.client
+import sys
 
 from requests import session as sesh,exceptions
 import requests
@@ -15,6 +16,8 @@ import urllib3.exceptions
 from urllib3 import PoolManager
 
 from codeparts import systems
+from codeparts import riot_auth
+from codeparts.riot_auth import auth_exceptions,auth
 
 sys=systems.system()
 
@@ -41,79 +44,95 @@ class auth():
             session.headers = headers
             session.mount('https://', TLSAdapter())
             session.mount('http://', TLSAdapter())
-            data = {
-                "acr_values": "urn:riot:bronze",
-                "claims": "",
-                "client_id": "riot-client",
-                "nonce": "oYnVwCSrlS5IHKh7iI16oQ",
-                "redirect_uri": "http://localhost/redirect",
-                "response_type": "token id_token",
-                "scope": "openid link ban lol_region",
-            }
-            headers = {
-                'Content-Type': 'application/json',
-                'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)'
-            }
+            #data = {
+            #    "acr_values": "urn:riot:bronze",
+            #    "claims": "",
+            #    "client_id": "riot-client",
+            #    "nonce": "oYnVwCSrlS5IHKh7iI16oQ",
+            #    "redirect_uri": "http://localhost/redirect",
+            #    "response_type": "token id_token",
+            #    "scope": "openid link ban lol_region",
+            #}
+            #headers = {
+            #    'Content-Type': 'application/json',
+            #    'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)'
+            #}
+            #try:
+            #    r = session.post(f'https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=proxy,timeout=20)
+            #    data = {
+            #        'type': 'auth',
+            #        'username': username,
+            #        'password': password
+            #    }
+            #    r2 = session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=proxy,timeout=20)
+            #    input(r2.text)
+            ##except requests.exceptions.ConnectTimeout:
+            ##    return 6,6,6,True,None
+            ##except requests.exceptions.ProxyError:
+            ##    return 6,6,6,True,None
+            ##except urllib3.exceptions.MaxRetryError:
+            ##    return 6,6,6,True,None
+            ##except http.client.RemoteDisconnected:
+            ##    return 6,6,6,True,None
+            ##except urllib3.exceptions.ConnectTimeoutError:
+            ##    return 6,6,6,True,None
+            ##except urllib3.exceptions.TimeoutError:
+            ##    return 6,6,6,True,None
+            #except Exception as e:
+            #    input(e)
+            #    return 6,6,6,True,None
+            ##print(r2.text)
+            #try:
+            #    data = r2.json()
+            #except:
+            #    return 6,6,6,6,None
+            #if "access_token" in r2.text:
+            #    pattern = compile(
+            #        'access_token=((?:[a-zA-Z]|\d|\.|-|_)*).*id_token=((?:[a-zA-Z]|\d|\.|-|_)*).*expires_in=(\d*)')
+            #    data = pattern.findall(data['response']['parameters']['uri'])[0]
+            #    token = data[0]
+            #    token_id=data[1]
+#
+            #elif 'invalid_session_id' in r2.text:
+            #    return 6,6,6,6,None
+            #elif "auth_failure" in r2.text:
+            #    return 3,3,3,3,None
+            #elif 'rate_limited' in r2.text:
+            #    return 1,1,1,1,None
+            #elif 'multifactor' in r2.text:
+            #    return 3,3,3,3,None
+            #elif 'cloudflare' in r2.text:
+            #    return 5,5,5,5,None
+            asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
             try:
-                r = session.post(f'https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=proxy,timeout=20)
-                data = {
-                    'type': 'auth',
-                    'username': username,
-                    'password': password
-                }
-                r2 = session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=proxy,timeout=20)
-                #input(r2.text)
-            #except requests.exceptions.ConnectTimeout:
-            #    return 6,6,6,True,None
-            #except requests.exceptions.ProxyError:
-            #    return 6,6,6,True,None
-            #except urllib3.exceptions.MaxRetryError:
-            #    return 6,6,6,True,None
-            #except http.client.RemoteDisconnected:
-            #    return 6,6,6,True,None
-            #except urllib3.exceptions.ConnectTimeoutError:
-            #    return 6,6,6,True,None
-            #except urllib3.exceptions.TimeoutError:
-            #    return 6,6,6,True,None
-            except Exception as e:
-                return 6,6,6,True,None
-            #print(r2.text)
-            try:
-                data = r2.json()
-            except:
-                return 6,6,6,6,None
-            if "access_token" in r2.text:
-                pattern = compile(
-                    'access_token=((?:[a-zA-Z]|\d|\.|-|_)*).*id_token=((?:[a-zA-Z]|\d|\.|-|_)*).*expires_in=(\d*)')
-                data = pattern.findall(data['response']['parameters']['uri'])[0]
-                token = data[0]
-                token_id=data[1]
+                auth = riot_auth.RiotAuth(proxy)
+                asyncio.run(auth.authorize(username,password))
+            except riot_auth.RiotRatelimitError: return 1,1,1,1,None
+            except riot_auth.RiotAuthenticationError: return 3,3,3,3,None
+            except riot_auth.RiotMultifactorError: return 3,3,3,3,None
+            except riot_auth.RiotAuthError: return 3,3,3,3,None
+            token=auth.access_token
+            #respauth=asyncio.run(auth.reauthorize())
+            #input(respauth)
 
-            elif 'invalid_session_id' in r2.text:
-                return 6,6,6,6,None
-            elif "auth_failure" in r2.text:
-                return 3,3,3,3,None
-            elif 'rate_limited' in r2.text:
-                return 1,1,1,1,None
-            elif 'multifactor' in r2.text:
-                return 3,3,3,3,None
-            elif 'cloudflare' in r2.text:
-                return 5,5,5,5,None
-            headers = {
-                'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
-                'Authorization': f'Bearer {token}'
-            }
-            try:
-                r = session.post('https://entitlements.auth.riotgames.com/api/token/v1', headers=headers, json={},proxies=proxy)
-                entitlement = r.json()['entitlements_token']
-                r = session.post('https://auth.riotgames.com/userinfo', headers=headers, json={},proxies=proxy)
-            except:
-                return 6,6,6,True,None
+            #headers = {
+            #    'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
+            #    'Authorization': f'Bearer {token}'
+            #}
+            #try:
+            #    r = session.post('https://entitlements.auth.riotgames.com/api/token/v1', headers=headers, json={},proxies=proxy)
+            #    input(r.text)
+            #    entitlement = r.json()['entitlements_token']
+            #    r = session.post('https://auth.riotgames.com/userinfo', headers=headers, json={},proxies=proxy)
+            #except:
+            #    return 6,6,6,True,None
             #print(r.text)
             #input()
-            data = r.json()
+            entitlement=auth.entitlements_token
             #print(data)
             #input()
+            data=auth.data2
+            #input(data)
             puuid = data['sub']
             try:
                 data2=data['ban']
