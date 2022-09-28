@@ -8,6 +8,8 @@ from os.path import exists
 import threading
 from InquirerPy.separator import Separator
 from datetime import datetime
+import asyncio
+import sys as syst
 
 from colorama import Fore, Style
 
@@ -193,6 +195,11 @@ class simplechecker():
                         break
             try:
                 token,entt,uuid,mailverif,banuntil=authenticate.auth(account,proxy=proxy)
+                #token=authenticate.access_token
+                #entt=authenticate.entitlements_token
+                #mailverif=authenticate.mailverif
+                #uuid=authenticate.user_id
+                #banuntil=authenticate.banuntil
                 if banuntil!=None:
                     banuntil=stff.checkban(banuntil)
                 if token == 2:
@@ -241,9 +248,9 @@ class simplechecker():
                         self.unverifiedmail+=1
                     while True:
                         reg,lvl=sys.get_region(token)
-                        reg2=sys.get_region2(token)
-                        reg=reg2 if reg2 != False else reg
-                        if reg!=False and reg!='' and reg != 'False':
+                        reg2,country=sys.get_region2(token)
+                        reg=reg2 if reg == 'N/A' else reg
+                        if reg!='N/A' and reg!='':
                             if banuntil==None:
                                 self.regions[str(reg).lower()]+=1
                             rank=None
@@ -297,7 +304,7 @@ class simplechecker():
                             file.write(f'''|[{account}]
 ------------------------------------  
 |ban until------> {banuntil}     
-|region---------> {reg}
+|region---------> {reg} ({country})
 |rank-----------> {rank}
 |level----------> {lvl}
 |lastmatch------> {lastplayed}
@@ -321,7 +328,7 @@ class simplechecker():
                         with open (f'{self.outpath}/valid.txt', 'a', encoding='UTF-8') as file:
                             file.write(f'''|[{account}]
 ------------------------------------       
-|region---------> {reg}
+|region---------> {reg} ({country})
 |rank-----------> {rank}
 |level----------> {lvl}
 |lastmatch------> {lastplayed}
@@ -347,7 +354,7 @@ class simplechecker():
                         with open(f'{self.outpath}/regions/{reg}/{rank}.txt','a',encoding='UTF-8') as file:
                             file.write(f'''|[{account}]
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓{bantext}        
-|region---------> {reg}
+|region---------> {reg} ({country})
 |rank-----------> {rank}
 |level----------> {lvl}
 |lastmatch------> {lastplayed}
@@ -384,7 +391,7 @@ class simplechecker():
                             embed.set_author(name='valkeker')
                             embed.set_timestamp()
                             embed.add_embed_field(name='LogPass', value=account)
-                            embed.add_embed_field(name='Region', value=reg)
+                            embed.add_embed_field(name='Region', value=f'{reg} ({country})')
                             embed.add_embed_field(name='Rank', value=rank)
                             embed.add_embed_field(name='Level', value=lvl)
                             embed.add_embed_field(name='Lastmatch', value=lastplayed)

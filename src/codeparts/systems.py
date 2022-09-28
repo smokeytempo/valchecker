@@ -31,7 +31,7 @@ class system():
         session=requests.Session()
         headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko","Pragma": "no-cache","Accept": "*/*","Content-Type": "application/json","Authorization":f"Bearer {token}"}
         userinfo = session.post('https://auth.riotgames.com/userinfo',headers=headers,proxies=self.getproxy(self.proxylist))
-        #print(userinfo.text)
+        #input(userinfo.text)
         try:
             name=userinfo.text.split('game_name":"')[1].split('","')[0]
             tag=userinfo.text.split('tag_line":"')[1].split('","')[0]
@@ -39,7 +39,7 @@ class system():
             return False,'N/A'
         #print(f'{name}\{tag}')
         try:
-            regionn=vapi.get_account_details_v1(name,tag)
+            regionn=vapi.get_account_details_by_name_v1(name,tag)
             #input(regionn)
         #region=session.get(f"https://api.henrikdev.xyz/valorant/v1/account/{name}/{tag}",headers=user_agent,proxies=self.proxxy)
             reg=regionn.region
@@ -48,7 +48,7 @@ class system():
             #input()
             return reg,lvl
         except Exception as e:
-            return False,'N/A'
+            return 'N/A','N/A'
 
     def get_region2(self,token):
         session=requests.Session()
@@ -59,18 +59,23 @@ class system():
         "Authorization":f"Bearer {token}"}
         userinfo = session.post(Constants.USERINFO,headers=headers,proxies=self.getproxy(self.proxylist)).json()
         try:
-            region = userinfo['region']['id']
-            #input(region)
-            fixedregion = Constants.LOL2REG[region]
-        except:
-            fixedregion=False
+            #input(userinfo  )
+            #region = userinfo['region']['id']
+            country=userinfo['country'].upper()
+            #fixedregion = Constants.LOL2REG[region]
+            cou3=Constants.A2TOA3[country]
+            fixedregion=Constants.COU2REG[cou3]
+            #input(fixedregion)
+        except Exception as e:
+            #input(e)
+            fixedregion='N/A'
 
         #headers = {'Content-Type': 'application/json', 'Authorization': f'Bearer {token}'}
         #body = {"id_token": 1}
         #r=session.put('https://riot-geo.pas.si.riotgames.com/pas/v1/product/valorant',headers=headers,json=body).text
         #input(r)
 
-        return fixedregion
+        return fixedregion,country
 
     #def get_level(self,token):
 
