@@ -10,7 +10,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3 import PoolManager
 
-from codeparts import exceptions, riot_auth, systems
+from codeparts import systems
 
 syst=systems.system()
 
