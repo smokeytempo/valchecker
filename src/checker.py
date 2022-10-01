@@ -371,6 +371,7 @@ class simplechecker():
 
 ''')                    
                     if skinscount>0 and reg !='N/A':
+                        os.mkdir(f'{self.outpath}/skins/')
                         if skinscount>70:
                             path=f'{self.outpath}/skins/70+/'
                         elif skinscount>40:
