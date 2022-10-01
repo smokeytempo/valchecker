@@ -268,6 +268,10 @@ class simplechecker():
                                 except:
                                     self.ranks['unknown']+=1
                             skins=check.skins_en(entt,token,uuid,reg)
+                            #get inv price
+                            invprice=0
+                            for skin in skins:
+                                invprice+=check.skinprice(skin)
                             vp,rp=check.balance(entt,token,uuid,reg)
                             skinscount=len(skins.split('\n'))
                             skinscount-=1
@@ -311,7 +315,7 @@ class simplechecker():
 |unverifiedmail-> {mailverif}
 |vp-------------> {vp}
 |rp-------------> {rp}
-|[ {skinscount} skins ]
+|[ {skinscount} skins ≈ {invprice} VP]
 {skins}------------------------------------
 ###account###
 
@@ -335,7 +339,7 @@ class simplechecker():
 |unverifiedmail-> {mailverif}
 |vp-------------> {vp}
 |rp-------------> {rp}
-|[ {skinscount} skins ]
+|[ {skinscount} skins ≈ {invprice} VP]
 {skins}------------------------------------
 ###account###
 
@@ -361,7 +365,7 @@ class simplechecker():
 |unverifiedmail-> {mailverif}
 |vp-------------> {vp}
 |rp-------------> {rp}
-|[ {skinscount} skins ]
+|[ {skinscount} skins ≈ {invprice} VP]
 {skins}┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 ###account###
 
@@ -397,7 +401,7 @@ class simplechecker():
                             embed.add_embed_field(name='Lastmatch', value=lastplayed)
                             embed.add_embed_field(name='Unverifiedmail', value=mailverif)
                             embed.add_embed_field(name=f'VP / RP', value=f'{vp} / {rp}')
-                            embed.add_embed_field(name=f'Skins ({skinscount})',value=skins if skins.replace(' ','').replace('\n','')!='' else 'drugged capybaras')
+                            embed.add_embed_field(name=f'Skins ({skinscount}) ≈ {invprice} VP',value=skins if skins.replace(' ','').replace('\n','')!='' else 'drugged capybaras')
                             dcwebhook.add_embed(embed)
                             response=dcwebhook.execute()
                             #input(response)

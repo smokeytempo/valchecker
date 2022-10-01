@@ -29,14 +29,18 @@ class system():
 
     def get_region(self,token):
         session=requests.Session()
-        headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko","Pragma": "no-cache","Accept": "*/*","Content-Type": "application/json","Authorization":f"Bearer {token}"}
+        headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko",
+        "Pragma": "no-cache",
+        "Accept": "*/*",
+        "Content-Type": "application/json",
+        "Authorization":f"Bearer {token}"}
         userinfo = session.post('https://auth.riotgames.com/userinfo',headers=headers,proxies=self.getproxy(self.proxylist))
         #input(userinfo.text)
         try:
             name=userinfo.text.split('game_name":"')[1].split('","')[0]
             tag=userinfo.text.split('tag_line":"')[1].split('","')[0]
         except Exception as e:
-            return False,'N/A'
+            return 'N/A','N/A'
         #print(f'{name}\{tag}')
         try:
             regionn=vapi.get_account_details_by_name_v1(name,tag)
@@ -52,20 +56,21 @@ class system():
 
     def get_region2(self,token):
         session=requests.Session()
-        headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko",
+        headers={"User-Agent": "RiotClient/58.0.0.4640299.4552318 %s (Windows;10;;Professional, x64)",
         "Pragma": "no-cache",
         "Accept": "*/*",
         "Content-Type": "application/json",
         "Authorization":f"Bearer {token}"}
         userinfo = session.post(Constants.USERINFO,headers=headers,proxies=self.getproxy(self.proxylist)).json()
         try:
-            #input(userinfo  )
-            #region = userinfo['region']['id']
-            country=userinfo['country'].upper()
-            #fixedregion = Constants.LOL2REG[region]
-            cou3=Constants.A2TOA3[country]
-            fixedregion=Constants.COU2REG[cou3]
-            #input(fixedregion)
+            try:
+                region = userinfo['region']['id']
+                fixedregion = Constants.LOL2REG[region]
+                country=userinfo['country'].upper()
+            except:
+                country=userinfo['country'].upper()
+                cou3=Constants.A2TOA3[country]
+                fixedregion=Constants.COU2REG[cou3]
         except Exception as e:
             #input(e)
             fixedregion='N/A'
@@ -75,6 +80,7 @@ class system():
         #r=session.put('https://riot-geo.pas.si.riotgames.com/pas/v1/product/valorant',headers=headers,json=body).text
         #input(r)
 
+        input(fixedregion+country)
         return fixedregion,country
 
     #def get_level(self,token):

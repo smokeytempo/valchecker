@@ -29,7 +29,7 @@ class auth():
             headers = OrderedDict({
                 "Accept-Language": "en-US,en;q=0.9",
                 "Accept": "application/json, text/plain, */*",
-                'User-Agent': 'RiotClient/58.0.0.4640299.4552318 rso-auth (Windows;10;;Professional, x64)'
+                'User-Agent': 'RiotClient/58.0.0.4640299.4552318 %s (Windows;10;;Professional, x64)'
             })
             session=requests.Session()
             session.trust_env=False
@@ -40,11 +40,11 @@ class auth():
                 password=logpass.split(':')[1]
 
             data = {
-                "client_id": "play-valorant-web-prod",
+                "client_id": "riot-client",
                 "nonce": "1",
-                "redirect_uri": "https://playvalorant.com/opt_in",
+                "redirect_uri": "http://localhost/redirect",
                 "response_type": "token id_token",
-                'scope': 'account openid',
+                'scope': 'account openid link ban lol_region',
             }
             headers = {
                 'Content-Type': 'application/json',
@@ -87,12 +87,13 @@ class auth():
                 return 5,5,5,5,None
             headers = {
                 'User-Agent': 'RiotClient/58.0.0.4640299.4552318 rso-auth (Windows;10;;Professional, x64)',
-                'Authorization': f'Bearer {token}'
+                'Authorization': f'Bearer {token}',
             }
             try:
-                r = session.post('https://entitlements.auth.riotgames.com/api/token/v1', headers=headers, json={},proxies=proxy)
-                entitlement = r.json()['entitlements_token']
-                r = session.post('https://auth.riotgames.com/userinfo', headers=headers, json={},proxies=proxy)
+                with session.post('https://entitlements.auth.riotgames.com/api/token/v1', headers=headers, json={},proxies=proxy) as r:
+                    entitlement = r.json()['entitlements_token']
+                    #input(entitlement)
+                r = session.post('https://auth.riotgames.com/userinfo', headers=headers,json={},proxies=proxy)
             except:
                 return 6,6,6,True,None
             #print(r.text)

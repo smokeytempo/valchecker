@@ -150,7 +150,7 @@ class validsort():
                 if skins !='':
                     try:
                         skinsam=int(skins)
-                        if account.split('|[ ')[1].split(' skins ]')[0] == 'n/a':
+                        if account.split('|[ ')[1].split(' skins')[0] == 'n/a':
                             gothis=False
                         else:
                             skinsacc=int(account.split('|[ ')[1].split(' skins ]')[0])

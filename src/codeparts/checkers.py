@@ -1,6 +1,8 @@
 import requests
 import pandas
 
+from codeparts.data import Constants
+
 sess=requests.Session()
 
 class checkers():
@@ -104,3 +106,10 @@ wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9"}
         except:
             time = "N/A"
         return time
+
+    def skinprice(self,skin:str):
+        try:
+            price=Constants.skinprice[skin]
+        except:
+            price=0
+        return price
