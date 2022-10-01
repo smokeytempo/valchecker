@@ -370,6 +370,36 @@ class simplechecker():
 ###account###
 
 ''')                    
+                    if skinscount>0 and reg !='N/A':
+                        if skinscount>70:
+                            path=f'{self.outpath}/skins/70+/'
+                        elif skinscount>40:
+                            path=f'{self.outpath}/skins/40-70/'
+                        elif skinscount>35:
+                            path=f'{self.outpath}/skins/35-40/'
+                        elif skinscount>20:
+                            path=f'{self.outpath}/skins/20-35/'
+                        elif skinscount>10:
+                            path=f'{self.outpath}/skins/10-20/'
+                        else:
+                            path=f'{self.outpath}/skins/1-10/'
+                        if not exists(path):
+                            os.mkdir(path)
+                        with open(f'{path}/{reg}.txt','a',encoding='UTF-8') as file:
+                            file.write(f'''|[{account}]
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓{bantext}
+|region---------> {reg} ({country})
+|rank-----------> {rank}
+|level----------> {lvl}
+|lastmatch------> {lastplayed}
+|unverifiedmail-> {mailverif}
+|vp-------------> {vp}
+|rp-------------> {rp}
+|[ {skinscount} skins ≈ {invprice} VP]
+{skins}┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+###account###
+
+''')   
                     if self.webhook != '':
                         send_wh=True
                         if reg=='N/A' and not self.send_ukreg:

@@ -80,7 +80,7 @@ class system():
         #r=session.put('https://riot-geo.pas.si.riotgames.com/pas/v1/product/valorant',headers=headers,json=body).text
         #input(r)
 
-        input(fixedregion+country)
+        #input(fixedregion+country)
         return fixedregion,country
 
     #def get_level(self,token):
