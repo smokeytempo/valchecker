@@ -29,7 +29,7 @@ class simplechecker():
         self.cooldown=int(settings['cooldown'])
         self.webhook=settings['webhook'].replace(' ','')
         self.print_sys=bool(settings['print_sys'])
-        self.esttime='99 years'
+        self.esttime='N/A'
         self.newfolder=settings['new_folder']
         if self.newfolder=='True':
             dtnw=str(datetime.now()).replace(' ','_').replace(':','.')
@@ -271,7 +271,7 @@ class simplechecker():
                             #get inv price
                             invprice=0
                             for skin in skins:
-                                invprice+=check.skinprice(skin)
+                                invprice+=check.skinprice(skin.replace('\n',''))
                             vp,rp=check.balance(entt,token,uuid,reg)
                             skinscount=len(skins.split('\n'))
                             skinscount-=1

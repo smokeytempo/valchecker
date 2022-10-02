@@ -13,7 +13,7 @@ from InquirerPy.separator import Separator
 import traceback
 import ctypes
 
-from codeparts import checkers
+from codeparts import checkers,PCSS
 from codeparts.data import Constants
 
 check=checkers.checkers()
@@ -247,45 +247,23 @@ class system():
         return round(time.time() * 1000)
 
     def checkproxy(self):
-        session=requests.Session()
         try:
             with open(f"{self.parentpath}\\proxy.txt", "r") as f:
                 proxylist = f.readlines()
         except FileNotFoundError:
             input('cant find your proxy file. press enter to return')
-        good=[]
-        count=len(proxylist)
-        checked=0
-        goodc,bad=0,0
-        for proxy in proxylist:
-            proxy=proxy.replace('\n','')
-            proxxy={
-                'http':f'{proxy}',
-                'https':f'{proxy}',
-            }
-            #print(f'using: {proxxy}')
-            try:
-                resp=session.get('https://auth.riotgames.com/api/v1/authorization/',proxies=proxxy,timeout=20)
-                try: country=resp.json()['country']
-                except: country='N/A'
-                if proxy in good: resp=f'{Fore.LIGHTRED_EX}[Double]{Fore.RESET} {proxy}'; bad+=1
-                else:
-                    resp=f'{Fore.GREEN}[Good]{Fore.RESET} {proxy} (country: {country})'
-                    good.append(proxy)
-                    goodc+=1
-            except Exception as e:
-                resp=f'{Fore.RED}[Bad]{Fore.RESET} {proxy} ({e})'
-                bad+=1
-            print(resp)
-            checked+=1
-            ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker by liljaba1337 | Checking Proxies ({checked}/{count}) | Good {goodc} | Bad {bad}')
+            return
+        proxychecker=PCSS.ProxyChecker()
+        good=proxychecker.main(proxylist)
         if inquirer.confirm(
             message="Do you want to delete the bad ones?", default=True
         ).execute():
             with open(f"{self.parentpath}\\proxy.txt", "w") as f:
                 f.write('\n'.join(good))
-        print(f'{Back.RED}THIS TOOL CHECKS WHETHER THE CHECKER CAN CONNECT TO YOUR PROXIES OR NOT.\nIT DOES NOT GUARANTEE THEY WILL WORK IN THE MAIN CHECKER{Back.RESET}')
+        #print(f'{Back.RED}THIS TOOL CHECKS WHETHER THE CHECKER CAN CONNECT TO YOUR PROXIES OR NOT.{Back.RESET}\n\
+#{Back.RED}IT DOES NOT GUARANTEE THEY WILL WORK IN THE MAIN CHECKER{Back.RESET}')
         input('press enter to return')
+        os.system('mode 120,30')
 
     def convert_to_preferred_format(self,sec):
         sec = sec % (24 * 3600)
