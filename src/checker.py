@@ -24,6 +24,7 @@ class simplechecker():
         path = os.getcwd()
         self.parentpath=os.path.abspath(os.path.join(path, os.pardir))
         self.proxylist=proxylist
+        self.inrlimit=0
         self.max_rlimits=settings['max_rlimits']
         self.rlimit_wait=settings['rlimit_wait']
         self.cooldown=int(settings['cooldown'])
@@ -208,6 +209,8 @@ class simplechecker():
                     self.err+=1
                 elif token==1:
                     if riotlimitinarow<self.max_rlimits:
+                        if riotlimitinarow==0:
+                            self.inrlimit+=1
                         #if self.print_sys==True:
                         #    print(sys.center(f'riot limit. waiting {self.rlimit_wait} seconds'))
                         time.sleep(self.rlimit_wait)
@@ -216,6 +219,7 @@ class simplechecker():
                     else:
                         #if self.print_sys==True:
                         #    print(sys.center(f'{self.max_rlimits} riot limits in a row. skipping'))
+                        self.inrlimit-=1
                         riotlimitinarow=0
                         self.rlimits+=1
                         self.checked+=1
@@ -270,8 +274,8 @@ class simplechecker():
                             skins=check.skins_en(entt,token,uuid,reg)
                             #get inv price
                             invprice=0
-                            for skin in skins:
-                                invprice+=check.skinprice(skin.replace('\n',''))
+                            for skin in skins.split('\n'):
+                                invprice+=check.skinprice(skin)
                             vp,rp=check.balance(entt,token,uuid,reg)
                             skinscount=len(skins.split('\n'))
                             skinscount-=1
@@ -444,6 +448,8 @@ class simplechecker():
                     f.write(f'({datetime.now()}) {str(traceback.format_exc())}\n_________________________________\n')
                 self.err+=1
             self.checked+=1
+            if riotlimitinarow >0:
+                self.inrlimit-=1
             riotlimitinarow=0
             if self.uselog==False:
                 self.printinfo()
@@ -521,3 +527,4 @@ class simplechecker():
 {Fore.LIGHTCYAN_EX} Estimated remaining time: {self.esttime}{reset}
 
         ''')
+#{Fore.LIGHTRED_EX} Threads with an rlimit: {self.inrlimit}{reset}

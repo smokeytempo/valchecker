@@ -153,10 +153,10 @@ class validsort():
                         if account.split('|[ ')[1].split(' skins')[0] == 'n/a':
                             gothis=False
                         else:
-                            skinsacc=int(account.split('|[ ')[1].split(' skins ]')[0])
+                            skinsacc=int(account.split('|[ ')[1].split(' skins')[0])
                             if skinsacc<skinsam:
                                 gothis=False
-                    except:
+                    except Exception as e:
                         pass
                 
                 if vp != '':

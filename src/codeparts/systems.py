@@ -43,7 +43,7 @@ class system():
             return 'N/A','N/A'
         #print(f'{name}\{tag}')
         try:
-            regionn=vapi.get_account_details_by_name_v1(name,tag)
+            regionn=vapi.get_account_details_v1(name,tag)
             #input(regionn)
         #region=session.get(f"https://api.henrikdev.xyz/valorant/v1/account/{name}/{tag}",headers=user_agent,proxies=self.proxxy)
             reg=regionn.region
