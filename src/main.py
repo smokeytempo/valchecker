@@ -21,7 +21,7 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='3.8'
+        self.version='3.8.2'
         self.riotlimitinarow=0
         try:
             response=requests.get('https://api.github.com/repos/lil-jaba/valchecker/releases').json()
@@ -117,6 +117,16 @@ class program():
                     lines = file.readlines()
                     #ret=list(set(lines))
                     ret=[]
+                    if len(lines)>100000:
+                        if inquirer.confirm(
+                            message=f"Your accounts count is more than 100k ({len(lines)}). Do you want to skip the sorting part? (it removes doubles and bad logpasses but can be long)",
+                            default=True,
+                            qmark='!',
+                            amark='!'
+                        ).execute():
+                            self.count=len(lines)
+                            return lines
+
                     for logpass in lines:
                         logpass=logpass.split(' ')[0].replace('\n','').replace(' ','')
                         # remove doubles
@@ -150,12 +160,20 @@ class program():
         ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker {self.version} by liljaba1337 | Loading Settings')
         print('loading settings')
         settings=sys.load_settings()
+
         ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker {self.version} by liljaba1337 | Loading Proxies')
         print('loading proxies')
         proxylist=sys.load_proxy()
+
         fn=settings['default_file']
+        ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker {self.version} by liljaba1337 | Loading Accounts')
         print('loading accounts')
         accounts=self.get_accounts(fn)
+
+        print('loading assets')
+        ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker {self.version} by liljaba1337 | Loading Assets')
+        sys.load_assets()
+
         if redirect==True:
             print('loading checker')
             ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker {self.version} by liljaba1337 | Loading Checker')

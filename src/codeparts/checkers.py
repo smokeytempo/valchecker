@@ -1,3 +1,5 @@
+import json
+import os
 import requests
 import pandas
 
@@ -6,6 +8,10 @@ from codeparts.data import Constants
 sess=requests.Session()
 
 class checkers():
+    def __init__(self) -> None:
+        path = os.getcwd()
+        self.parentpath=os.path.abspath(os.path.join(path, os.pardir))
+
     def skins_en(self,entitlement,token,puuid,region='EU') -> str:
         if region.lower()=='latam' or region.lower()=='br':
             region='na'
@@ -22,16 +28,19 @@ class checkers():
             r = sess.get(f"https://pd.{region}.a.pvp.net/store/v1/entitlements/{puuid}/e7c63390-eda7-46e0-bb7a-a6abdacd2433",headers=headers)
             #input(r.text)
             Skins = r.json()["Entitlements"]
-            response_API = requests.get('https://valorant-api.com/v1/weapons/skins/')
+            with open(f'{self.parentpath}\\src\\assets\\skins.json','r',encoding='utf-8') as f:
+                response=f.read()
             skinstr=''
             for skin in Skins:
-                skinid = skin['ItemID'].lower()
-                response=response_API.text
-                skin=response.split(skinid)[1].split(',')[1].replace('"displayName":"','').replace('\\"','').replace('"','').replace('u00A0','').replace("'",'').split(' Level')[0]
-                if skin in skinstr:
+                try:
+                    skinid = skin['ItemID'].lower()
+                    skin=response.split(skinid)[1].split('"displayName": "')[1].split('",')[0].replace('"displayName":"','').replace('\\"','').replace('"','').replace('u00A0','').replace("'",'').split(' Level')[0]
+                    #input(skin)
+                    if skin not in skinstr:
+                        skinstr += skin + "\n"
+                        
+                except:
                     pass
-                else:
-                    skinstr += skin + "\n"
 
             return skinstr
         except Exception as e:

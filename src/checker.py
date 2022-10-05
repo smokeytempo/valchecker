@@ -374,7 +374,7 @@ class simplechecker():
 ###account###
 
 ''')                    
-                    if skinscount>0 and reg !='N/A':
+                    if skinscount>0 and reg !='N/A' and banuntil==None:
                         if not exists(f'{self.outpath}/skins/'):
                             os.mkdir(f'{self.outpath}/skins/')
                         if skinscount>70:

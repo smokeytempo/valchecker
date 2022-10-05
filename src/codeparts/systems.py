@@ -278,4 +278,11 @@ class system():
         bar=f'{Fore.LIGHTGREEN_EX}━{Fore.RESET}'*int(percent)+f'{Fore.LIGHTRED_EX}━{Fore.RESET}'*int(100-percent)
         return f'{Fore.LIGHTCYAN_EX}[{bar}{Fore.LIGHTCYAN_EX}]{Fore.LIGHTCYAN_EX} {percent:.2f}%{Fore.RESET}'
 
+    def load_assets(self):
+        # skinlist
+        with requests.get('https://valorant-api.com/v1/weapons/skins/') as r:
+            data=json.loads(r.text)
+            with open(f'{self.parentpath}\\src\\assets\\skins.json','w',encoding='utf-8') as f:
+                json.dump(data, f, sort_keys=False, indent=4)
+
 syss=system()
