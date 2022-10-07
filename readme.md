@@ -3,7 +3,6 @@
   ValKeker
 </h1>
 
-![Discord Banner 2](https://discordapp.com/api/guilds/1002516272526921748/widget.png?style=banner2)(https://discord.gg/r3Y5KhM7kP)
 ![image](https://user-images.githubusercontent.com/82034934/191281792-6b45244e-9635-45a5-b6e8-529ff6d93268.png)
 
 <h2 align="center">
@@ -37,3 +36,4 @@ After a few seconds (first start can be longer) you will see the menu of the che
 Pick the first item in the menu (Start Checker) to run the checker
 ```
 > Still don't understand how to use it? [Click](https://discord.gg/r3Y5KhM7kP)
+![Discord Banner 2](https://discordapp.com/api/guilds/1002516272526921748/widget.png?style=banner2)
