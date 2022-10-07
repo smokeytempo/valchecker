@@ -3,6 +3,7 @@
   ValKeker
 </h1>
 
+<iframe src="https://discord.com/widget?id=1002516272526921748&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
 ![image](https://user-images.githubusercontent.com/82034934/191281792-6b45244e-9635-45a5-b6e8-529ff6d93268.png)
 
 <h2 align="center">
