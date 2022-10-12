@@ -212,13 +212,13 @@ class simplechecker():
                         if riotlimitinarow==0:
                             self.inrlimit+=1
                         #if self.print_sys==True:
-                        #    print(sys.center(f'riot limit. waiting {self.rlimit_wait} seconds'))
+                            print(sys.center(f'riot limit. waiting {self.rlimit_wait} seconds'))
                         time.sleep(self.rlimit_wait)
                         riotlimitinarow+=1
                         continue
                     else:
                         #if self.print_sys==True:
-                        #    print(sys.center(f'{self.max_rlimits} riot limits in a row. skipping'))
+                        print(sys.center(f'{self.max_rlimits} riot limits in a row. skipping'))
                         self.inrlimit-=1
                         riotlimitinarow=0
                         self.rlimits+=1
