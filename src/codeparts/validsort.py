@@ -98,7 +98,7 @@ class validsort():
         skin=str(input('enter what skin should be in this accounts (for example, prime vandal) >>>'))
 
         mail = inquirer.select(
-            message="unverified mail:",
+            message="full access (mail change):",
             choices=mails,
             default=mails[0],
             pointer='>'
@@ -116,7 +116,7 @@ class validsort():
 
         with open(folder,'r',encoding='UTF-8',errors='ignore') as f:
             text=f.read()
-        accounts=text.split('###account###')
+        accounts=text.split('╔═════════════════════════════════════════════════════════════╗')
         count=len(accounts)
         #print(count)
         sorted=0
@@ -128,63 +128,77 @@ class validsort():
 
             # sort regions
             try:
-                if f'region---------> {region}' not in account:
+                if f'region: {region}' not in account:
                     gothis=False
+                    #if gothis==False:
+                    #    print('reg no')
 
-                if f'rank-----------> {rank}' not in account:
+                if f'rank: {rank}' not in account:
                     gothis=False
+                    #if gothis==False:
+                    #    print('rnk no')
 
                 if level!='':
                     try:
                         level=int(level)
-                        levelacc=account.split('level----------> ')[1].split('|')[0].replace('\n','')
+                        levelacc=account.split('level: ')[1].split('|')[0].replace('\n','')
                         if levelacc == 'n/a':
                             gothis=False
                         else:
                             levelacc=int(levelacc)
                             if levelacc<level:
                                 gothis=False
+                        #if gothis==False:
+                        #    print('lvl no')
                     except:
                         pass
 
                 if skins !='':
                     try:
                         skinsam=int(skins)
-                        if account.split('|[ ')[1].split(' skins')[0] == 'n/a':
+                        if account.split('skins: ')[1].split(' ')[0] == 'n/a':
                             gothis=False
                         else:
-                            skinsacc=int(account.split('|[ ')[1].split(' skins')[0])
+                            skinsacc=int(account.split('skins: ')[1].split(' ')[0])
                             if skinsacc<skinsam:
                                 gothis=False
+                        #if gothis==False:
+                        #    print('sk no')
                     except Exception as e:
                         pass
                 
                 if vp != '':
                     try:
                         vpam=int(vp)
-                        if account.split('|vp-------------> ')[1].split('|')[0].replace('\n','') == 'n/a':
+                        if account.split('valorant points: ')[1].split('|')[0].replace('\n','') == 'n/a':
                             gothis=False
                         else:
-                            vpacc=int(account.split('|vp-------------> ')[1].split('|')[0].replace('\n',''))
+                            vpacc=int(account.split('valorant points: ')[1].split('|')[0].replace('\n',''))
                             if vpacc<vpam:
                                 gothis=False
+                        #if gothis==False:
+                        #    print('vp no')
                     except:
                         pass
 
                 if rp != '':
                     try:
                         rpam=int(rp)
-                        if account.split('|rp-------------> ')[1].split('|')[0].replace('\n','') == 'n/a':
+                        if account.split('radianite: ')[1].split('|')[0].replace('\n','') == 'n/a':
                             gothis=False
                         else:
-                            rpacc=int(account.split('|rp-------------> ')[1].split('|')[0].replace('\n',''))
+                            rpacc=int(account.split('radianite: ')[1].split('|')[0].replace('\n',''))
                             if rpacc<rpam:
                                 gothis=False
+                        #if gothis==False:
+                        #    print('rp no')
                     except Exception as e:
                         pass
 
-                if f'unverifiedmail-> {str(mail)}' not in account:
+                if str(mail) != '' and f'full access: {str(mail)}' not in account:
                     gothis=False
+                    #if gothis==False:
+                    #    print('fa no')
 
                 if skin not in account:
                     gothis=False
@@ -192,7 +206,7 @@ class validsort():
                 sorted+=1
                 if gothis==True:
                     with open(f'{self.parentpath}/output/sorted.txt','a',encoding='UTF-8') as f:
-                        f.write(account+'###account###')
+                        f.write('╔═════════════════════════════════════════════════════════════╗'+account)#####################
                     matches+=1
                     print(f'sorted {sorted}/{count} MATCH')
                 else:

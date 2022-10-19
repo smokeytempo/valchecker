@@ -21,7 +21,7 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='3.8.3'
+        self.version='3.9'
         self.riotlimitinarow=0
         try:
             response=requests.get('https://api.github.com/repos/lil-jaba/valchecker/releases').json()
@@ -58,7 +58,8 @@ class program():
 ░░░╚═╝░░░╚═╝░░╚═╝╚══════╝░╚════╝░╚═╝░░╚═╝╚══════╝░╚════╝░╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝'''
             print(sys.center(introtext))
             print(sys.center(f'v{self.version}'))
-            print(sys.center('capybaras ontop!' if random.randint(0,50)==0 else ' '))
+            print(sys.center(random.choice(['вы заебали меня',"capybaras ontop!", 'LIL zoofil','Skins (53) ≈ 23750 VP','Usq#1337 the best btw','N','LIL DRIPDOG',
+'open wifi_everywhere.exe pls','FIX ZE KEKER RN','how to use the checker help me pls bro',"http://liljaba1337.ml/","COUSCOUS CHZH"])))
             if self.lastver!=self.version:
                 print(sys.center(f'\nnew update ({self.lastver}) is available!'))
                 print(sys.center(f'What\'s new: {self.changelog}'))

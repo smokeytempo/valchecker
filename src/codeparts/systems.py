@@ -260,8 +260,8 @@ class system():
         ).execute():
             with open(f"{self.parentpath}\\proxy.txt", "w") as f:
                 f.write('\n'.join(good))
-        #print(f'{Back.RED}THIS TOOL CHECKS WHETHER THE CHECKER CAN CONNECT TO YOUR PROXIES OR NOT.{Back.RESET}\n\
-#{Back.RED}IT DOES NOT GUARANTEE THEY WILL WORK IN THE MAIN CHECKER{Back.RESET}')
+        print(f'{Back.RED}THIS TOOL CHECKS WHETHER THE CHECKER CAN CONNECT TO\nYOUR PROXIES OR NOT.{Back.RESET}\n\
+{Back.RED}IT DOES NOT GUARANTEE THEY WILL WORK\nIN THE MAIN CHECKER BECAUSE RIOT BANS PUB PROXIES{Back.RESET}')
         input('press enter to return')
         os.system('mode 120,30')
 

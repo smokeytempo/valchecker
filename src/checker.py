@@ -306,24 +306,26 @@ class simplechecker():
                             skins='N/A\n'
                             reg='N/A'
                         break
+                    skinsformatted='\n║'.join(skins.split('\n'))
+                    skinsformatted=[i+(space*(62-len(i)))+'║' for i in skinsformatted.split('\n')]
+                    skinsformatted[0] = skinsformatted[0][:-2]+'║'
+                    skinsformatted='║'+'\n'.join(skinsformatted)
                     if banuntil!=None:
                         self.tempbanned+=1
                         with open (f'{self.outpath}/tempbanned.txt', 'a', encoding='UTF-8') as file:
-                            file.write(f'''|[{account}]
-------------------------------------  
-|ban until------> {banuntil}     
-|region---------> {reg} ({country})
-|rank-----------> {rank}
-|level----------> {lvl}
-|lastmatch------> {lastplayed}
-|unverifiedmail-> {mailverif}
-|vp-------------> {vp}
-|rp-------------> {rp}
-|[ {skinscount} skins ≈ {invprice} VP]
-{skins}------------------------------------
-###account###
-
-''')
+                            file.write(f'''
+╔═════════════════════════════════════════════════════════════╗
+║            | {account} |{space*(49-len(f'| {account} |'))}║
+║ Ban Until: {banuntil}{space*(61-len(f'Ban Until: {banuntil}'))}║
+║                                                             ║
+║ Full Access: {mailverif} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {mailverif} | Level: {lvl} | Region: {reg} , {country}'))}║
+║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║
+║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
+║             Inventory Price = {invprice} VP{space*(61-len(f'             Inventory Price = {invprice} VP'))}║
+╠═════════════════════════════════════════════════════════════╣
+{skinsformatted}
+╚═════════════════════════════════════════════════════════════╝
+''')  
                     else:
                         #with open(f'{self.parentpath}/output/valid.json','r+',encoding='utf-8') as f:
                         #    data=json.load(f)
@@ -334,19 +336,18 @@ class simplechecker():
                         #    json.dump(data, f, indent=4)
                         #    f.truncate()
                         with open (f'{self.outpath}/valid.txt', 'a', encoding='UTF-8') as file:
-                            file.write(f'''|[{account}]
-------------------------------------       
-|region---------> {reg} ({country})
-|rank-----------> {rank}
-|level----------> {lvl}
-|lastmatch------> {lastplayed}
-|unverifiedmail-> {mailverif}
-|vp-------------> {vp}
-|rp-------------> {rp}
-|[ {skinscount} skins ≈ {invprice} VP]
-{skins}------------------------------------
-###account###
-
+                            file.write(f'''
+╔═════════════════════════════════════════════════════════════╗
+║            | {account} |{space*(49-len(f'| {account} |'))}║
+║                                                             ║
+║                                                             ║
+║ Full Access: {mailverif} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {mailverif} | Level: {lvl} | Region: {reg} , {country}'))}║
+║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║
+║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
+║             Inventory Price = {invprice} VP{space*(61-len(f'             Inventory Price = {invprice} VP'))}║
+╠═════════════════════════════════════════════════════════════╣
+{skinsformatted}
+╚═════════════════════════════════════════════════════════════╝
 ''')
                     # sort
                     if banuntil ==None:
@@ -360,20 +361,19 @@ class simplechecker():
                         if not exists(f'{self.outpath}/regions/{reg}/'):
                             os.mkdir(f'{self.outpath}/regions/{reg}/')
                         with open(f'{self.outpath}/regions/{reg}/{rank}.txt','a',encoding='UTF-8') as file:
-                            file.write(f'''|[{account}]
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓{bantext}        
-|region---------> {reg} ({country})
-|rank-----------> {rank}
-|level----------> {lvl}
-|lastmatch------> {lastplayed}
-|unverifiedmail-> {mailverif}
-|vp-------------> {vp}
-|rp-------------> {rp}
-|[ {skinscount} skins ≈ {invprice} VP]
-{skins}┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-###account###
-
-''')                    
+                            file.write(f'''
+╔═════════════════════════════════════════════════════════════╗
+║            | {account} |{space*(49-len(f'| {account} |'))}║
+║ {bantext}{space*(61-len(bantext))}║
+║                                                             ║
+║ Full Access: {mailverif} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {mailverif} | Level: {lvl} | Region: {reg} , {country}'))}║
+║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║
+║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
+║             Inventory Price = {invprice} VP{space*(61-len(f'             Inventory Price = {invprice} VP'))}║
+╠═════════════════════════════════════════════════════════════╣
+{skinsformatted}
+╚═════════════════════════════════════════════════════════════╝
+''')                   
                     if skinscount>0 and reg !='N/A' and banuntil==None:
                         if not exists(f'{self.outpath}/skins/'):
                             os.mkdir(f'{self.outpath}/skins/')
@@ -392,20 +392,19 @@ class simplechecker():
                         if not exists(path):
                             os.mkdir(path)
                         with open(f'{path}/{reg}.txt','a',encoding='UTF-8') as file:
-                            file.write(f'''|[{account}]
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓{bantext}
-|region---------> {reg} ({country})
-|rank-----------> {rank}
-|level----------> {lvl}
-|lastmatch------> {lastplayed}
-|unverifiedmail-> {mailverif}
-|vp-------------> {vp}
-|rp-------------> {rp}
-|[ {skinscount} skins ≈ {invprice} VP]
-{skins}┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-###account###
-
-''')   
+                            file.write(f'''
+╔═════════════════════════════════════════════════════════════╗
+║            | {account} |{space*(49-len(f'| {account} |'))}║
+║                                                             ║
+║                                                             ║
+║ Full Access: {mailverif} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {mailverif} | Level: {lvl} | Region: {reg} , {country}'))}║
+║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║
+║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
+║             Inventory Price = {invprice} VP{space*(61-len(f'             Inventory Price = {invprice} VP'))}║
+╠═════════════════════════════════════════════════════════════╣
+{skinsformatted}
+╚═════════════════════════════════════════════════════════════╝
+''')  
                     if self.webhook != '':
                         send_wh=True
                         if reg=='N/A' and not self.send_ukreg:
@@ -444,7 +443,7 @@ class simplechecker():
 
             except Exception as e:
                 #input(e)
-                with open(f'{self.parentpath}/log.txt','a') as f:
+                with open(f'{self.parentpath}/log.txt','a',errors='replace') as f:
                     f.write(f'({datetime.now()}) {str(traceback.format_exc())}\n_________________________________\n')
                 self.err+=1
             self.checked+=1
