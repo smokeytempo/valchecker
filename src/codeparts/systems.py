@@ -227,7 +227,7 @@ class system():
         try:
             if proxlist == None:
                 return None
-            elif len(proxlist) <= 1:
+            elif len(proxlist) == 0:
                 return None
             if self.num>len(proxlist)-1:
                 self.num=0

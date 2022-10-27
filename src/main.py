@@ -11,7 +11,7 @@ from InquirerPy.separator import Separator
 import requests
 
 import checker
-from codeparts import checkers, systems, validsort
+from codeparts import checkers, fastcheck as fc, systems, validsort
 
 check=checkers.checkers()
 sys=systems.system()
@@ -21,7 +21,7 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='3.9'
+        self.version='3.10'
         self.riotlimitinarow=0
         try:
             response=requests.get('https://api.github.com/repos/lil-jaba/valchecker/releases').json()
@@ -69,6 +69,7 @@ class program():
                 'Edit Settings',
                 'Sort Valid',
                 'Test Proxy',
+                'FastCheck',
                 'Info/Help',
                 Separator(),
                 'Exit'
@@ -81,7 +82,7 @@ class program():
                 pointer='>',
             ).execute()
             if res==menu_choices[1]:
-                self.main(redirect=True)
+                self.main(fastcheck=False)
                 break
             elif res==menu_choices[2]:
                 sys.edit_settings()
@@ -90,7 +91,10 @@ class program():
                 input('done. press ENTER to exit')
             elif res==menu_choices[4]:
                 sys.checkproxy()
-            elif res==menu_choices[5]:
+            elif res == menu_choices[5]:
+                self.main(fastcheck=True)
+                break
+            elif res==menu_choices[6]:
                 os.system('cls')
                 print(f'''
     valchecker v{self.version} by liljaba1337
@@ -102,12 +106,13 @@ class program():
   [2] - i think u understand
   [3] - sorts all accounts from valid.txt which match your requirements to output\\sorted\\custom.txt
   [4] - test your proxies
+  [5] - fast checker (checks only valid/invalid)
 
   [~] - press ENTER to return
                 ''')
                 input()
                 continue
-            elif res==menu_choices[7]:
+            elif res==menu_choices[8]:
                 os._exit(0)
 
 
@@ -157,7 +162,7 @@ class program():
                 continue
 
 
-    def main(self,redirect=False):
+    def main(self,fastcheck=False):
         ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker {self.version} by liljaba1337 | Loading Settings')
         print('loading settings')
         settings=sys.load_settings()
@@ -175,12 +180,19 @@ class program():
         ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker {self.version} by liljaba1337 | Loading Assets')
         sys.load_assets()
 
-        if redirect==True:
+        if not fastcheck:
             print('loading checker')
             ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker {self.version} by liljaba1337 | Loading Checker')
             scheck=checker.simplechecker(settings,proxylist)
             scheck.main(accounts,self.count)
             return
+        if fastcheck:
+            print('loading FastCheck')
+            ctypes.windll.kernel32.SetConsoleTitleW(f'ValChecker {self.version} by liljaba1337 | Loading FastCheck')
+            fch=fc.fastcheck(accounts,self.count,settings,proxylist)
+            fch.main()
+            return
+
     
 pr=program()
 if __name__=='__main__':
