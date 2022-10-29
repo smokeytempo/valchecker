@@ -37,4 +37,5 @@ Pick the first item in the menu (Start Checker) to run the checker
 ```
 > Still don't understand how to use it? [Click](https://discord.gg/r3Y5KhM7kP)
 > 
-![Discord Banner 2](https://discordapp.com/api/guilds/1002516272526921748/widget.png?style=banner2)
+
+<a href="https://discord.gg/r3Y5KhM7kP"><img src="https://discordapp.com/api/guilds/1002516272526921748/widget.png?style=banner2"></a>
