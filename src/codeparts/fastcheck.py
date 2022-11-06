@@ -65,7 +65,7 @@ class fastcheck:
 
         self.startedtesting=syst.getmillis()
         num=0
-        
+        self.printinfo()
         if self.threadam==1:
             for account in self.accounts:
                 us=account.split(':')[0]

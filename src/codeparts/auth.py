@@ -24,12 +24,12 @@ class auth():
         self.parentpath=os.path.abspath(os.path.join(path, os.pardir))
 
 
-    def auth(self,logpass=None,username=None,password=None,proxy=None):
+    def auth(self,logpass:str=None,username=None,password=None,proxy=None):
         try:
             headers = OrderedDict({
                 "Accept-Language": "en-US,en;q=0.9",
                 "Accept": "application/json, text/plain, */*",
-                'User-Agent': 'RiotClient/58.0.0.4640299.4552318 %s (Windows;10;;Professional, x64)'
+                'User-Agent': 'RiotClient/60.0.6.4770705.4770705 rso-auth (Windows;10;;Professional, x64)'
             })
             session=requests.Session()
             session.trust_env=False
@@ -48,7 +48,7 @@ class auth():
             }
             headers = {
                 'Content-Type': 'application/json',
-                'User-Agent': 'RiotClient/58.0.0.4640299.4552318 rso-auth (Windows;10;;Professional, x64)',
+                'User-Agent': 'RiotClient/60.0.6.4770705.4770705 rso-auth (Windows;10;;Professional, x64)',
             }
             try:
                 r = session.post(f'https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=proxy,timeout=20)
@@ -59,7 +59,7 @@ class auth():
                     'password': password
                 }
                 r2 = session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=proxy,timeout=20)
-                #input(r2.text)
+                input(r2.text)
             except Exception as e:
                 #input(e)
                 return 6,6,6,True,None
@@ -86,7 +86,7 @@ class auth():
             elif 'cloudflare' in r2.text:
                 return 5,5,5,5,None
             headers = {
-                'User-Agent': 'RiotClient/58.0.0.4640299.4552318 rso-auth (Windows;10;;Professional, x64)',
+                'User-Agent': 'RiotClient/60.0.6.4770705.4770705 rso-auth (Windows;10;;Professional, x64)',
                 'Authorization': f'Bearer {token}',
             }
             try:
