@@ -21,7 +21,7 @@ class program():
     def __init__(self) -> None:
         self.count=0
         self.checked=0
-        self.version='3.10.1'
+        self.version='-3.10.1'
         self.riotlimitinarow=0
         try:
             response=requests.get('https://api.github.com/repos/lil-jaba/valchecker/releases').json()

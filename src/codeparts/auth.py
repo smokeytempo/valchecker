@@ -34,6 +34,7 @@ class auth():
             session=requests.Session()
             session.trust_env=False
             session.headers=headers
+            session.mount('http://', TLSAdapter())
             session.mount('https://', TLSAdapter())
             if username ==None:
                 username=logpass.split(':')[0]
@@ -59,7 +60,7 @@ class auth():
                     'password': password
                 }
                 r2 = session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers,proxies=proxy,timeout=20)
-                input(r2.text)
+                #input(r2.text) #!!!!!!!!!!!!!!!!!!!!!!!!! DELETE THIS SHIT
             except Exception as e:
                 #input(e)
                 return 6,6,6,True,None
