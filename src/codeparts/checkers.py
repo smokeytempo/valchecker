@@ -13,10 +13,10 @@ class checkers():
         self.parentpath=os.path.abspath(os.path.join(path, os.pardir))
 
     def skins_en(self,entitlement,token,puuid,region='EU') -> str:
+        # riot api counts latam and br as NA so u have to do this shit
         if region.lower()=='latam' or region.lower()=='br':
             region='na'
         try:
-
             if entitlement==False:
                 return False
 
@@ -25,15 +25,21 @@ class checkers():
                 "Authorization": f"Bearer {token}"
                 }
 
+            # get skins using api
             r = sess.get(f"https://pd.{region}.a.pvp.net/store/v1/entitlements/{puuid}/e7c63390-eda7-46e0-bb7a-a6abdacd2433",headers=headers)
             #input(r.text)
             Skins = r.json()["Entitlements"]
+            #file with skins' names
             with open(f'{self.parentpath}\\src\\assets\\skins.json','r',encoding='utf-8') as f:
                 response=f.read()
+            
+            #there could be a list but im 1 iq
             skinstr=''
             for skin in Skins:
+                #find skin's name by it's id
                 try:
                     skinid = skin['ItemID'].lower()
+                    #there should be simple work with json. idk why ive done this shit
                     skin=response.split(skinid)[1].split('"displayName": "')[1].split('",')[0].replace('"displayName":"','').replace('\\"','').replace('"','').replace('u00A0','').replace("'",'').split(' Level')[0]
                     #input(skin)
                     if skin not in skinstr:

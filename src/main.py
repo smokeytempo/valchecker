@@ -61,8 +61,6 @@ class program():
 ░░░╚═╝░░░╚═╝░░╚═╝╚══════╝░╚════╝░╚═╝░░╚═╝╚══════╝░╚════╝░╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝'''
             print(sys.center(introtext))
             print(sys.center(f'v{self.version}'))
-            print(sys.center(random.choice(['вы заебали меня', "capybaras ontop!", 'LIL zoofil', 'Skins (53) ≈ 23750 VP', 'Usq#1337 the best btw', 'N', 'LIL DRIPDOG',
-                                            'open wifi_everywhere.exe pls', 'FIX ZE KEKER RN', 'how to use the checker help me pls bro', "http://liljaba1337.ml/", "COUSCOUS CHZH"])))
             if self.lastver != self.version:
                 print(sys.center(
                     f'\nnew update ({self.lastver}) is available!'))

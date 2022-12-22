@@ -112,9 +112,11 @@ class simplechecker():
             self.whtext = f'{Fore.LIGHTGREEN_EX}Using the webhook{Fore.RESET}'
         self.count = count
         os.system(f'mode con: cols=150 lines=32')
-        self.threadam = int(input(
-            f'input number if threads (min 1 max 1000) (proxies: {self.proxycount} (don\'t work rn)) >>>'))
-        self.threadam = self.threadam if 1000 > self.threadam > 0 else self.proxycount if self.proxycount > 1 else 3
+        #self.threadam = int(input(
+        #    f'input number if threads (min 1 max 1000) (proxies: {self.proxycount} (don\'t work rn)) >>>'))
+        input('0 threads; 0 proxies; enter to start >>>')
+        #self.threadam = self.threadam if 1000 > self.threadam > 0 else self.proxycount if self.proxycount > 1 else 3
+        self.threadam = 0
         menu_choices = [
             Separator(),
             'GUI',
@@ -146,7 +148,8 @@ class simplechecker():
         self.startedtesting = sys.getmillis()
         if self.uselog == False:
             self.printinfo()
-        if self.threadam == 1:
+        #if self.threadam == 1:
+        if True:
             for account in accounts:
                 us = account.split(':')[0]
                 ps = account.split(':')[1]
@@ -176,10 +179,6 @@ class simplechecker():
         riotlimitinarow = 0
         proxy = sys.getproxy(self.proxylist)
         account = f'{username}:{password}'
-        reset = Fore.RESET
-        cyan = Fore.CYAN
-        green = Fore.LIGHTGREEN_EX
-        red = Fore.LIGHTRED_EX
         space = " "
         authenticate = auth.auth()
         # self.printinfo()
