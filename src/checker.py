@@ -112,7 +112,7 @@ class simplechecker():
             self.whtext = f'{Fore.LIGHTGREEN_EX}Using the webhook{Fore.RESET}'
         self.count = count
         os.system(f'mode con: cols=150 lines=32')
-        #self.threadam = int(input(
+        # self.threadam = int(input(
         #    f'input number if threads (min 1 max 1000) (proxies: {self.proxycount} (don\'t work rn)) >>>'))
         input('0 threads; 0 proxies; enter to start >>>')
         #self.threadam = self.threadam if 1000 > self.threadam > 0 else self.proxycount if self.proxycount > 1 else 3
@@ -146,9 +146,10 @@ class simplechecker():
         # else:
         #    input(0)
         self.startedtesting = sys.getmillis()
+        self.whtime = sys.getmillis()
         if self.uselog == False:
             self.printinfo()
-        #if self.threadam == 1:
+        # if self.threadam == 1:
         if True:
             for account in accounts:
                 us = account.split(':')[0]
@@ -462,7 +463,9 @@ class simplechecker():
     def printinfo(self):
         # get cpm
         finishedtesting = sys.getmillis()
+        self.whtime = sys.getmillis()
         if finishedtesting-self.startedtesting > 60000:
+
             prevcpm = self.cpm
             self.cpm = self.checked-self.startedcount
             self.startedtesting = sys.getmillis()
@@ -471,26 +474,29 @@ class simplechecker():
             self.esttime = sys.convert_to_preferred_format(
                 round((self.count-self.checked)/self.cpm*60))
 
-            if self.webhook != '' and self.send_stats:
-                from discord_webhook import DiscordEmbed, DiscordWebhook
-                dcwebhook = DiscordWebhook(url=self.webhook)
-                embed = DiscordEmbed(title='Stats', color='686d75')
-                embed.set_author(name='ValChecker')
-                embed.set_timestamp()
-                embed.add_embed_field(
-                    name='Checked', value=f'{self.checked}/{self.count}')
-                embed.add_embed_field(name='Valid', value=self.valid)
-                embed.add_embed_field(name='Banned', value=self.banned)
-                embed.add_embed_field(name='TempBanned', value=self.tempbanned)
-                embed.add_embed_field(name='RLimits', value=self.rlimits)
-                embed.add_embed_field(name='With Skins', value=self.skins)
-                embed.add_embed_field(
-                    name='Unverifiedmail', value=self.unverifiedmail)
-                embed.add_embed_field(name='CPM', value=self.cpmtext)
-                embed.add_embed_field(
-                    name='Est. Time Remaining', value=self.esttime)
-                dcwebhook.add_embed(embed)
-                response = dcwebhook.execute()
+
+        if self.webhook != '' and self.send_stats and finishedtesting-self.whtime > 300000:
+            from discord_webhook import DiscordEmbed, DiscordWebhook
+            dcwebhook = DiscordWebhook(url=self.webhook)
+            embed = DiscordEmbed(title='Stats', color='686d75')
+            embed.set_author(name='ValChecker')
+            embed.set_timestamp()
+            embed.add_embed_field(
+                name='Checked', value=f'{self.checked}/{self.count}')
+            embed.add_embed_field(name='Valid', value=self.valid)
+            embed.add_embed_field(name='Banned', value=self.banned)
+            embed.add_embed_field(name='TempBanned', value=self.tempbanned)
+            embed.add_embed_field(name='RLimits', value=self.rlimits)
+            embed.add_embed_field(name='With Skins', value=self.skins)
+            embed.add_embed_field(
+                name='Unverifiedmail', value=self.unverifiedmail)
+            embed.add_embed_field(name='CPM', value=self.cpmtext)
+            embed.add_embed_field(
+                name='Est. Time Remaining', value=self.esttime)
+            dcwebhook.add_embed(embed)
+            response = dcwebhook.execute()
+            self.whtime = sys.getmillis()
+
 
         reset = Fore.RESET
         cyan = Fore.CYAN

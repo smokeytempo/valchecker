@@ -22,7 +22,7 @@ class program():
     def __init__(self) -> None:
         self.count = 0
         self.checked = 0
-        self.version = '3.10.2'
+        self.version = '3.10.4'
         self.riotlimitinarow = 0
         try:
             response = requests.get(

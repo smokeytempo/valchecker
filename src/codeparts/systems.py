@@ -200,7 +200,7 @@ class system():
                     inquirer.checkbox(
                         "What to send in discord webhook?",
                         choices=["tempbanned accounts", "accounts without skins", "accounts with only wayfinder shorty",
-                                 "stats (once per minute)", "accounts with unknown region"],
+                                 "stats (once per 5 minutes)", "accounts with unknown region"],
                         long_instruction="space to pick. enter to finish",
                         disabled_symbol='[X]',
                         enabled_symbol=f"[Y]",
