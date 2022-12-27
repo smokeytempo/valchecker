@@ -41,8 +41,6 @@ class system():
             return 'N/A', 'N/A'
         # print(f'{name}\{tag}')
         try:
-            # regionn=vapi.get_account_details_v1(name,tag)
-            # input(regionn)
             response = session.get(
                 f"https://api.henrikdev.xyz/valorant/v1/account/{name}/{tag}", headers=Constants.USER_AGENT, proxies=proxy)
             #input(response.text)
