@@ -62,6 +62,7 @@ class checkers():
                     }
         try:
             r = requests.get(f"https://pd.{region}.a.pvp.net/store/v1/wallet/{puuid}",headers=headers)
+            #input(r.text)
 
             vp = int(r.json()["Balances"]["85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741"])
             rp = int(r.json()["Balances"]["e59aa87c-4cbf-517a-5983-6e81511be9b7"])
@@ -84,15 +85,12 @@ class checkers():
 :"Immortal 3","27":"Radiant"}
             headers = {"Content-Type": "application/json","Authorization": \
 f"Bearer {token}","X-Riot-Entitlements-JWT": entitlement,"X-Riot-ClientVersion": \
-"release-01.08-shipping-10-471230","X-Riot-ClientPlatform": "ew0KCSJwbGF0Zm9ybVR5cG\
-UiOiAiUEMiLA0KCSJwbGF0Zm9ybU9TIjogIldpbmRvd3MiLA0KCSJwbGF0Zm9ybU9TVmVyc2lvbiI6ICIxMC4\
-wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9"}
+"release-05.12-shipping-21-808353","X-Riot-ClientPlatform": Constants.CLIENTPLATFORM}
             ranked = sess.get(f"https://pd.{region}.a.pvp.net/mmr/v1/players/{puuid}/competitiveupdates",headers=headers)
-            #input(ranked.text)
             if '","Matches":[]}' in ranked.text:
                 rank = "UnRanked"
             else:
-                rankid = ranked.text.split('"TierAfterUpdate":')[1].split(',"')[0]
+                rankid = str(ranked.json()['Matches'][0]['TierAfterUpdate'])
                 rank = RankIDtoRank[rankid]
             return rank
         except:
@@ -107,10 +105,11 @@ wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9"}
                             "Authorization": f"Bearer {token}",
                             "X-Riot-Entitlements-JWT": ent,
                             "X-Riot-ClientVersion": "release-01.08-shipping-10-471230",
-                            "X-Riot-ClientPlatform": "ew0KCSJwbGF0Zm9ybVR5cGUiOiAiUEMiLA0KCSJwbGF0Zm9ybU9TIjogIldpbmRvd3MiLA0KCSJwbGF0Zm9ybU9TVmVyc2lvbiI6ICIxMC4wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9"
+                            "X-Riot-ClientPlatform": Constants.CLIENTPLATFORM
             }
             r = requests.get(f"https://pd.{region}.a.pvp.net/match-history/v1/history/{uuid}?startIndex=0&endIndex=10",headers=headers)
             data = r.json()
+            #input(data)
             data2 = data["History"]
             for x in data2:
                 data3 = x['GameStartTime']

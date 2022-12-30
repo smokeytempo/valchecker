@@ -29,8 +29,9 @@ class TLSAdapter(HTTPAdapter):
 
 
 class auth():
-    def __init__(self) -> None:
+    def __init__(self, useragent) -> None:
         path = os.getcwd()
+        self.useragent = useragent
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
 
     def auth(self, logpass: str = None, username=None, password=None, proxy=None):
@@ -103,9 +104,11 @@ class auth():
             if sys.platform == "win32":
                 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
+            
             auth = RiotAuth()
+            auth.RIOT_CLIENT_USER_AGENT = 'RiotClient/{} %s (Windows;10;;Professional, x64)'.format(self.useragent)
             try:
-                asyncio.run(auth.authorize(username,password))
+                asyncio.run(auth.authorize(username,password,proxy=proxy))
             except RiotMultifactorError:
                 return 3, 3, 3, 3, None
             except RiotRatelimitError:
@@ -179,10 +182,7 @@ class auth():
             except Exception as e:
                 # input(e)
                 mailverif = True
-            if mailverif == True:
-                mailverif = False
-            else:
-                mailverif = True
+            mailverif = not mailverif #true to false || false to true
             return token, entitlement, puuid, mailverif, banuntil
         except Exception as e:
             # input(e)

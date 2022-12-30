@@ -20,41 +20,44 @@ class system():
         self.num = 0
         self.proxylist = []
         self.proxy = set()
+        self.useragent = ''
 
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
 
-    def get_region(self, token: str, proxy: dict):
+    def get_region(self, token: str, entt:str, uuid:str, region:str, proxy: dict):
         session = requests.Session()
-        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko",
-                   "Pragma": "no-cache",
-                   "Accept": "*/*",
-                   "Content-Type": "application/json",
-                   "Authorization": f"Bearer {token}"}
-        userinfo = session.post('https://auth.riotgames.com/userinfo',
-                                headers=headers, proxies=self.getproxy(self.proxylist))
-        # input(userinfo.text)
+        # headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko",
+        #            "Pragma": "no-cache",
+        #            "Accept": "*/*",
+        #            "Content-Type": "application/json",
+        #            "Authorization": f"Bearer {token}"}
+        # userinfo = session.post('https://auth.riotgames.com/userinfo',
+        #                         headers=headers, proxies=self.getproxy(self.proxylist))
+        
+        # try:
+        #     name = userinfo.text.split('game_name":"')[1].split('","')[0]
+        #     tag = userinfo.text.split('tag_line":"')[1].split('","')[0]
+        # except Exception as e:
+        #     return 'N/A', 'N/A'
         try:
-            name = userinfo.text.split('game_name":"')[1].split('","')[0]
-            tag = userinfo.text.split('tag_line":"')[1].split('","')[0]
-        except Exception as e:
-            return 'N/A', 'N/A'
-        # print(f'{name}\{tag}')
-        try:
+            headers = {
+                'X-Riot-Entitlements-JWT': entt,
+                'Authorization': 'Bearer {}'.format(token)
+            }
             response = session.get(
-                f"https://api.henrikdev.xyz/valorant/v1/account/{name}/{tag}", headers=Constants.USER_AGENT, proxies=proxy)
-            #input(response.text)
+                f"https://pd.{region}.a.pvp.net/account-xp/v1/players/{uuid}", headers=headers, proxies=proxy)
+
             response=response.json()
-            reg = response['data']['region']
-            lvl = response['data']['account_level']
-            #print(reg, lvl)
-            #input()
+            reg = 'N/A'
+            lvl = response['Progress']['Level']
+
             return reg, lvl
         except Exception as e:
-            #input(e)
             return 'N/A', 'N/A'
 
-    def get_region2(self, token):
+    def get_region2(self, token:str, entt:str, uuid:str, proxy:dict):
+        #reg + country
         session = requests.Session()
         headers = {"User-Agent": "RiotClient/58.0.0.4640299.4552318 %s (Windows;10;;Professional, x64)",
                    "Pragma": "no-cache",
@@ -62,7 +65,7 @@ class system():
                    "Content-Type": "application/json",
                    "Authorization": f"Bearer {token}"}
         userinfo = session.post(
-            Constants.USERINFO, headers=headers, proxies=self.getproxy(self.proxylist)).json()
+            Constants.USERINFO, headers=headers, proxies=proxy).json()
         try:
             try:
                 region = userinfo['region']['id']
@@ -76,15 +79,19 @@ class system():
             # input(e)
             fixedregion = 'N/A'
 
-        #headers = {'Content-Type': 'application/json', 'Authorization': f'Bearer {token}'}
-        #body = {"id_token": 1}
-        # r=session.put('https://riot-geo.pas.si.riotgames.com/pas/v1/product/valorant',headers=headers,json=body).text
-        # input(r)
+        #lvl
+        try:
+            headers = {
+                'X-Riot-Entitlements-JWT': entt,
+                'Authorization': 'Bearer {}'.format(token)
+            }
+            response = session.get(
+                f"https://pd.{fixedregion}.a.pvp.net/account-xp/v1/players/{uuid}", headers=headers, proxies=proxy)
+            lvl = response.json()['Progress']['Level']
+        except Exception as e:
+            lvl = 'N/A'
 
-        # input(fixedregion+country)
-        return fixedregion, country
-
-    # def get_level(self,token):
+        return fixedregion, country, lvl
 
     def load_settings(self):
         try:
@@ -230,7 +237,6 @@ class system():
         return self.proxylist
 
     def getproxy(self, proxlist):
-        return None
         try:
             if proxlist == None:
                 return None
@@ -293,6 +299,12 @@ class system():
             data = json.loads(r.text)
             with open(f'{self.parentpath}\\src\\assets\\skins.json', 'w', encoding='utf-8') as f:
                 json.dump(data, f, sort_keys=False, indent=4)
+
+        # user agent
+        with requests.get('https://valorant-api.com/v1/version') as r:
+            data = r.json()
+            self.useragent = data['data']['riotClientBuild']
+
 
 
 syss = system()

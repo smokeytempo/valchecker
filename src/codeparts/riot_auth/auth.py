@@ -157,7 +157,7 @@ class RiotAuth:
         self.__update(extract_jwt=True, **data)
 
     async def authorize(
-        self, username: str, password: str, use_query_response_mode: bool = False
+        self, username: str, password: str, use_query_response_mode: bool = False, proxy:str=None
     ) -> None:
         """
         Authenticate using username and password.
@@ -194,6 +194,7 @@ class RiotAuth:
                 "https://auth.riotgames.com/api/v1/authorization",
                 json=body,
                 headers=headers,
+                proxy=proxy
             ) as r:
                 data: Dict = await r.json()
                 resp_type = data["type"]
@@ -213,6 +214,7 @@ class RiotAuth:
                     "https://auth.riotgames.com/api/v1/authorization",
                     json=body,
                     headers=headers,
+                    proxy=proxy
                 ) as r:
                     data: Dict = await r.json()
                     resp_type = data["type"]
@@ -249,11 +251,12 @@ class RiotAuth:
                 "https://entitlements.auth.riotgames.com/api/token/v1",
                 headers=headers,
                 json={},
+                proxy=proxy
                 # json={"urn": "urn:entitlement:%"},
             ) as r:
                 self.entitlements_token = (await r.json())["entitlements_token"]
 
-            async with session.post('https://auth.riotgames.com/userinfo', headers=headers, json={}) as r:
+            async with session.post('https://auth.riotgames.com/userinfo', headers=headers, json={},proxy=proxy) as r:
                 self.data2=(await r.json())
 
             # endregion

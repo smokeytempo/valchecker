@@ -22,13 +22,12 @@ class program():
     def __init__(self) -> None:
         self.count = 0
         self.checked = 0
-        self.version = '3.10.4'
+        self.version = '3.10.5'
         self.riotlimitinarow = 0
         try:
             response = requests.get(
                 'https://api.github.com/repos/lil-jaba/valchecker/releases').json()
             self.lastver = response[0]['tag_name']
-            self.changelog = response[0]['body']
         except:
             self.lastver = self.version
             self.changelog = ''
@@ -63,8 +62,7 @@ class program():
             print(sys.center(f'v{self.version}'))
             if self.lastver != self.version:
                 print(sys.center(
-                    f'\nnew update ({self.lastver}) is available!'))
-                print(sys.center(f'What\'s new: {self.changelog}'))
+                    f'\nnext version {self.lastver} is available!'))
             menu_choices = [
                 Separator(),
                 'Start Checker',
@@ -191,14 +189,14 @@ class program():
             print('loading checker')
             ctypes.windll.kernel32.SetConsoleTitleW(
                 f'ValChecker {self.version} by liljaba1337 | Loading Checker')
-            scheck = checker.simplechecker(settings, proxylist)
+            scheck = checker.simplechecker(settings, proxylist, sys.useragent)
             scheck.main(accounts, self.count)
             return
         if fastcheck:
             print('loading FastCheck')
             ctypes.windll.kernel32.SetConsoleTitleW(
                 f'ValChecker {self.version} by liljaba1337 | Loading FastCheck')
-            fch = fc.fastcheck(accounts, self.count, settings, proxylist)
+            fch = fc.fastcheck(accounts, self.count, settings, proxylist,sys.useragent)
             fch.main()
             return
 

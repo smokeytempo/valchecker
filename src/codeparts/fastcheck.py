@@ -12,7 +12,8 @@ import ctypes
 syst=systems.system()
 stff=staff.staff()
 class fastcheck:
-    def __init__(self,accounts,count,settings:list,proxylist) -> None:
+    def __init__(self,accounts,count,settings:list,proxylist,useragent:str) -> None:
+        self.useragent = useragent
         self.accounts=accounts
         path = os.getcwd()
         self.parentpath=os.path.abspath(os.path.join(path, os.pardir))
@@ -52,7 +53,8 @@ class fastcheck:
         self.whtext=f"{Fore.LIGHTRED_EX}Not using a webhook{Fore.RESET}"
         self.count=count
         os.system(f'mode con: cols=120 lines=25')
-        self.threadam=int(input(f'input number if threads (min 1 max 1000) (proxies: {self.proxycount}) >>>'))
+        self.threadam=1
+        input(f'0 threads; {self.proxycount} proxies (enter to start) >>>')
         self.threadam= self.threadam if 1000>self.threadam>0 else self.proxycount if self.proxycount > 1 else 3
 
     def main(self):
@@ -95,7 +97,7 @@ class fastcheck:
         green = Fore.LIGHTGREEN_EX
         red = Fore.LIGHTRED_EX
         space = " "
-        authenticate=auth.auth()
+        authenticate=auth.auth(self.useragent)
         while True:
             try:
                 token,entt,uuid,mailverif,banuntil=authenticate.auth(account,proxy=proxy)
