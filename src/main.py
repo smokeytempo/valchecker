@@ -6,12 +6,14 @@ import tkinter
 from tkinter import filedialog
 from InquirerPy import inquirer
 from InquirerPy.separator import Separator
+import colorama
 
 
 import requests
 
 import checker
 from codeparts import checkers, fastcheck as fc, systems, validsort
+from codeparts.systems import system
 
 check = checkers.checkers()
 sys = systems.system()
@@ -22,81 +24,72 @@ class program():
     def __init__(self) -> None:
         self.count = 0
         self.checked = 0
-        self.version = '3.10.5'
+        self.version = '3.11'
         self.riotlimitinarow = 0
+        path = os.getcwd()
+        self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
         try:
-            response = requests.get(
-                'https://api.github.com/repos/lil-jaba/valchecker/releases').json()
-            self.lastver = response[0]['tag_name']
+            self.lastver = requests.get(
+                'https://api.github.com/repos/lil-jaba/valchecker/releases').json()[0]['tag_name']
         except:
             self.lastver = self.version
-            self.changelog = ''
 
     def start(self):
-        while True:
-            try:
-                print('internet check')
-                requests.get('https://github.com')
-            except requests.exceptions.ConnectionError:
-                print('no internet connection')
+        try:
+            print('internet check')
+            requests.get('https://github.com')
+        except requests.exceptions.ConnectionError:
+            print('no internet connection')
+            os._exit(0)
+        os.system('cls')
+        codes = vars(colorama.Fore)
+        colors = [codes[color] for color in codes if color not in ['BLACK']]
+        colored_name = [random.choice(colors) + char for char in f'ValChecker by liljaba1337']
+        print(sys.get_spaces_to_center(f'ValChecker by liljaba1337')+(''.join(colored_name))+colorama.Fore.RESET)
+        print(sys.center(f'v{self.version}'))
+        if self.lastver != self.version:
+            print(sys.center(
+                f'\nnext version {self.lastver} is available!'))
+            if inquirer.confirm(
+                message="{}Would you like to download it now?".format(system.get_spaces_to_center('Would you like to download it now? (Y/n)')), default=True,qmark=''
+            ).execute():
+                os.system(f'{self.parentpath}/updater.bat')
                 os._exit(0)
-            ctypes.windll.kernel32.SetConsoleTitleW(
-                f'ValChecker {self.version} by liljaba1337')
+        menu_choices = [
+            Separator(),
+            'Start Checker',
+            'Edit Settings',
+            'Sort Valid',
+            'Test Proxy',
+            'FastCheck',
+            'Info/Help',
+            Separator(),
+            'Exit'
+        ]
+        print(sys.center('\nhttps://github.com/LIL-JABA/valchecker\n'))
+        res = inquirer.select(
+            message="Please select an option:",
+            choices=menu_choices,
+            default=menu_choices[0],
+            pointer='>',
+            qmark=''
+        ).execute()
+        if res == menu_choices[1]:
+            self.main(fastcheck=False)
+        elif res == menu_choices[2]:
+            sys.edit_settings()
+            pr.start()
+        elif res == menu_choices[3]:
+            valid.customsort()
+            input('done. press ENTER to exit')
+        elif res == menu_choices[4]:
+            sys.checkproxy()
+            pr.start()
+        elif res == menu_choices[5]:
+            self.main(fastcheck=True)
+        elif res == menu_choices[6]:
             os.system('cls')
-            introtext = '''
-
-██╗░░░██╗░█████╗░██╗░░░░░██╗░░██╗███████╗██╗░░██╗███████╗██████╗░
-██║░░░██║██╔══██╗██║░░░░░██║░██╔╝██╔════╝██║░██╔╝██╔════╝██╔══██╗
-╚██╗░██╔╝███████║██║░░░░░█████═╝░█████╗░░█████═╝░█████╗░░██████╔╝
-░╚████╔╝░██╔══██║██║░░░░░██╔═██╗░██╔══╝░░██╔═██╗░██╔══╝░░██╔══██╗
-░░╚██╔╝░░██║░░██║███████╗██║░╚██╗███████╗██║░╚██╗███████╗██║░░██║
-░░░╚═╝░░░╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝''' if random.randint(0, 5) == 0 else '''
-
-██╗░░░██╗░█████╗░██╗░░░░░░█████╗░██╗░░██╗███████╗░█████╗░██╗░░██╗███████╗██████╗░
-██║░░░██║██╔══██╗██║░░░░░██╔══██╗██║░░██║██╔════╝██╔══██╗██║░██╔╝██╔════╝██╔══██╗
-╚██╗░██╔╝███████║██║░░░░░██║░░╚═╝███████║█████╗░░██║░░╚═╝█████═╝░█████╗░░██████╔╝
-░╚████╔╝░██╔══██║██║░░░░░██║░░██╗██╔══██║██╔══╝░░██║░░██╗██╔═██╗░██╔══╝░░██╔══██╗
-░░╚██╔╝░░██║░░██║███████╗╚█████╔╝██║░░██║███████╗╚█████╔╝██║░╚██╗███████╗██║░░██║
-░░░╚═╝░░░╚═╝░░╚═╝╚══════╝░╚════╝░╚═╝░░╚═╝╚══════╝░╚════╝░╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝'''
-            print(sys.center(introtext))
-            print(sys.center(f'v{self.version}'))
-            if self.lastver != self.version:
-                print(sys.center(
-                    f'\nnext version {self.lastver} is available!'))
-            menu_choices = [
-                Separator(),
-                'Start Checker',
-                'Edit Settings',
-                'Sort Valid',
-                'Test Proxy',
-                'FastCheck',
-                'Info/Help',
-                Separator(),
-                'Exit'
-            ]
-            print(sys.center('\nhttps://github.com/LIL-JABA/valchecker\n'))
-            res = inquirer.select(
-                message="Please select an option:",
-                choices=menu_choices,
-                default=menu_choices[0],
-                pointer='>',
-            ).execute()
-            if res == menu_choices[1]:
-                self.main(fastcheck=False)
-                break
-            elif res == menu_choices[2]:
-                sys.edit_settings()
-            elif res == menu_choices[3]:
-                valid.customsort()
-                input('done. press ENTER to exit')
-            elif res == menu_choices[4]:
-                sys.checkproxy()
-            elif res == menu_choices[5]:
-                self.main(fastcheck=True)
-                break
-            elif res == menu_choices[6]:
-                os.system('cls')
-                print(f'''
+            print(f'''
     valchecker v{self.version} by liljaba1337
 
     discord: LIL JABA#1895
@@ -109,11 +102,11 @@ class program():
   [5] - fast checker (checks only valid/invalid)
 
   [~] - press ENTER to return
-                ''')
-                input()
-                continue
-            elif res == menu_choices[8]:
-                os._exit(0)
+            ''')
+            input()
+            pr.start()
+        elif res == menu_choices[8]:
+            os._exit(0)
 
     def get_accounts(self, filename):
         while True:
@@ -124,7 +117,7 @@ class program():
                     ret = []
                     if len(lines) > 100000:
                         if inquirer.confirm(
-                            message=f"Your accounts count is more than 100k ({len(lines)}). Do you want to skip the sorting part? (it removes doubles and bad logpasses but can be long)",
+                            message=f"You have more than 100k accounts ({len(lines)}). Do you want to skip the sorting part? (it removes doubles and bad logpasses but can be long)",
                             default=True,
                             qmark='!',
                             amark='!'
@@ -151,7 +144,7 @@ class program():
                 root.destroy()
                 os.system('cls')
                 if file == None:
-                    print('u chose nothing')
+                    print('you chose nothing')
                     input('press ENTER to choose again')
                     continue
                 filename = str(file).split("name='")[1].split("'>")[0]

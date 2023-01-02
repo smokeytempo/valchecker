@@ -3,6 +3,8 @@ import os
 import tkinter
 from tkinter import filedialog
 import time
+from typing import NoReturn
+import ctypes
 
 from colorama import Fore, Back
 import requests
@@ -25,7 +27,8 @@ class system():
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
 
-    def get_region(self, token: str, entt:str, uuid:str, region:str, proxy: dict):
+    @staticmethod
+    def get_region(token: str, entt:str, uuid:str, region:str, proxy: dict):
         session = requests.Session()
         # headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko",
         #            "Pragma": "no-cache",
@@ -56,7 +59,8 @@ class system():
         except Exception as e:
             return 'N/A', 'N/A'
 
-    def get_region2(self, token:str, entt:str, uuid:str, proxy:dict):
+    @staticmethod
+    def get_region2(token:str, entt:str, uuid:str, proxy:dict):
         #reg + country
         session = requests.Session()
         headers = {"User-Agent": "RiotClient/58.0.0.4640299.4552318 %s (Windows;10;;Professional, x64)",
@@ -93,7 +97,8 @@ class system():
 
         return fixedregion, country, lvl
 
-    def load_settings(self):
+    @staticmethod
+    def load_settings():
         try:
             f = open('system\\settings.json')
             data = json.load(f)
@@ -103,7 +108,8 @@ class system():
             print("can't find settings.json\nplease download it from my github\n")
             return False
 
-    def edit_settings(self):
+    @staticmethod
+    def edit_settings():
         while True:
             os.system('cls')
             f = open('system\\settings.json', 'r+')
@@ -251,13 +257,22 @@ class system():
             nextproxy = None
         return nextproxy
 
-    def center(self, var: str, space: int = None):  # From Pycenter
+    @staticmethod
+    def center(var: str, space: int = None):  # From Pycenter
         if not space:
             space = (os.get_terminal_size().columns -
                      len(var.splitlines()[int(len(var.splitlines())/2)])) / 2
         return "\n".join((' ' * int(space)) + var for var in var.splitlines())
 
-    def getmillis(self):
+    @staticmethod
+    def get_spaces_to_center(var:str, space:int = None):
+        if not space:
+            space = (os.get_terminal_size().columns -
+                     len(var.splitlines()[int(len(var.splitlines())/2)])) / 2
+        return ' '*int(space)
+
+    @staticmethod
+    def getmillis():
         return round(time.time() * 1000)
 
     def checkproxy(self):
@@ -279,7 +294,8 @@ class system():
         input('press enter to return')
         os.system('mode 120,30')
 
-    def convert_to_preferred_format(self, sec):
+    @staticmethod
+    def convert_to_preferred_format(sec):
         sec = sec % (24 * 3600)
         hour = sec // 3600
         sec %= 3600
@@ -287,7 +303,8 @@ class system():
         sec %= 60
         return "%02d:%02d:%02d" % (hour, min, sec)
 
-    def progressbar(self, pr, ttl):
+    @staticmethod
+    def progressbar(pr, ttl):
         percent = 100*(pr/ttl)
         bar = f'{Fore.LIGHTGREEN_EX}━{Fore.RESET}' * \
             int(percent)+f'{Fore.LIGHTRED_EX}━{Fore.RESET}'*int(100-percent)
@@ -304,6 +321,10 @@ class system():
         with requests.get('https://valorant-api.com/v1/version') as r:
             data = r.json()
             self.useragent = data['data']['riotClientBuild']
+
+    @staticmethod
+    def set_console_title(title:str) -> NoReturn:
+        ctypes.windll.kernel32.SetConsoleTitleW(title)
 
 
 

@@ -125,6 +125,9 @@ class simplechecker():
         # if self.threadam == 1:
         if True:
             for account in accounts:
+                if ':' not in account:
+                    self.checked += 1
+                    continue
                 us = account.split(':')[0]
                 ps = account.split(':')[1]
                 self.checker(us, ps)
@@ -143,19 +146,12 @@ class simplechecker():
                     except:
                         print("Checked all")
 
-            # try:
-            #    for x in running:
-            #        x.join()
-            # except:
-            #    print("Checked all")
-
     def checker(self, username, password):
         riotlimitinarow = 0
         proxy = sys.getproxy(self.proxylist)
         account = f'{username}:{password}'
         space = " "
         authenticate = auth.auth(self.useragent)
-        # self.printinfo()
         while True:
             try:
                 token, entt, uuid, unverifmail, banuntil = authenticate.auth(
@@ -171,7 +167,6 @@ class simplechecker():
                     if riotlimitinarow < self.max_rlimits:
                         if riotlimitinarow == 0:
                             self.inrlimit += 1
-                        # if self.print_sys==True:
                             print(sys.center(
                                 f'riot limit. waiting {self.rlimit_wait} seconds'))
                         time.sleep(self.rlimit_wait)
@@ -276,13 +271,13 @@ class simplechecker():
                         with open(f'{self.outpath}/tempbanned.txt', 'a', encoding='UTF-8') as file:
                             file.write(f'''
 ╔═════════════════════════════════════════════════════════════╗
-║            | {account} |
-║ Ban Until: {banuntil}
-║
-║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}
-║ Rank: {rank} | Last Played: {lastplayed}
-║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}
-║             Inventory Price = {invprice} VP
+║            | {account} |{space*(49-len(f'| {account} |'))}║
+║ Ban Until: {banuntil}{space*(61-len(f'Ban Until: {banuntil}'))}║
+║                                                             ║
+║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}'))}║
+║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║
+║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
+║             Inventory Price = {invprice} VP{space*(61-len(f'             Inventory Price = {invprice} VP'))}║
 ╠═════════════════════════════════════════════════════════════╣
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
@@ -299,13 +294,13 @@ class simplechecker():
                         with open(f'{self.outpath}/valid.txt', 'a', encoding='UTF-8') as file:
                             file.write(f'''
 ╔═════════════════════════════════════════════════════════════╗
-║            | {account} |
-║
-║
-║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}
-║ Rank: {rank} | Last Played: {lastplayed}
-║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}
-║             Inventory Price = {invprice} VP
+║            | {account} |{space*(49-len(f'| {account} |'))}║
+║                                                             ║
+║                                                             ║
+║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}'))}║
+║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║
+║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
+║             Inventory Price = {invprice} VP{space*(61-len(f'             Inventory Price = {invprice} VP'))}║
 ╠═════════════════════════════════════════════════════════════╣
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
@@ -325,12 +320,12 @@ class simplechecker():
                             file.write(f'''
 ╔═════════════════════════════════════════════════════════════╗
 ║            | {account} |{space*(49-len(f'| {account} |'))}║
-║ {bantext}
-║
-║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}
-║ Rank: {rank} | Last Played: {lastplayed}
-║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}
-║             Inventory Price = {invprice} VP
+║ {bantext}{space*(60-len(bantext))}║
+║                                                             ║
+║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}'))}║
+║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║
+║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
+║             Inventory Price = {invprice} VP{space*(61-len(f'             Inventory Price = {invprice} VP'))}║
 ╠═════════════════════════════════════════════════════════════╣
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
@@ -355,13 +350,13 @@ class simplechecker():
                         with open(f'{path}/{reg}.txt', 'a', encoding='UTF-8') as file:
                             file.write(f'''
 ╔═════════════════════════════════════════════════════════════╗
-║            | {account} |
-║
-║
-║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}
-║ Rank: {rank} | Last Played: {lastplayed}
-║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}
-║             Inventory Price = {invprice} VP
+║            | {account} |{space*(49-len(f'| {account} |'))}║
+║                                                             ║
+║                                                             ║
+║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}'))}║
+║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║
+║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
+║             Inventory Price = {invprice} VP{space*(61-len(f'             Inventory Price = {invprice} VP'))}║
 ╠═════════════════════════════════════════════════════════════╣
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
@@ -438,8 +433,11 @@ class simplechecker():
             self.startedtesting = sys.getmillis()
             self.startedcount = self.checked
             self.cpmtext = f'↑ {self.cpm}' if self.cpm > prevcpm else f'↓ {self.cpm}'
-            self.esttime = sys.convert_to_preferred_format(
-                round((self.count-self.checked)/self.cpm*60))
+            if self.cpm > 0:
+                self.esttime = sys.convert_to_preferred_format(
+                    round((self.count-self.checked)/self.cpm*60))
+            else:
+                self.esttime = 'N/A'
 
 
         if self.webhook != '' and self.send_stats and finishedtesting-self.whtime > 300000:
