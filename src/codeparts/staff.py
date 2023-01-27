@@ -1,8 +1,11 @@
 from datetime import date,datetime
 import tkinter
 
+from codeparts.systems import Account
+
 class staff:
-    def checkban(self,bantime):
+    def checkban(self,account:Account) -> None:
+        bantime = account.banuntil
         banyear=int(bantime.year)
         nowyear=date.today().year
 
@@ -13,19 +16,20 @@ class staff:
         nowday=date.today().day
 
         if banyear<nowyear:
-            return None
+            bantime = None
         elif banyear>nowyear:
-            return bantime
+            bantime = None
         else:
             if banmonth<nowmonth:
-                return None
+                bantime = None
             elif banmonth>nowmonth:
-                return bantime
+                bantime = None
             else:
                 if banday<nowday:
-                    return None
+                    bantime = None
                 else:
-                    return bantime
+                    bantime = None
+        account.banuntil = bantime
 
 class log:
     def __init__(self) -> None:

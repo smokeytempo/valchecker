@@ -12,7 +12,7 @@ import colorama
 import requests
 
 import checker
-from codeparts import checkers, fastcheck as fc, systems, validsort
+from codeparts import checkers, systems, validsort
 from codeparts.systems import system
 
 check = checkers.checkers()
@@ -24,7 +24,7 @@ class program():
     def __init__(self) -> None:
         self.count = 0
         self.checked = 0
-        self.version = '3.11'
+        self.version = '3.12'
         self.riotlimitinarow = 0
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
@@ -61,7 +61,6 @@ class program():
             'Edit Settings',
             'Sort Valid',
             'Test Proxy',
-            'FastCheck',
             'Info/Help',
             Separator(),
             'Exit'
@@ -75,7 +74,7 @@ class program():
             qmark=''
         ).execute()
         if res == menu_choices[1]:
-            self.main(fastcheck=False)
+            self.main()
         elif res == menu_choices[2]:
             sys.edit_settings()
             pr.start()
@@ -86,8 +85,6 @@ class program():
             sys.checkproxy()
             pr.start()
         elif res == menu_choices[5]:
-            self.main(fastcheck=True)
-        elif res == menu_choices[6]:
             os.system('cls')
             print(f'''
     valchecker v{self.version} by liljaba1337
@@ -99,13 +96,12 @@ class program():
   [2] - i think u understand
   [3] - sorts all accounts from valid.txt which match your requirements to output\\sorted\\custom.txt
   [4] - test your proxies
-  [5] - fast checker (checks only valid/invalid)
 
   [~] - press ENTER to return
             ''')
             input()
             pr.start()
-        elif res == menu_choices[8]:
+        elif res == menu_choices[7]:
             os._exit(0)
 
     def get_accounts(self, filename):
@@ -156,7 +152,7 @@ class program():
                     f.truncate()
                 continue
 
-    def main(self, fastcheck=False):
+    def main(self):
         ctypes.windll.kernel32.SetConsoleTitleW(
             f'ValChecker {self.version} by liljaba1337 | Loading Settings')
         print('loading settings')
@@ -178,20 +174,12 @@ class program():
             f'ValChecker {self.version} by liljaba1337 | Loading Assets')
         sys.load_assets()
 
-        if not fastcheck:
-            print('loading checker')
-            ctypes.windll.kernel32.SetConsoleTitleW(
-                f'ValChecker {self.version} by liljaba1337 | Loading Checker')
-            scheck = checker.simplechecker(settings, proxylist, sys.useragent)
-            scheck.main(accounts, self.count)
-            return
-        if fastcheck:
-            print('loading FastCheck')
-            ctypes.windll.kernel32.SetConsoleTitleW(
-                f'ValChecker {self.version} by liljaba1337 | Loading FastCheck')
-            fch = fc.fastcheck(accounts, self.count, settings, proxylist,sys.useragent)
-            fch.main()
-            return
+        print('loading checker')
+        ctypes.windll.kernel32.SetConsoleTitleW(
+            f'ValChecker {self.version} by liljaba1337 | Loading Checker')
+        scheck = checker.simplechecker(settings, proxylist)
+        scheck.main(accounts, self.count)
+        return
 
 
 pr = program()
