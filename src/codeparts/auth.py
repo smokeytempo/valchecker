@@ -5,6 +5,7 @@ from re import compile
 import ssl
 from typing import Any
 from tkinter import *
+from urllib3 import HTTPSConnectionPool
 
 import pandas
 import requests
@@ -43,39 +44,36 @@ class auth():
             session = requests.Session()
             session.headers = headers
             session.mount('https://', SSLAdapter())
-            session.proxies = proxy
             if username is None:
                 username = logpass.split(':')[0].strip()
                 password = logpass.split(':')[1].strip()
 
-            data = {
-                "client_id": "play-valorant-web-prod",
-                "nonce": "1",
-                "redirect_uri": "https://playvalorant.com/opt_in",
-                "response_type": "token id_token",
-                'scope': 'account openid link ban lol_region',
-            }
+            data = {"acr_values": "urn:riot:bronze",
+                    "claims": "",
+                    "client_id": "riot-client",
+                    "nonce": "oYnVwCSrlS5IHKh7iI16oQ",
+                    "redirect_uri": "http://localhost/redirect",
+                    "response_type": "token id_token",
+                    "scope": "openid link ban lol_region"
+                }
             headers = {
                 'Content-Type': 'application/json',
                 'User-Agent': f'RiotClient/{self.useragent} %s (Windows;10;;Professional, x64)'
             }
             try:
                 r = session.post(Constants.AUTH_URL,
-                                 json=data, headers=headers, proxies=proxy, timeout=20)
-                #input(r.text)
+                                json=data, headers=headers, proxies=proxy, timeout=20)
                 data = {
-                    'type': 'auth',
-                    'username': username,
-                    'password': password
+                   'type': 'auth',
+                   'username': username,
+                   'password': password
                 }
-                r2 = session.put(Constants.AUTH_URL,
-                                 json=data, headers=headers, proxies=proxy, timeout=20)
-                #input(r2.text) #!!!!!!!!!!!!!!!!!!!!!!!!! DELETE THIS SHIT
+                r2 = session.put(Constants.AUTH_URL,json=data,headers=headers,timeout=20)
+                #input(r2.text)
             except Exception as e:
                 #input(e)
                 account.code = 6
                 return account
-            # print(r2.text)
             try:
                 data = r2.json()
             except:
@@ -126,11 +124,13 @@ class auth():
             # input()
             puuid = data['sub']
             try:
+                #input(data)
                 data2 = data['ban']
                 # input(data2)
                 data3 = data2['restrictions']
                 # input(data3)
                 typebanned = data3[0]['type']
+                #input(typebanned)
                 # input(typebanned)
                 if typebanned == "PERMANENT_BAN" or typebanned == 'PERMA_BAN':
                     # input(True)
@@ -150,7 +150,7 @@ class auth():
                     pass
             except Exception as e:
                 # print(e)
-                # input(e)
+                #input(e)
                 banuntil = None
                 pass
             try:

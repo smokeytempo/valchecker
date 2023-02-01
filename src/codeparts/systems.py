@@ -232,7 +232,6 @@ class system():
             if '.' in i:
                 self.proxylist.append({
                     'http': f'http://{i}',
-                    'https': f'http://{i}',
                 })
         return self.proxylist
 

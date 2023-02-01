@@ -4,7 +4,7 @@
     "rlimit_wait": 30,
     "cooldown": 0,
     "new_folder": "True",
-    "webhook": "",
+    "webhook": "https://discord.com/api/webhooks/1016261936083632170/Srea761oUIsTx942gQ_bOUAB2xuZc4YDbLpzZNkizp3z44gHRAYaLSFYCYT_M8rTrcFZ",
     "print_sys": "True",
     "dw_settings": [
         [
