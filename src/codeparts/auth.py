@@ -68,7 +68,7 @@ class auth():
                    'username': username,
                    'password': password
                 }
-                r2 = session.put(Constants.AUTH_URL,json=data,headers=headers,timeout=20)
+                r2 = session.put(Constants.AUTH_URL,json=data,headers=headers,proxies=proxy,timeout=20)
                 #input(r2.text)
             except Exception as e:
                 #input(e)
@@ -128,7 +128,7 @@ class auth():
                 data2 = data['ban']
                 # input(data2)
                 data3 = data2['restrictions']
-                # input(data3)
+                #input(data3)
                 typebanned = data3[0]['type']
                 #input(typebanned)
                 # input(typebanned)
@@ -143,7 +143,7 @@ class auth():
                 elif typebanned == 'TIME_BAN' or typebanned == 'LEGACY_BAN':
                     expire = data3[0]['dat']['expirationMillis']
                     expirepatched = pandas.to_datetime(int(expire), unit='ms')
-                    # input(expire)
+                    #input(expire)
                     banuntil = expirepatched
                 else:
                     banuntil = None

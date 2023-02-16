@@ -24,7 +24,7 @@ class program():
     def __init__(self) -> None:
         self.count = 0
         self.checked = 0
-        self.version = '3.12.1'
+        self.version = '3.12.2 beta'
         self.riotlimitinarow = 0
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
@@ -47,7 +47,7 @@ class program():
         colored_name = [random.choice(colors) + char for char in f'ValChecker by liljaba1337']
         print(sys.get_spaces_to_center(f'ValChecker by liljaba1337')+(''.join(colored_name))+colorama.Fore.RESET)
         print(sys.center(f'v{self.version}'))
-        if self.lastver != self.version:
+        if self.lastver != self.version and 'beta' not in self.version:
             print(sys.center(
                 f'\nnext version {self.lastver} is available!'))
             if inquirer.confirm(

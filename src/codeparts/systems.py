@@ -57,7 +57,7 @@ class system():
                    "Content-Type": "application/json",
                    "Authorization": f"Bearer {account.token}"}
         userinfo = session.post(
-            Constants.USERINFO_URL, headers=headers, proxies=proxy).json()
+            Constants.USERINFO_URL, headers=headers).json()
         try:
             try:
                 region = userinfo['region']['id']
@@ -81,9 +81,9 @@ class system():
                 'X-Riot-Entitlements-JWT': account.entt,
                 'Authorization': 'Bearer {}'.format(account.token)
             }
-            response = session.get(
-                f"https://pd.{progregion}.a.pvp.net/account-xp/v1/players/{account.puuid}", headers=headers, proxies=proxy)
+            response = session.get(f"https://pd.{progregion}.a.pvp.net/account-xp/v1/players/{account.puuid}", headers=headers)
             lvl = response.json()['Progress']['Level']
+            input(lvl)
         except Exception as e:
             lvl = 'N/A'
 
@@ -232,6 +232,7 @@ class system():
             if '.' in i:
                 self.proxylist.append({
                     'http': f'http://{i}',
+                    'https':f'http://{i}'
                 })
         return self.proxylist
 
@@ -298,6 +299,9 @@ class system():
 
     @staticmethod
     def progressbar(pr, ttl):
+        if ttl == 0:
+            print(f'{Back.RED}YOU DO NOT HAVE ACCOUNTS IN THIS FILE{Back.RESET}')
+            os._exit(0)
         percent = 100*(pr/ttl)
         bar = f'{Fore.LIGHTGREEN_EX}━{Fore.RESET}' * \
             int(percent)+f'{Fore.LIGHTRED_EX}━{Fore.RESET}'*int(100-percent)

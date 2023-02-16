@@ -178,7 +178,7 @@ class simplechecker():
                         self.checked += 1
                         self.printinfo()
                         with open(f'{self.parentpath}/output/riot_limits.txt', 'a', encoding='UTF-8') as file:
-                            file.write(f'\n{account}')
+                            file.write(f'\n{account.logpass}')
                         break
                 elif account.code == 6:
                     proxy = sys.getproxy(self.proxylist)
@@ -186,15 +186,19 @@ class simplechecker():
                     time.sleep(1)
                     continue
                 elif account.code == 3:
-                    self.printinfo()
                     self.checked += 1
+                    self.printinfo()
                     break
                 elif account.code == 0:
-                    self.printinfo()
                     self.checked += 1
+                    self.printinfo()
                     break
                 elif account.code == 4:
                     self.banned += 1
+                    self.checked += 1
+                    self.printinfo()
+                    time.sleep(self.cooldown)
+                    break
                 elif account.code == 5:
                     self.retries += 1
                     time.sleep(1)
@@ -467,7 +471,7 @@ class simplechecker():
         green = Fore.LIGHTGREEN_EX
         red = Fore.LIGHTRED_EX
         space = " "
-        percent = self.valid/self.checked*100 if self.checked != 0 else 0
+        percent = self.valid/self.checked*100 if self.checked != 0 else 0.0
         percent = f'{str(round(percent,1))}%'
         ctypes.windll.kernel32.SetConsoleTitleW(
             f'ValChecker by liljaba1337  |  Checked {self.checked}/{self.count}  |  {self.cpmtext} CPM  |  Hitrate {percent}  |  Est. time: {self.esttime}')

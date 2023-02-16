@@ -18,16 +18,16 @@ class staff:
         if banyear<nowyear:
             bantime = None
         elif banyear>nowyear:
-            bantime = None
+            account.banuntil = bantime
+            return
         else:
             if banmonth<nowmonth:
                 bantime = None
             elif banmonth>nowmonth:
-                bantime = None
+                account.banuntil = bantime
+                return
             else:
                 if banday<nowday:
-                    bantime = None
-                else:
                     bantime = None
         account.banuntil = bantime
 
