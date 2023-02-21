@@ -5,6 +5,7 @@ from tkinter import filedialog
 import time
 from typing import NoReturn
 import ctypes
+import msvcrt as m
 
 from colorama import Fore, Back
 import requests
@@ -41,7 +42,7 @@ class system():
             response = response.json()
             reg = 'N/A'
             lvl = ''
-            input(response)
+            #input(response)
 
             return reg, lvl
         except Exception as e:
@@ -83,7 +84,7 @@ class system():
             }
             response = session.get(f"https://pd.{progregion}.a.pvp.net/account-xp/v1/players/{account.puuid}", headers=headers)
             lvl = response.json()['Progress']['Level']
-            input(lvl)
+            #input(lvl)
         except Exception as e:
             lvl = 'N/A'
 
@@ -322,6 +323,10 @@ class system():
     @staticmethod
     def set_console_title(title: str) -> NoReturn:
         ctypes.windll.kernel32.SetConsoleTitleW(title)
+
+    @staticmethod
+    def waitkey():
+        m.getch()
 
 
 class Account:
