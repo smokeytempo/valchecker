@@ -3,7 +3,6 @@ import ctypes
 import json
 import os
 import random
-import time
 import tkinter
 from tkinter import filedialog
 from InquirerPy import inquirer
@@ -47,7 +46,7 @@ class program():
         codes = vars(colorama.Fore)
         colors = [codes[color] for color in codes if color not in ['BLACK']]
         colored_name = [random.choice(colors) + char for char in f'ValChecker by liljaba1337']
-        print(sys.get_spaces_to_center(f'ValChecker by liljaba1337')+(''.join(colored_name))+colorama.Fore.RESET)
+        print(sys.get_spaces_to_center('ValChecker by liljaba1337')+(''.join(colored_name))+colorama.Fore.RESET)
         print(sys.center(f'v{self.version}'))
         if self.lastver != self.version and 'beta' not in self.version:
             print(sys.center(
