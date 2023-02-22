@@ -1,3 +1,4 @@
+import asyncio
 import ctypes
 import json
 import os
@@ -24,7 +25,7 @@ class program():
     def __init__(self) -> None:
         self.count = 0
         self.checked = 0
-        self.version = '3.12.2'
+        self.version = '3.12.2 beta'
         self.riotlimitinarow = 0
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
@@ -44,16 +45,14 @@ class program():
         os.system('cls')
         codes = vars(colorama.Fore)
         colors = [codes[color] for color in codes if color not in ['BLACK']]
-        colored_name = [random.choice(
-            colors) + char for char in f'ValChecker by liljaba1337']
-        print(sys.get_spaces_to_center(f'ValChecker by liljaba1337') +
-              (''.join(colored_name))+colorama.Fore.RESET)
+        colored_name = [random.choice(colors) + char for char in f'ValChecker by liljaba1337']
+        print(sys.get_spaces_to_center('ValChecker by liljaba1337')+(''.join(colored_name))+colorama.Fore.RESET)
         print(sys.center(f'v{self.version}'))
         if self.lastver != self.version and 'beta' not in self.version:
             print(sys.center(
                 f'\nnext version {self.lastver} is available!'))
             if inquirer.confirm(
-                message="{}Would you like to download it now?".format(system.get_spaces_to_center('Would you like to download it now? (Y/n)')), default=True, qmark=''
+                message="{}Would you like to download it now?".format(system.get_spaces_to_center('Would you like to download it now? (Y/n)')), default=True,qmark=''
             ).execute():
                 os.system(f'{self.parentpath}/updater.bat')
                 os._exit(0)
@@ -91,8 +90,8 @@ class program():
             print(f'''
     valchecker v{self.version} by liljaba1337
 
+    discord: LIL JABA#1895
     server: https://discord.gg/r3Y5KhM7kP
-    help: https://liljaba1337.gitbook.io/untitled/
 
   [1] - check valid/invalid/ban and save them to valid.txt in output folder
   [2] - i think u understand
@@ -179,8 +178,8 @@ class program():
         print('loading checker')
         ctypes.windll.kernel32.SetConsoleTitleW(
             f'ValChecker {self.version} by liljaba1337 | Loading Checker')
-        scheck = checker.simplechecker(settings, proxylist, self.version)
-        scheck.main(accounts, self.count)
+        scheck = checker.simplechecker(settings, proxylist)
+        asyncio.run(scheck.main(accounts, self.count))
         return
 
 

