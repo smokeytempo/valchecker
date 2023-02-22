@@ -9,7 +9,6 @@ import traceback
 from datetime import datetime
 from os.path import exists
 
-import aiohttp
 from colorama import Fore
 from InquirerPy.separator import Separator
 
