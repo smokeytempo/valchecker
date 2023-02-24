@@ -9,8 +9,8 @@ from InquirerPy import inquirer
 from InquirerPy.separator import Separator
 import colorama
 
-
 import requests
+from colorama import Fore, Style
 
 import checker
 from codeparts import checkers, systems, validsort
@@ -25,7 +25,7 @@ class program():
     def __init__(self) -> None:
         self.count = 0
         self.checked = 0
-        self.version = '3.12.2 beta'
+        self.version = '3.13'
         self.riotlimitinarow = 0
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
@@ -164,6 +164,35 @@ class program():
         print('loading proxies')
         proxylist = sys.load_proxy()
 
+        if proxylist == None:
+            path = os.getcwd()
+            file_path = f"{os.path.abspath(os.path.join(path, os.pardir))}\\proxy.txt"
+
+            print(Fore.YELLOW, end='')
+            response = input('No Proxies Found, Do you want to scrape some? (y/n): ')
+            print(Style.RESET_ALL, end='')
+
+            if response.lower() == 'y':
+                f = open('system\\settings.json', 'r+')
+                data = json.load(f)
+                proxyscraper = data['proxyscraper']
+                f.close()
+
+                # Scrape proxies
+                url = proxyscraper
+                proxies = requests.get(url).text.split('\r\n')
+
+                # Save proxies to file
+                with open(file_path, 'w') as f:
+                    f.write("\n".join(proxies))
+
+                # Print number of proxies saved
+                num_proxies = len(proxies)
+                print(f'{num_proxies} Proxies saved to "proxy.txt" file.')
+                proxylist = sys.load_proxy()
+            else:
+                print('Running Proxy Less...')
+
         fn = settings['default_file']
         ctypes.windll.kernel32.SetConsoleTitleW(
             f'ValChecker {self.version} by liljaba1337 | Loading Accounts')
@@ -178,7 +207,7 @@ class program():
         print('loading checker')
         ctypes.windll.kernel32.SetConsoleTitleW(
             f'ValChecker {self.version} by liljaba1337 | Loading Checker')
-        scheck = checker.simplechecker(settings, proxylist)
+        scheck = checker.simplechecker(settings, proxylist, self.version)
         asyncio.run(scheck.main(accounts, self.count))
         return
 

@@ -1,3 +1,4 @@
 *.pyc
 *.pyo
+*.txt
 output/riot_limits.txt

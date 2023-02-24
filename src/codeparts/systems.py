@@ -1,3 +1,4 @@
+import asyncio
 import json
 import os
 import tkinter
@@ -5,9 +6,8 @@ from tkinter import filedialog
 import time
 from typing import NoReturn
 import ctypes
-import msvcrt as m
 
-from colorama import Fore, Back
+from colorama import Fore, Back, Style
 import requests
 from InquirerPy import inquirer
 from InquirerPy.separator import Separator
@@ -42,7 +42,7 @@ class system():
             response = response.json()
             reg = 'N/A'
             lvl = ''
-            #input(response)
+            input(response)
 
             return reg, lvl
         except Exception as e:
@@ -84,7 +84,7 @@ class system():
             }
             response = session.get(f"https://pd.{progregion}.a.pvp.net/account-xp/v1/players/{account.puuid}", headers=headers)
             lvl = response.json()['Progress']['Level']
-            #input(lvl)
+            input(lvl)
         except Exception as e:
             lvl = 'N/A'
 
@@ -116,6 +116,7 @@ class system():
             webhook = data['webhook']
             print_sys = data['print_sys']
             create_folder = data['new_folder']
+            proxyscraper = data['proxyscraper']
             menu_choices = [
                 Separator(),
                 f'Default File: {deffile}',
@@ -126,6 +127,7 @@ class system():
                 f'Discord Webhook: {webhook}',
                 f'Print system info: {print_sys}',
                 'Discord Webhook Settings',
+                f'Proxy Scraper URL: {proxyscraper}',
                 Separator(),
                 'Exit'
             ]
@@ -214,6 +216,15 @@ class system():
                     ).execute()
                 ]
                 data['dw_settings'] = dwsttngs
+            elif edit == menu_choices[9]:
+                default_scraperurl = 'https://api.proxyscrape.com/?request=getproxies&proxytype=http&timeout=10000&country=all&ssl=all&anonymity=all'
+                newscraperurl = ''
+                newscraperurl = input(
+                    'Enter URL From Which (HTTP) Proxies Will Be Scraped, Leave Empty To Use ProxySrape: ')
+
+                if len(newscraperurl) == 0:
+                    newscraperurl = default_scraperurl
+                data['proxyscraper'] = newscraperurl
             else:
                 return
             f.seek(0)
@@ -235,6 +246,7 @@ class system():
                     'http': f'http://{i}',
                     'https':f'http://{i}'
                 })
+
         return self.proxylist
 
     def getproxy(self, proxlist):
@@ -277,8 +289,11 @@ class system():
         except FileNotFoundError:
             input('cant find your proxy file. press enter to return')
             return
+
         proxychecker = PCSS.ProxyChecker()
-        good = proxychecker.main(proxylist)
+        proxychecker.main(proxylist)
+        good = asyncio.run(proxychecker.check_proxies())
+
         if inquirer.confirm(
             message="Do you want to delete the bad ones?", default=True
         ).execute():
@@ -323,10 +338,6 @@ class system():
     @staticmethod
     def set_console_title(title: str) -> NoReturn:
         ctypes.windll.kernel32.SetConsoleTitleW(title)
-
-    @staticmethod
-    def waitkey():
-        m.getch()
 
 
 class Account:

@@ -20,8 +20,9 @@ stff = staff.staff()
 
 
 class simplechecker():
-    def __init__(self, settings: list, proxylist) -> None:
+    def __init__(self, settings: list, proxylist:list, version:str) -> None:
         path = os.getcwd()
+        self.version = version
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
         self.proxylist = proxylist
         self.inrlimit = 0
@@ -144,7 +145,7 @@ class simplechecker():
                         ps = accounts[num].split(':')[1]
                         task = loop.run_in_executor(executor, self.checker, us, ps)
                         tasks.append(task)
-                        print(f'Added task for account {us}:{ps}. Current tasks: {len(tasks)}')
+                        #print(f'Added task for account {us}:{ps}. Current tasks: {len(tasks)}')
                         num += 1
                     except:
                         print("Checked all")
@@ -237,7 +238,7 @@ class simplechecker():
                         sys.get_region2(account, proxy)
                         if account.region != 'N/A' and account.region != '':
                             if account.banuntil is None:
-                                self.regions[account.region.lower()] += 1
+                                self.regions[account.region.lower().strip()] += 1
                             account.rank = None
                             try:
                                 if int(account.lvl) < 20 and account.banuntil is None:
@@ -249,7 +250,7 @@ class simplechecker():
                                 check.ranked(account)
                             if account.banuntil is None:
                                 try:
-                                    self.ranks[account.rank] += 1
+                                    self.ranks[account.rank.strip().lower().split(' ')[0]] += 1
                                 except:
                                     self.ranks['unknown'] += 1
                             check.skins_en(account)
@@ -294,6 +295,7 @@ class simplechecker():
                     reg = account.region
                     country = account.country
                     rank = account.rank
+                    sysrank = rank.strip().lower().split(' ')[0]
                     lastplayed = account.lastplayed
                     vp = account.vp
                     rp = account.rp
@@ -348,7 +350,7 @@ class simplechecker():
                             os.mkdir(f'{self.outpath}/regions/')
                         if not exists(f'{self.outpath}/regions/{reg}/'):
                             os.mkdir(f'{self.outpath}/regions/{reg}/')
-                        with open(f'{self.outpath}/regions/{reg}/{rank}.txt', 'a', encoding='UTF-8') as file:
+                        with open(f'{self.outpath}/regions/{reg}/{sysrank}.txt', 'a', encoding='UTF-8') as file:
                             file.write(f'''
 ╔═════════════════════════════════════════════════════════════╗
 ║            | {account.logpass} |{space*(49-len(f'| {account.logpass} |'))}║
@@ -501,7 +503,7 @@ class simplechecker():
         percent = self.valid/self.checked*100 if self.checked != 0 else 0.0
         percent = f'{str(round(percent,1))}%'
         ctypes.windll.kernel32.SetConsoleTitleW(
-            f'ValChecker by liljaba1337  |  Checked {self.checked}/{self.count}  |  {self.cpmtext} CPM  |  Hitrate {percent}  |  Est. time: {self.esttime}')
+            f'ValChecker {self.version}  |  Checked {self.checked}/{self.count}  |  {self.cpmtext} CPM  |  Hitrate {percent}  |  Est. time: {self.esttime}')
         os.system('cls')
         print(f'''
     {reset}
