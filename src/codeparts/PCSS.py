@@ -146,4 +146,4 @@ class ProxyChecker:
             exit()
         self.checked += 1
 
-        ctypes.windll.kernel32.SetConsoleTitleW(f"PCSS by skyx#7043 | {self.checked}/{len(self.proxies)} | Threads: {self.THREADS_NUM}")
+        ctypes.windll.kernel32.SetConsoleTitleW(f"Proxy Checker | {self.checked}/{len(self.proxies)} | Threads: {self.THREADS_NUM}")

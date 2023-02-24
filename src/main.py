@@ -169,7 +169,7 @@ class program():
             file_path = f"{os.path.abspath(os.path.join(path, os.pardir))}\\proxy.txt"
 
             print(Fore.YELLOW, end='')
-            response = input('No Proxies Found, Do you want to scrape some? (y/n): ')
+            response = input('No Proxies Found, Do you want to scrape proxies? (y/n): ')
             print(Style.RESET_ALL, end='')
 
             if response.lower() == 'y':
