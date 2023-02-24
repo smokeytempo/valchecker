@@ -42,7 +42,7 @@ class system():
             response = response.json()
             reg = 'N/A'
             lvl = ''
-            input(response)
+            #input(response)
 
             return reg, lvl
         except Exception as e:
@@ -84,7 +84,7 @@ class system():
             }
             response = session.get(f"https://pd.{progregion}.a.pvp.net/account-xp/v1/players/{account.puuid}", headers=headers)
             lvl = response.json()['Progress']['Level']
-            input(lvl)
+            #input(lvl)
         except Exception as e:
             lvl = 'N/A'
 
