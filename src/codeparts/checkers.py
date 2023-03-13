@@ -1,5 +1,6 @@
 import os
 import requests
+import json
 import pandas
 
 from codeparts.data import Constants
@@ -30,27 +31,33 @@ class checkers():
             Skins = r.json()["Entitlements"]
             # file with skins' names
             with open(f'{self.parentpath}\\src\\assets\\skins.json', 'r', encoding='utf-8') as f:
-                response = f.read()
+                response = json.load(f)
 
             # there could be a list but im 1 iq
-            skinstr = ''
+            skinlist = []
+            skinids = []
             for skin in Skins:
                 # find skin's name by it's id
                 try:
-                    skinid = skin['ItemID'].lower()
-                    # there should be simple work with json. idk why ive done this shit
-                    skin = response.split(skinid)[1].split('"displayName": "')[1].split('",')[0].replace('"displayName":"', '').replace(
-                        '\\"', '').replace('"', '').replace('u00A0', '').replace("'", '').split(' Level')[0]
-                    # input(skin)
-                    if skin not in skinstr:
-                        skinstr += skin + "\n"
+                    skinid = skin['ItemID']
+                    for i in response['data']:
+                        if skinid in str(i):
+                            if i['displayName'] in skinlist:
+                                break
+                            skinlist.append(i['displayName'])
+                            skinids.append(skinid.strip())
+                            break
 
-                except:
+                except Exception as e:
+                    #input(e)
                     pass
 
-            account.skins = skinstr
+            #input(skinlist)
+            account.skins = skinlist
+            account.uuids = skinids
         except Exception as e:
-            account.skins = 'err'
+            input(e)
+            account.skins = ['N/A']
 
     def balance(self, account) -> None:
         region = account.region
@@ -96,12 +103,12 @@ class checkers():
             if '","Matches":[]}' in ranked.text:
                 rank = "unranked"
             else:
-                #input(ranked.json())
+                # input(ranked.json())
                 rankid = str(ranked.json()['Matches'][0]['TierAfterUpdate'])
                 rank = RankIDtoRank[rankid]
             account.rank = rank
         except Exception as e:
-            #input(e)
+            # input(e)
             account.rank = 'err'
 
     def lastplayed(self, account):
@@ -118,7 +125,7 @@ class checkers():
             r = requests.get(
                 f"https://pd.{region}.a.pvp.net/match-history/v1/history/{account.puuid}?startIndex=0&endIndex=10", headers=headers)
             data = r.json()
-            #input(data)
+            # input(data)
             data2 = data["History"]
             if data2 == []:
                 account.lastplayed = 'long time ago'

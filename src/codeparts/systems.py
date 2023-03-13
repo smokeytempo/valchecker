@@ -3,9 +3,12 @@ import json
 import os
 import tkinter
 from tkinter import filedialog
+import random
+import urllib
 import time
 from typing import NoReturn
 import ctypes
+from PIL import Image
 
 from colorama import Fore, Back, Style
 import requests
@@ -241,11 +244,11 @@ class system():
                 self.proxy.add(line1.strip())
 
         for i in list(self.proxy):
-            if '.' in i:
-                self.proxylist.append({
-                    'http': f'http://{i}',
-                    'https':f'http://{i}'
-                })
+            if 'socks5' not in i:
+                proxies = {'http':'http://' + i, 'https':'http://'+i}
+            else:
+                proxies = {'http':i, 'https':i}
+            self.proxylist.append(proxies)
 
         return self.proxylist
 
@@ -336,7 +339,7 @@ class system():
             Constants.RIOTCLIENT = data['data']['riotClientBuild']
 
     @staticmethod
-    def set_console_title(title: str) -> NoReturn:
+    def set_console_title(title: str) -> None:
         ctypes.windll.kernel32.SetConsoleTitleW(title)
 
 
@@ -353,7 +356,8 @@ class Account:
     country: str = None
     lvl: int = None
     rank: str = None
-    skins: str = None
+    skins: list[str] = None
+    uuids: list[str] = None
     vp: int = None
     rp: int = None
     lastplayed: Timestamp = None

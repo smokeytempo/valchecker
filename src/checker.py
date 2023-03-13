@@ -3,7 +3,6 @@ import concurrent
 import ctypes
 import datetime
 import os
-import threading
 import time
 import traceback
 from datetime import datetime
@@ -124,9 +123,8 @@ class simplechecker():
             self.printinfo()
         if self.threadam <= 1:
             for account in accounts:
-                if ':' not in account:
-                    self.checked += 1
-                    continue
+                #input(account)
+                account = account.strip()
                 us = account.split(':')[0]
                 ps = account.split(':')[1]
                 self.checker(us, ps)
@@ -256,10 +254,10 @@ class simplechecker():
                             check.skins_en(account)
                             # get inv price
                             invprice = 0
-                            for skin in account.skins.split('\n'):
+                            for skin in account.skins:
                                 invprice += check.skinprice(skin)
                             check.balance(account)
-                            skinscount = len(account.skins.split('\n'))
+                            skinscount = len(account.skins)
                             skinscount -= 1
                             if skinscount > 0 and account.banuntil == None:
                                 self.skins += 1
@@ -285,10 +283,10 @@ class simplechecker():
                                 self.regions['unknown'] += 1
                             account.rank = 'N/A'
                             skinscount = 'N/A'
-                            account.skins = 'N/A\n'
+                            account.skins = ['N/A']
                             account.region = 'N/A'
                         break
-                    skinsformatted = '\n'.join(account.skins.split('\n'))
+                    skinsformatted = '\n'.join(account.skins)
                     banuntil = account.banuntil
                     unverifmail = account.unverifiedmail
                     lvl = account.lvl
@@ -434,8 +432,7 @@ class simplechecker():
                                 name='Full Access', value=unverifmail)
                             embed.add_embed_field(
                                 name=f'VP / RP', value=f'{vp} / {rp}')
-                            embed.add_embed_field(name=f'Skins ({skinscount}) ≈ {invprice} VP', value=account.skins if account.skins.strip(
-                            ) != '' else 'no skins')
+                            embed.add_embed_field(name=f'Skins ({skinscount}) ≈ {invprice} VP', value=account.skins if len(account.skins) != 0 else 'no skins')
                             dcwebhook.add_embed(embed)
                             response = dcwebhook.execute()
                             # input(response)

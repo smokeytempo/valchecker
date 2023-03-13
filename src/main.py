@@ -25,7 +25,7 @@ class program():
     def __init__(self) -> None:
         self.count = 0
         self.checked = 0
-        self.version = '3.13'
+        self.version = '3.14.1'
         self.riotlimitinarow = 0
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
@@ -110,7 +110,6 @@ class program():
             try:
                 with open(str(filename), 'r', encoding='UTF-8', errors='replace') as file:
                     lines = file.readlines()
-                    # ret=list(set(lines))
                     ret = []
                     if len(lines) > 100000:
                         if inquirer.confirm(
@@ -123,8 +122,7 @@ class program():
                             return lines
 
                     for logpass in lines:
-                        logpass = logpass.split(' ')[0].replace(
-                            '\n', '').replace(' ', '')
+                        logpass = logpass.strip()
                         # remove doubles
                         if logpass not in ret and ':' in logpass:
                             self.count += 1

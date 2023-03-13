@@ -127,7 +127,11 @@ class ProxyChecker:
             session.max_redirects = 300
             proxy = proxy.split('\n',1)[0]
             print(Fore.LIGHTYELLOW_EX + 'Checking...  ' + proxy)
-            self.r = session.get(self.URL, proxies={'http':'http://' + proxy, 'https':'http://'+proxy}, timeout=self.TIMEOUT,allow_redirects=True)
+            if 'socks5' not in proxy:
+                proxies = {'http':'http://' + proxy, 'https':'http://'+proxy}
+            else:
+                proxies = {'http':proxy, 'https':proxy}
+            self.r = session.get(self.URL, proxies=proxies, timeout=self.TIMEOUT,allow_redirects=True)
             self.code = self.r.status_code
         except Exception as e:
             return e
