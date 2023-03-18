@@ -26,7 +26,6 @@ class system():
     def __init__(self) -> None:
         self.num = 0
         self.proxylist = []
-        self.proxy = set()
 
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
@@ -240,10 +239,12 @@ class system():
             file_lines1 = f.readlines()
             if len(file_lines1) == 0:
                 return
-            for line1 in file_lines1:
-                self.proxy.add(line1.strip())
+            proxies = file_lines1
 
-        for i in list(self.proxy):
+        for i in proxies:
+            if i.startswith('#') or i.strip() == '':
+                continue
+            i = i.strip()
             if 'socks5' not in i:
                 proxies = {'http':'http://' + i, 'https':'http://'+i}
             else:
@@ -287,8 +288,7 @@ class system():
 
     def checkproxy(self):
         try:
-            with open(f"{self.parentpath}\\proxy.txt", "r") as f:
-                proxylist = f.readlines()
+            proxylist = self.load_proxy()
         except FileNotFoundError:
             input('cant find your proxy file. press enter to return')
             return

@@ -125,13 +125,8 @@ class ProxyChecker:
             session.trust_env = False
             session.headers['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36'
             session.max_redirects = 300
-            proxy = proxy.split('\n',1)[0]
-            print(Fore.LIGHTYELLOW_EX + 'Checking...  ' + proxy)
-            if 'socks5' not in proxy:
-                proxies = {'http':'http://' + proxy, 'https':'http://'+proxy}
-            else:
-                proxies = {'http':proxy, 'https':proxy}
-            self.r = session.get(self.URL, proxies=proxies, timeout=self.TIMEOUT,allow_redirects=True)
+            print(Fore.LIGHTYELLOW_EX + 'Checking...  ' + proxy['http'])
+            self.r = session.get(self.URL, proxies=proxy, timeout=self.TIMEOUT,allow_redirects=True)
             self.code = self.r.status_code
         except Exception as e:
             return e
@@ -142,8 +137,8 @@ class ProxyChecker:
                 print(Fore.LIGHTRED_EX, end='')
             else:
                 print(Fore.LIGHTGREEN_EX, end='')
-                if proxy not in self.goods:
-                    self.goods.append(proxy.replace('\n', ''))
+                if proxy['http'].split('//')[1] not in self.goods:
+                    self.goods.append(proxy['http'].split('//')[1])
             print(f'response: {self.code}')
         except KeyboardInterrupt:
             print(Fore.LIGHTGREEN_EX + '\nExit.')

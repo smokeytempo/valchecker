@@ -25,7 +25,7 @@ class program():
     def __init__(self) -> None:
         self.count = 0
         self.checked = 0
-        self.version = '3.14.1'
+        self.version = '3.14.2 beta'
         self.riotlimitinarow = 0
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
@@ -56,6 +56,9 @@ class program():
             ).execute():
                 os.system(f'{self.parentpath}/updater.bat')
                 os._exit(0)
+        if 'beta' in self.version:
+            print(sys.center(f'{Fore.YELLOW}You have downloaded the BETA version. It can work unstable and contain some bugs.'))
+            print(sys.center(f'Follow https://github.com/LIL-JABA/valchecker/releases/latest to download the latest stable release{Fore.RESET}'))
         menu_choices = [
             Separator(),
             'Start Checker',
@@ -90,7 +93,6 @@ class program():
             print(f'''
     valchecker v{self.version} by liljaba1337
 
-    discord: LIL JABA#1895
     server: https://discord.gg/r3Y5KhM7kP
 
   [1] - check valid/invalid/ban and save them to valid.txt in output folder

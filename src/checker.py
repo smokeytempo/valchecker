@@ -106,8 +106,11 @@ class simplechecker():
             self.whtext = f'{Fore.LIGHTGREEN_EX}Using the webhook{Fore.RESET}'
         self.count = count
         os.system(f'mode con: cols=150 lines=32')
-        self.threadam = int(input(
-            f'input number if threads (min 1 max 1000) (proxies: {self.proxycount}) >>>'))
+        try:
+            self.threadam = int(input(
+                f'input number of threads (min 1 max 1000) (proxies: {self.proxycount}) >>>'))
+        except ValueError:
+            self.threadam = 1
         self.threadam = self.threadam if 1000 > self.threadam > 0 else self.proxycount if self.proxycount > 1 else 3
         menu_choices = [
             Separator(),
