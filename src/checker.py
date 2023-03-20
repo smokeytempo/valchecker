@@ -235,6 +235,7 @@ class simplechecker():
                 else:
                     if account.unverifiedmail and account.banuntil is None:
                         self.unverifiedmail += 1
+                    invprice = 0
                     while True:
                         sys.get_region2(account, proxy)
                         if account.region != 'N/A' and account.region != '':
@@ -261,7 +262,6 @@ class simplechecker():
                                 invprice += check.skinprice(skin)
                             check.balance(account)
                             skinscount = len(account.skins)
-                            skinscount -= 1
                             if skinscount > 0 and account.banuntil == None:
                                 self.skins += 1
                                 if skinscount > 70:

@@ -70,6 +70,7 @@ class auth():
                 }
                 r2 = session.put(Constants.AUTH_URL,json=data,headers=headers,proxies=proxy,timeout=20)
                 #input(r2.text)
+                #print(session.get('https://api64.ipify.org?format=json',proxies=proxy).text)
             except Exception as e:
                 #input(e)
                 account.code = 6
@@ -101,6 +102,9 @@ class auth():
                 return account
             elif 'cloudflare' in r2.text:
                 account.code = 5
+                return account
+            else:
+                account.code = 3
                 return account
 
 

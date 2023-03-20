@@ -4,7 +4,7 @@
     "rlimit_wait": 30,
     "cooldown": 0,
     "new_folder": "True",
-    "webhook": "https://discord.com/api/webhooks/1016261936083632170/Srea761oUIsTx942gQ_bOUAB2xuZc4YDbLpzZNkizp3z44gHRAYaLSFYCYT_M8rTrcFZ",
+    "webhook": "https://discord.com/api/webhooks/1087080802392752238/MLCL5M2jFIp6xFGO3XcwvfQNrLOGhxjTThfRzEdbrR3xB61J-cc-25agXRJ2FeyT1KEr",
     "print_sys": "True",
     "dw_settings": [
         [
@@ -12,5 +12,5 @@
         ]
     ],
     "capybaras": "cool",
-    "proxyscraper": "https://api.proxyscrape.com/?request=getproxies&proxytype=http&timeout=10000&country=all&ssl=all&anonymity=all"
+    "proxyscraper": "https://api.good-proxies.ru/get.php?type%5Bhttp%5D=on&access%5B'supportsHttps'%5D=on&anon%5B'elite'%5D=on&count=&ping=8000&time=600&works=100&key=933b21783c4861ea7b07f619713de54b"
 }

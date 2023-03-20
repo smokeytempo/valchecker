@@ -128,18 +128,20 @@ class ProxyChecker:
             print(Fore.LIGHTYELLOW_EX + 'Checking...  ' + proxy['http'])
             self.r = session.get(self.URL, proxies=proxy, timeout=self.TIMEOUT,allow_redirects=True)
             self.code = self.r.status_code
+            return None
         except Exception as e:
             return e
 
     def check_proxy(self, proxy):
         try:
-            if self.check_proxy_code(proxy) or self.r.status_code != self.RESPONSE_CODE:
+            response = self.check_proxy_code(proxy)
+            if response is not None or self.r.status_code != self.RESPONSE_CODE:
                 print(Fore.LIGHTRED_EX, end='')
             else:
                 print(Fore.LIGHTGREEN_EX, end='')
                 if proxy['http'].split('//')[1] not in self.goods:
                     self.goods.append(proxy['http'].split('//')[1])
-            print(f'response: {self.code}')
+            print(f'response: {self.code} ({response})')
         except KeyboardInterrupt:
             print(Fore.LIGHTGREEN_EX + '\nExit.')
             exit()
