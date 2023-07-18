@@ -1,16 +1,10 @@
 {
-    "default_file": "C:/Users/roadhog/Downloads/100k valorant combo ()3.txt",
+    "default_file": "C:/Users/roadhog/Downloads/search.txt",
     "max_rlimits": 3,
     "rlimit_wait": 30,
     "cooldown": 0,
     "new_folder": "True",
-    "webhook": "https://discord.com/api/webhooks/1087761314635587685/7I9zg6HJSK2alxx8k4efGq5NylyIoFKS35Kn3VjErr858ZDzeikxva1Rc9pzalvQOHJN",
     "print_sys": "True",
-    "dw_settings": [
-        [
-            "stats (once per minute)"
-        ]
-    ],
     "capybaras": "cool",
     "proxyscraper": "https://api.good-proxies.ru/get.php?type%5Bhttp%5D=on&access%5B'supportsHttps'%5D=on&anon%5B'elite'%5D=on&count=&ping=8000&time=600&works=100&key=933b21783c4861ea7b07f619713de54b"
 }

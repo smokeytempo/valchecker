@@ -115,8 +115,6 @@ class system():
             max_rlimits = data['max_rlimits']
             rlimit_wait = data['rlimit_wait']
             cooldown = data['cooldown']
-            webhook = data['webhook']
-            print_sys = data['print_sys']
             create_folder = data['new_folder']
             proxyscraper = data['proxyscraper']
             menu_choices = [
@@ -126,9 +124,6 @@ class system():
                 f'Wait if there is a RLimit (seconds): {rlimit_wait}',
                 f'Wait between checking accounts (seconds): {cooldown}',
                 f'Create folder for every check: {create_folder}',
-                f'Discord Webhook: {webhook}',
-                f'Print system info: {print_sys}',
-                'Discord Webhook Settings',
                 f'Proxy Scraper URL: {proxyscraper}',
                 Separator(),
                 'Exit'
@@ -189,36 +184,6 @@ class system():
                 ).execute().replace('Yes', 'True').replace('No', 'False')
                 data['new_folder'] = newfolder
             elif edit == menu_choices[6]:
-                newwebhook = input(
-                    'ented the discotd webhook to use (leave it empty if u dont wanna use it): ')
-                data['webhook'] = newwebhook
-            elif edit == menu_choices[7]:
-                printinfo = [
-                    Separator(),
-                    'Yes',
-                    'No'
-                ]
-                newinfo = inquirer.select(
-                    message='print system info (e.g. riot limits)?',
-                    choices=printinfo,
-                    default=printinfo[0],
-                    pointer='>'
-                ).execute().replace('Yes', 'True').replace('No', 'False')
-                data['print_sys'] = newinfo
-            elif edit == menu_choices[8]:
-                dwsttngs = [
-                    inquirer.checkbox(
-                        "What to send in discord webhook?",
-                        choices=["tempbanned accounts", "accounts without skins", "accounts with only wayfinder shorty",
-                                 "stats (once per 5 minutes)", "accounts with unknown region"],
-                        long_instruction="space to pick. enter to finish",
-                        disabled_symbol='[X]',
-                        enabled_symbol=f"[Y]",
-                        pointer='>'
-                    ).execute()
-                ]
-                data['dw_settings'] = dwsttngs
-            elif edit == menu_choices[9]:
                 default_scraperurl = 'https://api.proxyscrape.com/?request=getproxies&proxytype=http&timeout=10000&country=all&ssl=all&anonymity=all'
                 newscraperurl = ''
                 newscraperurl = input(
@@ -362,3 +327,89 @@ class Account:
     vp: int = None
     rp: int = None
     lastplayed: Timestamp = None
+
+class vlchkrsource:
+    def __init__(self,path:str) -> None:
+        self.filepath = path
+        self.tocheck=[]
+        self.valid=[]
+        self.banned=0
+        self.tempbanned=[]
+        self.rlimits=0
+        self.errors=0
+        self.retries=0
+        self.wskins=0
+        self.umail=0
+        self.checked=0
+        self.regions = {
+            "eu":0,
+            "na":0,
+            "ap":0,
+            "kr":0,
+            "br":0,
+            "latam":0,
+            'unknown':0
+        }
+
+        
+        self.ranks={
+            "unranked":0,
+            "iron":0,
+            "bronze":0,
+            "silver":0,
+            "gold":0,
+            "platinum":0,
+            "diamond":0,
+            "ascendant":0,
+            "immortal":0,
+            "radiant":0,
+            'unknown':0
+        }
+        self.locked = 0
+        self.skins={
+            '1-10': 0,
+            '10-20': 0,
+            '20-35': 0,
+            '35-40': 0,
+            '40-70': 0,
+            '70+': 0
+        }
+    
+    def loadfile(self):
+        with open(self.filepath,'r',encoding='utf-8') as f:
+            data = json.loads(f.read())
+            self.tocheck = data['tocheck']
+            self.valid = data['valid']
+            self.banned = data['banned']
+            self.tempbanned = data['tempbanned']
+            self.rlimits = data['rlimits']
+            self.errors = data['errors']
+            self.retries = data['retries']
+            self.wskins = data['wskins']
+            self.umail = data['umail']
+            self.checked = data['checked']
+            self.regions = data['regions']
+            self.ranks = data['ranks']
+            self.locked = data['locked']
+            self.skins = data['skins']
+
+    def savefile(self):
+        data = {
+            "tocheck": self.tocheck,
+            "valid": self.valid,
+            "banned": self.banned,
+            "tempbanned": self.tempbanned,
+            "rlimits": self.rlimits,
+            "errors": self.errors,
+            "retries": self.retries,
+            "wskins": self.wskins,
+            "umail": self.umail,
+            "checked": self.checked,
+            "regions": self.regions,
+            "ranks": self.ranks,
+            'locked':self.locked,
+            "skins": self.skins
+        }
+        
+        with open(self.filepath, 'w', encoding="utf-8") as file:
+            json.dump(data, file)

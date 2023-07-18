@@ -16,4 +16,4 @@ Please leave a ⭐  if you like it
 ## [A Complete installation and usage guide](https://liljaba1337.gitbook.io/untitled/)
 
 
-<a href="https://discord.gg/VbBfzAweRm"><img src="https://discordapp.com/api/guilds/1105384983385886791/widget.png?style=banner2"></a>
+<a href="https://discord.gg/DYfCsZG5UX"><img src="https://discordapp.com/api/guilds/1105384983385886791/widget.png?style=banner2"></a>

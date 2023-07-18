@@ -8,6 +8,8 @@ from tkinter import filedialog
 from InquirerPy import inquirer
 from InquirerPy.separator import Separator
 import colorama
+from tkinter import Tk
+from tkinter.filedialog import askopenfilename
 
 import requests
 from colorama import Fore, Style
@@ -25,7 +27,7 @@ class program():
     def __init__(self) -> None:
         self.count = 0
         self.checked = 0
-        self.version = '3.14.2'
+        self.version = '3.15 beta'
         self.riotlimitinarow = 0
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
@@ -204,11 +206,25 @@ class program():
             f'ValChecker {self.version} by liljaba1337 | Loading Assets')
         sys.load_assets()
 
+        if inquirer.confirm(
+            message="Do you want to continue checking a .vlchkr file instead of loading a new .txt?", default=True
+        ).execute():
+            root = tkinter.Tk()
+            file = filedialog.askopenfile(parent=root, mode='rb', title='select file with accounts (login:password)',
+                                          filetype=(("vlchkr", "*.vlchkr"), ("All files", "*.vlchkr")))
+            root.destroy()
+            if file == None:
+                filename = 'None'
+            else:
+                filename = str(file).split("name='")[1].split("'>")[0]
+                valkekersource = systems.vlchkrsource(filename)
+        else: 
+            valkekersource = None
         print('loading checker')
         ctypes.windll.kernel32.SetConsoleTitleW(
             f'ValChecker {self.version} by liljaba1337 | Loading Checker')
         scheck = checker.simplechecker(settings, proxylist, self.version)
-        asyncio.run(scheck.main(accounts, self.count))
+        asyncio.run(scheck.main(accounts, self.count, valkekersource))
         return
 
 

