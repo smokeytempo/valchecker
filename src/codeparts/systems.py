@@ -3,14 +3,10 @@ import json
 import os
 import tkinter
 from tkinter import filedialog
-import random
-import urllib
 import time
-from typing import NoReturn
 import ctypes
-from PIL import Image
 
-from colorama import Fore, Back, Style
+from colorama import Fore, Back
 import requests
 from InquirerPy import inquirer
 from InquirerPy.separator import Separator

@@ -3,8 +3,6 @@ from codeparts import stuff, systems,auth
 from datetime import datetime
 import threading
 import time
-from InquirerPy import inquirer
-from InquirerPy.separator import Separator
 import traceback
 from colorama import Fore
 import ctypes

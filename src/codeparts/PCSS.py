@@ -1,11 +1,8 @@
 #!/usr/bin/python3
 import asyncio
-import concurrent
 import time
 from concurrent.futures import ThreadPoolExecutor
 
-import aiohttp
-import urllib3
 import ctypes
 import requests
 import os

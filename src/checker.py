@@ -8,11 +8,7 @@ import traceback
 from datetime import datetime
 from os.path import exists
 
-from tkinter import Tk
-from tkinter.filedialog import askopenfilename
 from colorama import Fore
-from InquirerPy.separator import Separator
-from InquirerPy import inquirer
 
 from codeparts import auth, checkers, stuff, systems
 from codeparts.systems import vlchkrsource

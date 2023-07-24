@@ -5,7 +5,6 @@ from re import compile
 import ssl
 from typing import Any
 from tkinter import *
-from urllib3 import HTTPSConnectionPool
 
 import pandas
 import requests

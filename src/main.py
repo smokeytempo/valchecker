@@ -8,8 +8,6 @@ from tkinter import filedialog
 from InquirerPy import inquirer
 from InquirerPy.separator import Separator
 import colorama
-from tkinter import Tk
-from tkinter.filedialog import askopenfilename
 
 import requests
 from colorama import Fore, Style
@@ -27,7 +25,7 @@ class program():
     def __init__(self) -> None:
         self.count = 0
         self.checked = 0
-        self.version = '3.15 beta'
+        self.version = '3.15 beta 2'
         self.riotlimitinarow = 0
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
