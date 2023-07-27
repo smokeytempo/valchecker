@@ -62,6 +62,7 @@ class program():
         menu_choices = [
             Separator(),
             'Start Checker',
+            'Single-Line Checker',
             'Edit Settings',
             'Sort Valid',
             'Test Proxy',
@@ -79,16 +80,22 @@ class program():
         ).execute()
         if res == menu_choices[1]:
             self.main()
+            pr.start()
         elif res == menu_choices[2]:
-            sys.edit_settings()
+            slchecker = checker.singlelinechecker()
+            slchecker.main()
             pr.start()
         elif res == menu_choices[3]:
+            sys.edit_settings()
+            pr.start()
+        elif res == menu_choices[4]:
             valid.customsort()
             input('done. press ENTER to exit')
-        elif res == menu_choices[4]:
-            sys.checkproxy()
             pr.start()
         elif res == menu_choices[5]:
+            sys.checkproxy()
+            pr.start()
+        elif res == menu_choices[6]:
             os.system('cls')
             print(f'''
     valchecker v{self.version} by liljaba1337
@@ -104,54 +111,39 @@ class program():
             ''')
             input()
             pr.start()
-        elif res == menu_choices[7]:
+        elif res == menu_choices[8]:
             os._exit(0)
 
-    def get_accounts(self, filename):
-        while True:
-            try:
-                with open(str(filename), 'r', encoding='UTF-8', errors='replace') as file:
-                    lines = file.readlines()
-                    ret = []
-                    if len(lines) > 100000:
-                        if inquirer.confirm(
-                            message=f"You have more than 100k accounts ({len(lines)}). Do you want to skip the sorting part? (it removes doubles and bad logpasses but can be long)",
-                            default=True,
-                            qmark='!',
-                            amark='!'
-                        ).execute():
-                            self.count = len(lines)
-                            return lines
-
-                    for logpass in lines:
-                        logpass = logpass.strip()
-                        # remove doubles
-                        if logpass not in ret and ':' in logpass:
-                            self.count += 1
-                            ctypes.windll.kernel32.SetConsoleTitleW(
-                                f'ValChecker {self.version} by liljaba1337 | Loading Accounts ({self.count})')
-                            ret.append(logpass)
-                    return ret
-            except FileNotFoundError:
-                print(
-                    f"can't find the default file ({filename})\nplease select a new one")
-                root = tkinter.Tk()
-                file = filedialog.askopenfile(parent=root, mode='rb', title='select file with accounts (login:password)',
-                                              filetype=(("txt", "*.txt"), ("All files", "*.txt")))
-                root.destroy()
-                os.system('cls')
-                if file == None:
-                    print('you chose nothing')
-                    input('press ENTER to choose again')
-                    continue
-                filename = str(file).split("name='")[1].split("'>")[0]
-                with open('system\\settings.json', 'r+') as f:
-                    data = json.load(f)
-                    data['default_file'] = filename
-                    f.seek(0)
-                    json.dump(data, f, indent=4)
-                    f.truncate()
-                continue
+    def get_accounts(self):
+        root = tkinter.Tk()
+        file = filedialog.askopenfile(parent=root, mode='rb', title='select file with accounts (login:password)',
+                                      filetype=(("txt", "*.txt"), ("All files", "*.txt")))
+        root.destroy()
+        os.system('cls')
+        if file == None:
+            os._exit(0)
+        filename = str(file).split("name='")[1].split("'>")[0]
+        with open(str(filename), 'r', encoding='UTF-8', errors='replace') as file:
+            lines = file.readlines()
+            ret = []
+            if len(lines) > 100000:
+                if inquirer.confirm(
+                    message=f"You have more than 100k accounts ({len(lines)}). Do you want to skip the sorting part? (it removes doubles and bad logpasses but can be long)",
+                    default=True,
+                    qmark='!',
+                    amark='!'
+                ).execute():
+                    self.count = len(lines)
+                    return lines
+            for logpass in lines:
+                logpass = logpass.strip()
+                # remove doubles
+                if logpass not in ret and ':' in logpass:
+                    self.count += 1
+                    ctypes.windll.kernel32.SetConsoleTitleW(
+                        f'ValChecker {self.version} by liljaba1337 | Loading Accounts ({self.count})')
+                    ret.append(logpass)
+            return ret
 
     def main(self):
         ctypes.windll.kernel32.SetConsoleTitleW(
@@ -193,17 +185,6 @@ class program():
             else:
                 print('Running Proxy Less...')
 
-        fn = settings['default_file']
-        ctypes.windll.kernel32.SetConsoleTitleW(
-            f'ValChecker {self.version} by liljaba1337 | Loading Accounts')
-        print('loading accounts')
-        accounts = self.get_accounts(fn)
-
-        print('loading assets')
-        ctypes.windll.kernel32.SetConsoleTitleW(
-            f'ValChecker {self.version} by liljaba1337 | Loading Assets')
-        sys.load_assets()
-
         if inquirer.confirm(
             message="Do you want to continue checking a .vlchkr file instead of loading a new .txt?", default=True
         ).execute():
@@ -216,8 +197,19 @@ class program():
             else:
                 filename = str(file).split("name='")[1].split("'>")[0]
                 valkekersource = systems.vlchkrsource(filename)
+                accounts=None
         else: 
             valkekersource = None
+            ctypes.windll.kernel32.SetConsoleTitleW(
+                f'ValChecker {self.version} by liljaba1337 | Loading Accounts')
+            print('loading accounts')
+            accounts = self.get_accounts()
+
+        print('loading assets')
+        ctypes.windll.kernel32.SetConsoleTitleW(
+            f'ValChecker {self.version} by liljaba1337 | Loading Assets')
+        sys.load_assets()
+
         print('loading checker')
         ctypes.windll.kernel32.SetConsoleTitleW(
             f'ValChecker {self.version} by liljaba1337 | Loading Checker')

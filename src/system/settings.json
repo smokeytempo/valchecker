@@ -1,5 +1,4 @@
 {
-    "default_file": "C:/Users/roadhog/Downloads/search.txt",
     "max_rlimits": 3,
     "rlimit_wait": 30,
     "cooldown": 0,

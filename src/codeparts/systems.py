@@ -47,7 +47,7 @@ class system():
             return 'N/A', 'N/A'
 
     @staticmethod
-    def get_region2(account, proxy: dict) -> None:
+    def get_region2(account, proxy: dict={'http':None,'https':None}) -> None:
         # reg + country
         session = requests.Session()
         headers = {"User-Agent": f"RiotClient/{Constants.RIOTCLIENT} %s (Windows;10;;Professional, x64)",
@@ -107,7 +107,6 @@ class system():
             os.system('cls')
             f = open('system\\settings.json', 'r+')
             data = json.load(f)
-            deffile = data['default_file']
             max_rlimits = data['max_rlimits']
             rlimit_wait = data['rlimit_wait']
             cooldown = data['cooldown']
@@ -115,7 +114,6 @@ class system():
             proxyscraper = data['proxyscraper']
             menu_choices = [
                 Separator(),
-                f'Default File: {deffile}',
                 f'RLimits to skip an acc: {max_rlimits}',
                 f'Wait if there is a RLimit (seconds): {rlimit_wait}',
                 f'Wait between checking accounts (seconds): {cooldown}',
@@ -130,7 +128,7 @@ class system():
                 default=menu_choices[0],
                 pointer='>'
             ).execute()
-            if edit == menu_choices[1]:
+            if edit == menu_choices[0]:
                 root = tkinter.Tk()
                 file = filedialog.askopenfile(parent=root, mode='rb', title='select file with accounts (login:password)',
                                               filetype=(("txt", "*.txt"), ("All files", "*.txt")))
@@ -140,7 +138,7 @@ class system():
                 else:
                     filename = str(file).split("name='")[1].split("'>")[0]
                 data['default_file'] = filename
-            elif edit == menu_choices[2]:
+            elif edit == menu_choices[1]:
                 new_rlimits = input(
                     'enter the number of riot limits to skip this account (min 1) >>>')
                 if int(new_rlimits) < 1 or int(new_rlimits) > 999:
@@ -150,7 +148,7 @@ class system():
                 except:
                     print('u have to type a num from 1 to 999 (3 recommended)')
                     return
-            elif edit == menu_choices[3]:
+            elif edit == menu_choices[2]:
                 new_maxrlimits = input(
                     'enter the number of seconds to wait if there is a riot limit (min 1) >>>')
                 if int(new_maxrlimits) < 1 or int(new_maxrlimits) > 99999:
@@ -160,13 +158,13 @@ class system():
                 except:
                     print('u have to type a num from 1 to 99999 (30 recommended)')
                     return
-            elif edit == menu_choices[4]:
+            elif edit == menu_choices[3]:
                 new_cd = input(
                     'enter the number of seconds to wait between checking accounts (min 0) >>>')
                 if int(new_cd) < 0 or int(new_cd) > 99999:
                     return
                 data['cooldown'] = int(new_cd)
-            elif edit == menu_choices[5]:
+            elif edit == menu_choices[4]:
                 createfolder = [
                     Separator(),
                     'Yes',
@@ -179,7 +177,7 @@ class system():
                     pointer='>'
                 ).execute().replace('Yes', 'True').replace('No', 'False')
                 data['new_folder'] = newfolder
-            elif edit == menu_choices[6]:
+            elif edit == menu_choices[5]:
                 default_scraperurl = 'https://api.proxyscrape.com/?request=getproxies&proxytype=http&timeout=10000&country=all&ssl=all&anonymity=all'
                 newscraperurl = ''
                 newscraperurl = input(

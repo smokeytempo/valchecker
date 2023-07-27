@@ -123,6 +123,7 @@ class validsort():
         matches=0
         for account in accounts:
             ctypes.windll.kernel32.SetConsoleTitleW(f'sorted {sorted}/{count}  {matches} matches')
+            accounttowrite=account
             account=account.lower()
             gothis=True
 
@@ -206,7 +207,7 @@ class validsort():
                 sorted+=1
                 if gothis==True:
                     with open(f'{self.parentpath}/output/sorted.txt','a',encoding='UTF-8') as f:
-                        f.write('╔═════════════════════════════════════════════════════════════╗'+account)#####################
+                        f.write('╔═════════════════════════════════════════════════════════════╗'+accounttowrite)#####################
                     matches+=1
                     print(f'sorted {sorted}/{count} MATCH')
                 else:

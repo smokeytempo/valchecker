@@ -7,6 +7,7 @@ import time
 import traceback
 from datetime import datetime
 from os.path import exists
+from InquirerPy import inquirer
 
 from colorama import Fore
 
@@ -17,6 +18,54 @@ check = checkers.checkers()
 sys = systems.system()
 stff = stuff.staff()
 
+class singlelinechecker():
+    def __init__(self) -> None:
+        self.checkskins = inquirer.confirm(
+            message='wanna capture skins?', default=True,qmark=''
+        ).execute()
+    
+    def main(self) -> None:
+        authenticate = auth.auth()
+        while True:
+            logpass = input('account (login:password) or "E" to exit >>>')
+            if logpass == 'E': break
+            if not ':' in logpass: continue
+            account = authenticate.auth(logpass)
+            if account.banuntil is not None:
+                stff.checkban(account)
+            elif account.code == 1:
+                print('you have been ratelimited. wait 30-60 seconds and try again')
+                continue
+            elif account.code == 3 or account.code == 0:
+                print('invalid account')
+                continue
+            elif account.code == 4:
+                print('permbanned account')
+                continue
+            sys.get_region2(account)
+            if account.region == 'N/A' or account.region == '':
+                print('unknown region')
+                continue
+            if account.lvl < 20:
+                account.rank = 'locked'
+            else:
+                check.ranked(account)
+            if self.checkskins:
+                check.skins_en(account)
+            check.balance(account)
+            check.lastplayed(account)
+            print(f'''
+|   {account.logpass}   |
+
+ban until: {account.banuntil}
+region: {account.region}    country: {account.country}
+rank: {account.rank}    lvl: {account.lvl}
+vp: {account.vp}    rp: {account.rp}
+last game: {account.lastplayed}''')
+            if self.checkskins:
+                print('skins:')
+                print('\n'.join(account.skins))
+            print('\n')
 
 class simplechecker():
     def __init__(self, settings: list, proxylist:list, version:str) -> None:
@@ -240,7 +289,6 @@ class simplechecker():
                 else:
                     if account.unverifiedmail and account.banuntil is None:
                         self.unverifiedmail += 1
-                    invprice = 0
                     while True:
                         sys.get_region2(account, proxy)
                         if account.region != 'N/A' and account.region != '':
@@ -261,10 +309,6 @@ class simplechecker():
                                 except:
                                     self.ranks['unknown'] += 1
                             check.skins_en(account)
-                            # get inv price
-                            invprice = 0
-                            for skin in account.skins:
-                                invprice += check.skinprice(skin)
                             check.balance(account)
                             skinscount = len(account.skins)
                             if skinscount > 0 and account.banuntil == None:
@@ -318,7 +362,6 @@ class simplechecker():
 ║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}'))}║
 ║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║
 ║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
-║             Inventory Price = {invprice} VP{space*(61-len(f'             Inventory Price = {invprice} VP'))}║
 ╠═════════════════════════════════════════════════════════════╣
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
@@ -341,7 +384,6 @@ class simplechecker():
 ║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}'))}║
 ║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║
 ║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
-║             Inventory Price = {invprice} VP{space*(61-len(f'             Inventory Price = {invprice} VP'))}║
 ╠═════════════════════════════════════════════════════════════╣
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
@@ -367,7 +409,6 @@ class simplechecker():
 ║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}'))}║
 ║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║
 ║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
-║             Inventory Price = {invprice} VP{space*(61-len(f'             Inventory Price = {invprice} VP'))}║
 ╠═════════════════════════════════════════════════════════════╣
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
@@ -398,7 +439,6 @@ class simplechecker():
 ║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}'))}║
 ║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║
 ║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
-║             Inventory Price = {invprice} VP{space*(61-len(f'             Inventory Price = {invprice} VP'))}║
 ╠═════════════════════════════════════════════════════════════╣
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
