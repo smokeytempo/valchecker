@@ -130,8 +130,7 @@ class checkers():
             if data2 == []:
                 account.lastplayed = 'long time ago'
                 return
-            for x in data2:
-                data3 = x['GameStartTime']
+            data3 = data2[0]['GameStartTime']
             unix_time1 = data3
             unix_time1 = int(unix_time1)
             result_s2 = pandas.to_datetime(unix_time1, unit='ms')

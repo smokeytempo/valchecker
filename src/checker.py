@@ -58,10 +58,13 @@ class singlelinechecker():
 |   {account.logpass}   |
 
 ban until: {account.banuntil}
+{account.gamename}#{account.tagline}
 region: {account.region}    country: {account.country}
 rank: {account.rank}    lvl: {account.lvl}
 vp: {account.vp}    rp: {account.rp}
-last game: {account.lastplayed}''')
+last game: {account.lastplayed}
+https://tracker.gg/valorant/profile/riot/{account.gamename.replace(' ','%20')}%23{account.tagline}/overview
+''')
             if self.checkskins:
                 print('skins:')
                 print('\n'.join(account.skins))
@@ -357,11 +360,13 @@ class simplechecker():
                             file.write(f'''
 ╔═════════════════════════════════════════════════════════════╗
 ║            | {account.logpass} |{space*(49-len(f'| {account.logpass} |'))}║
-║ Ban Until: {banuntil}{space*(61-len(f'Ban Until: {banuntil}'))}║
+║ Banned until {banuntil}{space*(61-len(f' Banned until {banuntil}'))}║
 ║                                                             ║
 ║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}'))}║
 ║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║
 ║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
+║ Creation date: {account.registerdate}{space*(61-len(f' Creation date: {account.registerdate}'))}║
+║ Gamename: {account.gamename}#{account.tagline}{space*(61-len(f' Gamename: {account.gamename}#{account.tagline}'))}║
 ╠═════════════════════════════════════════════════════════════╣
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
@@ -384,6 +389,8 @@ class simplechecker():
 ║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}'))}║
 ║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║
 ║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
+║ Creation date: {account.registerdate}{space*(61-len(f' Creation date: {account.registerdate}'))}║
+║ Gamename: {account.gamename}#{account.tagline}{space*(61-len(f' Gamename: {account.gamename}#{account.tagline}'))}║
 ╠═════════════════════════════════════════════════════════════╣
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
@@ -392,10 +399,10 @@ class simplechecker():
                     if banuntil == None:
                         self.valid += 1
                         self.validlist.append(acc)
-                    bantext = ''
+                    bantext = ' '
                     if rank != 'N/A' and reg != 'N/A':
                         if banuntil != None:
-                            bantext = f'\n|ban until------> {banuntil}'
+                            bantext = f' Banned until {banuntil}'
                         if not exists(f'{self.outpath}/regions/'):
                             os.mkdir(f'{self.outpath}/regions/')
                         if not exists(f'{self.outpath}/regions/{reg}/'):
@@ -404,11 +411,13 @@ class simplechecker():
                             file.write(f'''
 ╔═════════════════════════════════════════════════════════════╗
 ║            | {account.logpass} |{space*(49-len(f'| {account.logpass} |'))}║
-║ {bantext}{space*(60-len(bantext))}║
+║{bantext}{space*(61-len(bantext))}║
 ║                                                             ║
 ║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}'))}║
 ║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║
 ║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
+║ Creation date: {account.registerdate}{space*(61-len(f' Creation date: {account.registerdate}'))}║
+║ Gamename: {account.gamename}#{account.tagline}{space*(61-len(f' Gamename: {account.gamename}#{account.tagline}'))}║
 ╠═════════════════════════════════════════════════════════════╣
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
@@ -439,11 +448,12 @@ class simplechecker():
 ║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}'))}║
 ║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║
 ║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
+║ Creation date: {account.registerdate}{space*(61-len(f' Creation date: {account.registerdate}'))}║
+║ Gamename: {account.gamename}#{account.tagline}{space*(61-len(f' Gamename: {account.gamename}#{account.tagline}'))}║
 ╠═════════════════════════════════════════════════════════════╣
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
 ''')
-
             except Exception as e:
                 with open(f'{self.parentpath}/log.txt', 'a', errors='replace', encoding='utf-8') as f:
                     f.write(

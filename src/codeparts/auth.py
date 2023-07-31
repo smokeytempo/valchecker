@@ -125,6 +125,10 @@ class auth():
             data = r.json()
             # print(data)
             # input()
+            gamename = data['acct']['game_name']
+            tagline = data['acct']['tag_line']
+            registerdate = data['acct']['created_at']
+            registerdatepatched = pandas.to_datetime(int(registerdate), unit='ms')
             puuid = data['sub']
             try:
                 #input(data)
@@ -178,6 +182,9 @@ class auth():
             account.puuid = puuid
             account.unverifiedmail = mailverif
             account.banuntil = banuntil
+            account.gamename = gamename
+            account.tagline = tagline
+            account.registerdate = registerdatepatched
             return account
         except Exception as e:
             account.errmsg = str(traceback.format_exc())

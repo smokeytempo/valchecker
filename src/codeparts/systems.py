@@ -321,6 +321,9 @@ class Account:
     vp: int = None
     rp: int = None
     lastplayed: Timestamp = None
+    registerdate: Timestamp = None
+    gamename: str = None
+    tagline: str = None
 
 class vlchkrsource:
     def __init__(self,path:str) -> None:

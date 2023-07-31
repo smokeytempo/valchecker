@@ -25,7 +25,7 @@ class program():
     def __init__(self) -> None:
         self.count = 0
         self.checked = 0
-        self.version = '3.15'
+        self.version = '3.15.1'
         self.riotlimitinarow = 0
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
@@ -48,7 +48,12 @@ class program():
         colored_name = [random.choice(colors) + char for char in f'ValChecker by liljaba1337']
         print(sys.get_spaces_to_center('ValChecker by liljaba1337')+(''.join(colored_name))+colorama.Fore.RESET)
         print(sys.center(f'v{self.version}'))
-        if self.lastver != self.version and 'beta' not in self.version:
+        if 'devtest' in self.version:
+            print(sys.center(f'{Fore.YELLOW}Hi from liljaba'))
+        elif 'beta' in self.version:
+            print(sys.center(f'{Fore.YELLOW}You have downloaded the BETA version. It can work unstable and contain some bugs.'))
+            print(sys.center(f'Follow https://github.com/LIL-JABA/valchecker/releases/latest to download the latest stable release{Fore.RESET}'))
+        elif self.lastver != self.version:
             print(sys.center(
                 f'\nnext version {self.lastver} is available!'))
             if inquirer.confirm(
@@ -56,9 +61,6 @@ class program():
             ).execute():
                 os.system(f'{self.parentpath}/updater.bat')
                 os._exit(0)
-        if 'beta' in self.version:
-            print(sys.center(f'{Fore.YELLOW}You have downloaded the BETA version. It can work unstable and contain some bugs.'))
-            print(sys.center(f'Follow https://github.com/LIL-JABA/valchecker/releases/latest to download the latest stable release{Fore.RESET}'))
         menu_choices = [
             Separator(),
             'Start Checker',
@@ -80,6 +82,7 @@ class program():
         ).execute()
         if res == menu_choices[1]:
             self.main()
+            input('finished checking. press ENTER to exit')
             pr.start()
         elif res == menu_choices[2]:
             slchecker = checker.singlelinechecker()
