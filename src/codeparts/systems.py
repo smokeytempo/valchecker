@@ -56,7 +56,9 @@ class system():
                    "Content-Type": "application/json",
                    "Authorization": f"Bearer {account.token}"}
         userinfo = session.post(
-            Constants.USERINFO_URL, headers=headers).json()
+            Constants.USERINFO_URL, headers=headers)
+        #print(userinfo.text)
+        userinfo = userinfo.json()
         try:
             try:
                 region = userinfo['region']['id']

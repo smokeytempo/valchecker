@@ -105,6 +105,7 @@ class checkers():
             else:
                 # input(ranked.json())
                 rankid = str(ranked.json()['Matches'][0]['TierAfterUpdate'])
+                account.lastplayed = pandas.to_datetime(ranked.json()['Matches'][0]['MatchStartTime'], unit='ms')
                 rank = RankIDtoRank[rankid]
             account.rank = rank
         except Exception as e:
@@ -128,14 +129,17 @@ class checkers():
             # input(data)
             data2 = data["History"]
             if data2 == []:
-                account.lastplayed = 'long time ago'
+                if account.lastplayed is None:
+                    account.lastplayed = 'long time ago'
                 return
+            #print(data2)
             data3 = data2[0]['GameStartTime']
             unix_time1 = data3
             unix_time1 = int(unix_time1)
             result_s2 = pandas.to_datetime(unix_time1, unit='ms')
             time = str(result_s2)
         except Exception as e:
+            #print(e)
             time = "N/A"
         account.lastplayed = time
 

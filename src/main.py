@@ -25,7 +25,7 @@ class program():
     def __init__(self) -> None:
         self.count = 0
         self.checked = 0
-        self.version = '3.15.1'
+        self.version = '3.15.2'
         self.riotlimitinarow = 0
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
@@ -48,6 +48,18 @@ class program():
         colored_name = [random.choice(colors) + char for char in f'ValChecker by liljaba1337']
         print(sys.get_spaces_to_center('ValChecker by liljaba1337')+(''.join(colored_name))+colorama.Fore.RESET)
         print(sys.center(f'v{self.version}'))
+        print(sys.center(f'{Fore.YELLOW}Thank you for using ValChecker!'))
+        print(sys.center(f'{Fore.YELLOW}v3.15.2 is the last version of ValChecker released by liljaba in Python'))
+        print(sys.center(f'{Fore.YELLOW}Im currently working on ValChecker4, so I\'ll notify you when it\'s out'))
+        print(sys.center(f'{Fore.YELLOW}This version of ValChecker WILL NOT be supported by me anymore'))
+        print()
+        r = requests.get('https://api.github.com/repos/lil-jaba/valchecker4')
+        try:
+            r.json()['message']
+        except:
+            print(sys.center(f'{Fore.GREEN}Good news! ValChecker4 is out!'))
+            print(sys.center(f'{Fore.GREEN}Please follow this link to download it:'))
+            print(sys.center(f'{Fore.GREEN}https://github.com/LIL-JABA/valchecker4{Fore.WHITE}'))
         if 'devtest' in self.version:
             print(sys.center(f'{Fore.YELLOW}Hi from liljaba'))
         elif 'beta' in self.version:
@@ -68,7 +80,7 @@ class program():
             'Edit Settings',
             'Sort Valid',
             'Test Proxy',
-            'Info/Help',
+            f'Some info for devs',
             Separator(),
             'Exit'
         ]
@@ -103,12 +115,12 @@ class program():
             print(f'''
     valchecker v{self.version} by liljaba1337
 
-    server: https://discord.gg/r3Y5KhM7kP
+    If you have any questions about valchecker's source code, feel free to ask me in discord
+    https://discord.gg/RzUjzpVXpE (liljaba1338#7206)
 
-  [1] - check valid/invalid/ban and save them to valid.txt in output folder
-  [2] - i think u understand
-  [3] - sorts all accounts from valid.txt which match your requirements to output\\sorted\\custom.txt
-  [4] - test your proxies
+    You can also open pull requests if you have some updates, I will check them all
+
+    Happy coding :)
 
   [~] - press ENTER to return
             ''')
