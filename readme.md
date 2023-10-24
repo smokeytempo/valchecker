@@ -1,5 +1,5 @@
 <h1 align="center">
-  Discontinued. Please use https://github.com/LIL-JABA/valchecker4-public-beta
+  Discontinued.
 </h1>
 
 [![CodeFactor](https://www.codefactor.io/repository/github/lil-jaba/valchecker/badge/main)](https://www.codefactor.io/repository/github/lil-jaba/valchecker/overview/main)
