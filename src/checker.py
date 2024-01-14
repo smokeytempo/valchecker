@@ -18,18 +18,21 @@ check = checkers.checkers()
 sys = systems.system()
 stff = stuff.staff()
 
+
 class singlelinechecker():
     def __init__(self) -> None:
         self.checkskins = inquirer.confirm(
-            message='wanna capture skins?', default=True,qmark=''
+            message='wanna capture skins?', default=True, qmark=''
         ).execute()
-    
+
     def main(self) -> None:
         authenticate = auth.auth()
         while True:
             logpass = input('account (login:password) or "E" to exit >>>')
-            if logpass == 'E': break
-            if not ':' in logpass: continue
+            if logpass == 'E':
+                break
+            if not ':' in logpass:
+                continue
             account = authenticate.auth(logpass)
             if account.banuntil is not None:
                 stff.checkban(account)
@@ -70,8 +73,9 @@ https://tracker.gg/valorant/profile/riot/{account.gamename.replace(' ','%20')}%2
                 print('\n'.join(account.skins))
             print('\n')
 
+
 class simplechecker():
-    def __init__(self, settings: list, proxylist:list, version:str) -> None:
+    def __init__(self, settings: list, proxylist: list, version: str) -> None:
         path = os.getcwd()
         self.version = version
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
@@ -130,29 +134,30 @@ class simplechecker():
         self.regions = {'eu': 0, 'na': 0, 'ap': 0,
                         'br': 0, 'kr': 0, 'latam': 0, 'unknown': 0}
 
-    async def main(self, accounts:list[str]=None, count:int=None, vlchkr:vlchkrsource=None):
+    async def main(self, input_: list[str] | vlchkrsource = None, count: int = None, vlchkr: bool = False):
         self.count = count
         os.system(f'mode con: cols=150 lines=32')
 
-        if vlchkr is not None:
-            vlchkr.loadfile()
-            self.checked = vlchkr.checked
-            self.valid = vlchkr.valid
-            self.banned = vlchkr.banned
-            self.tempbanned = len(vlchkr.tempbanned)
-            self.skins = vlchkr.wskins
-            self.unverifiedmail = vlchkr.umail
-            self.err = vlchkr.errors
-            self.retries = vlchkr.retries
-            self.rlimits = vlchkr.rlimits
-            self.count = len(vlchkr.tocheck)+vlchkr.checked
-            self.ranks = vlchkr.ranks
-            self.skinsam = vlchkr.skins
-            self.locked = vlchkr.locked
-            self.regions = vlchkr.regions
-            accounts = vlchkr.tocheck
-            count = len(vlchkr.tocheck)
+        if vlchkr:
+            input_.loadfile()
+            self.checked = input_.checked
+            self.valid = input_.valid
+            self.banned = input_.banned
+            self.tempbanned = len(input_.tempbanned)
+            self.skins = input_.wskins
+            self.unverifiedmail = input_.umail
+            self.err = input_.errors
+            self.retries = input_.retries
+            self.rlimits = input_.rlimits
+            self.count = len(input_.tocheck)+input_.checked
+            self.ranks = input_.ranks
+            self.skinsam = input_.skins
+            self.locked = input_.locked
+            self.regions = input_.regions
+            accounts = input_.tocheck
+            count = len(input_.tocheck)
         else:
+            accounts = input_
             open(f'{self.outpath}\\record.vlchkr', 'w').close()
             vlchkr = systems.vlchkrsource(f'{self.outpath}\\record.vlchkr')
             vlchkr.savefile()
@@ -168,7 +173,7 @@ class simplechecker():
         self.printinfo()
         if self.threadam <= 1:
             for account in accounts:
-                #input(account)
+                # input(account)
                 account = account.strip()
                 us = account.split(':')[0]
                 ps = account.split(':')[1]
@@ -186,9 +191,10 @@ class simplechecker():
                     try:
                         us = accounts[num].split(':')[0]
                         ps = accounts[num].split(':')[1]
-                        task = loop.run_in_executor(executor, self.checker, us, ps)
+                        task = loop.run_in_executor(
+                            executor, self.checker, us, ps)
                         tasks.append(task)
-                        #print(f'Added task for account {us}:{ps}. Current tasks: {len(tasks)}')
+                        # print(f'Added task for account {us}:{ps}. Current tasks: {len(tasks)}')
                         num += 1
                         vlchkr.checked = self.checked
                         vlchkr.valid = self.valid
@@ -209,9 +215,9 @@ class simplechecker():
                         print("Checked all")
 
                 while len(tasks) > 0:
-                   tasks = [task for task in tasks if not task.done()]
-                   await asyncio.sleep(0.1)
-                   # print(f'Waiting for {len(tasks)} tasks to complete...')
+                    tasks = [task for task in tasks if not task.done()]
+                    await asyncio.sleep(0.1)
+                    # print(f'Waiting for {len(tasks)} tasks to complete...')
 
             # while True:
             #     if threading.active_count() <= self.threadam:
@@ -228,7 +234,7 @@ class simplechecker():
             #                 print("Checked all")
 
     def checker(self, username, password):
-        #print('running')
+        # print('running')
         riotlimitinarow = 0
         proxy = sys.getproxy(self.proxylist)
         acc = f'{username}:{password}'
@@ -296,7 +302,8 @@ class simplechecker():
                         sys.get_region2(account, proxy)
                         if account.region != 'N/A' and account.region != '':
                             if account.banuntil is None:
-                                self.regions[account.region.lower().strip()] += 1
+                                self.regions[account.region.lower(
+                                ).strip()] += 1
                             account.rank = None
                             try:
                                 if int(account.lvl) < 20 and account.banuntil is None:
@@ -308,7 +315,8 @@ class simplechecker():
                                 check.ranked(account)
                             if account.banuntil is None:
                                 try:
-                                    self.ranks[account.rank.strip().lower().split(' ')[0]] += 1
+                                    self.ranks[account.rank.strip().lower().split(' ')[
+                                        0]] += 1
                                 except:
                                     self.ranks['unknown'] += 1
                             check.skins_en(account)

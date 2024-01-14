@@ -5,8 +5,8 @@ from re import compile
 import ssl
 from typing import Any
 from tkinter import *
+from datetime import datetime
 
-import pandas
 import requests
 from requests.adapters import HTTPAdapter
 
@@ -18,11 +18,11 @@ syst = systems.system()
 
 
 class SSLAdapter(HTTPAdapter):
-	def init_poolmanager(self, *a: Any, **k: Any) -> None:
-		c = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
-		c.set_ciphers(':'.join(Constants.CIPHERS))
-		k['ssl_context'] = c
-		return super(SSLAdapter, self).init_poolmanager(*a, **k)
+    def init_poolmanager(self, *a: Any, **k: Any) -> None:
+        c = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+        c.set_ciphers(':'.join(Constants.CIPHERS))
+        k['ssl_context'] = c
+        return super(SSLAdapter, self).init_poolmanager(*a, **k)
 
 
 class auth():
@@ -54,24 +54,25 @@ class auth():
                     "redirect_uri": "http://localhost/redirect",
                     "response_type": "token id_token",
                     "scope": "openid link ban lol_region"
-                }
+                    }
             headers = {
                 'Content-Type': 'application/json',
                 'User-Agent': f'RiotClient/{self.useragent} %s (Windows;10;;Professional, x64)'
             }
             try:
                 r = session.post(Constants.AUTH_URL,
-                                json=data, headers=headers, proxies=proxy, timeout=20)
+                                 json=data, headers=headers, proxies=proxy, timeout=20)
                 data = {
-                   'type': 'auth',
-                   'username': username,
-                   'password': password
+                    'type': 'auth',
+                    'username': username,
+                    'password': password
                 }
-                r2 = session.put(Constants.AUTH_URL,json=data,headers=headers,proxies=proxy,timeout=20)
-                #input(r2.text)
-                #print(session.get('https://api64.ipify.org?format=json',proxies=proxy).text)
+                r2 = session.put(Constants.AUTH_URL, json=data,
+                                 headers=headers, proxies=proxy, timeout=20)
+                # input(r2.text)
+                # print(session.get('https://api64.ipify.org?format=json',proxies=proxy).text)
             except Exception as e:
-                #input(e)
+                # input(e)
                 account.code = 6
                 return account
             try:
@@ -106,7 +107,6 @@ class auth():
                 account.code = 3
                 return account
 
-
             headers = {
                 'User-Agent': f'RiotClient/{self.useragent} %s (Windows;10;;Professional, x64)',
                 'Authorization': f'Bearer {token}',
@@ -121,23 +121,24 @@ class auth():
                 return account
             # print(r.text)
             # input()
-            #input(r.text)
+            # input(r.text)
             data = r.json()
             # print(data)
             # input()
             gamename = data['acct']['game_name']
             tagline = data['acct']['tag_line']
-            registerdate = data['acct']['created_at']
-            registerdatepatched = pandas.to_datetime(int(registerdate), unit='ms')
+            register_date = data['acct']['created_at']
+            registerdatepatched = datetime.utcfromtimestamp(
+                int(register_date) / 1000.0)
             puuid = data['sub']
             try:
-                #input(data)
+                # input(data)
                 data2 = data['ban']
                 # input(data2)
                 data3 = data2['restrictions']
-                #input(data3)
+                # input(data3)
                 typebanned = data3[0]['type']
-                #input(typebanned)
+                # input(typebanned)
                 # input(typebanned)
                 if typebanned == "PERMANENT_BAN" or typebanned == 'PERMA_BAN':
                     # input(True)
@@ -149,15 +150,16 @@ class auth():
                     return account
                 elif typebanned == 'TIME_BAN' or typebanned == 'LEGACY_BAN':
                     expire = data3[0]['dat']['expirationMillis']
-                    expirepatched = pandas.to_datetime(int(expire), unit='ms')
-                    #input(expire)
+                    expirepatched = datetime.utcfromtimestamp(
+                        int(expire) / 1000.0)
+                    # input(expire)
                     banuntil = expirepatched
                 else:
                     banuntil = None
                     pass
             except Exception as e:
                 # print(e)
-                #input(e)
+                # input(e)
                 banuntil = None
                 pass
             try:
@@ -176,7 +178,7 @@ class auth():
             except Exception as e:
                 # input(e)
                 mailverif = True
-            mailverif = not mailverif #true to false || false to true
+            mailverif = not mailverif  # true to false || false to true
             account.token = token
             account.entt = entitlement
             account.puuid = puuid

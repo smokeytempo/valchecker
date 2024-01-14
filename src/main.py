@@ -4,6 +4,7 @@ import json
 import os
 import random
 import tkinter
+import win32api
 from tkinter import filedialog
 from InquirerPy import inquirer
 from InquirerPy.separator import Separator
@@ -25,7 +26,7 @@ class program():
     def __init__(self) -> None:
         self.count = 0
         self.checked = 0
-        self.version = '3.15.2'
+        self.version = '3.15.3'
         self.riotlimitinarow = 0
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
@@ -45,31 +46,26 @@ class program():
         os.system('cls')
         codes = vars(colorama.Fore)
         colors = [codes[color] for color in codes if color not in ['BLACK']]
-        colored_name = [random.choice(colors) + char for char in f'ValChecker by liljaba1337']
-        print(sys.get_spaces_to_center('ValChecker by liljaba1337')+(''.join(colored_name))+colorama.Fore.RESET)
+        colored_name = [random.choice(
+            colors) + char for char in f'ValChecker by liljaba1337']
+        print(sys.get_spaces_to_center('ValChecker by liljaba1337') +
+              (''.join(colored_name))+colorama.Fore.RESET)
         print(sys.center(f'v{self.version}'))
-        print(sys.center(f'{Fore.YELLOW}Thank you for using ValChecker!'))
-        print(sys.center(f'{Fore.YELLOW}v3.15.2 is the last version of ValChecker released by liljaba in Python'))
-        print(sys.center(f'{Fore.YELLOW}Im currently working on ValChecker4, so I\'ll notify you when it\'s out'))
-        print(sys.center(f'{Fore.YELLOW}This version of ValChecker WILL NOT be supported by me anymore'))
-        print()
-        r = requests.get('https://api.github.com/repos/lil-jaba/valchecker4')
-        try:
-            r.json()['message']
-        except:
-            print(sys.center(f'{Fore.GREEN}Good news! ValChecker4 is out!'))
-            print(sys.center(f'{Fore.GREEN}Please follow this link to download it:'))
-            print(sys.center(f'{Fore.GREEN}https://github.com/LIL-JABA/valchecker4{Fore.WHITE}'))
+
+        self.CheckIfFirstStart()
+
         if 'devtest' in self.version:
             print(sys.center(f'{Fore.YELLOW}Hi from liljaba'))
         elif 'beta' in self.version:
-            print(sys.center(f'{Fore.YELLOW}You have downloaded the BETA version. It can work unstable and contain some bugs.'))
-            print(sys.center(f'Follow https://github.com/LIL-JABA/valchecker/releases/latest to download the latest stable release{Fore.RESET}'))
+            print(sys.center(
+                f'{Fore.YELLOW}You have downloaded the BETA version. It can work unstable and contain some bugs.'))
+            print(sys.center(
+                f'Follow https://github.com/LIL-JABA/valchecker/releases/latest to download the latest stable release{Fore.RESET}'))
         elif self.lastver != self.version:
             print(sys.center(
                 f'\nnext version {self.lastver} is available!'))
             if inquirer.confirm(
-                message="{}Would you like to download it now?".format(system.get_spaces_to_center('Would you like to download it now? (Y/n)')), default=True,qmark=''
+                message="{}Would you like to download it now?".format(system.get_spaces_to_center('Would you like to download it now? (Y/n)')), default=True, qmark=''
             ).execute():
                 os.system(f'{self.parentpath}/updater.bat')
                 os._exit(0)
@@ -80,11 +76,12 @@ class program():
             'Edit Settings',
             'Sort Valid',
             'Test Proxy',
-            f'Some info for devs',
+            'Info',
             Separator(),
             'Exit'
         ]
         print(sys.center('\nhttps://github.com/LIL-JABA/valchecker\n'))
+        print(sys.center('https://discord.gg/GRzTYuhCgA\n'))
         res = inquirer.select(
             message="Please select an option:",
             choices=menu_choices,
@@ -115,12 +112,7 @@ class program():
             print(f'''
     valchecker v{self.version} by liljaba1337
 
-    If you have any questions about valchecker's source code, feel free to ask me in discord
-    https://discord.gg/RzUjzpVXpE (liljaba1338#7206)
-
-    You can also open pull requests if you have some updates, I will check them all
-
-    Happy coding :)
+    yo whatsup
 
   [~] - press ENTER to return
             ''')
@@ -130,14 +122,21 @@ class program():
             os._exit(0)
 
     def get_accounts(self):
+        filetypes = (
+            ("", ("*.txt", "*.vlchkr")),
+            ("All files", "*.*")
+        )
         root = tkinter.Tk()
-        file = filedialog.askopenfile(parent=root, mode='rb', title='select file with accounts (login:password)',
-                                      filetype=(("txt", "*.txt"), ("All files", "*.txt")))
+        file = filedialog.askopenfile(parent=root, mode='rb', title='Select a file with combos OR .vlchkr ro continue checking',
+                                      filetypes=filetypes)
         root.destroy()
         os.system('cls')
         if file == None:
             os._exit(0)
         filename = str(file).split("name='")[1].split("'>")[0]
+        if (".vlchkr" in filename):
+            valkekersource = systems.vlchkrsource(filename)
+            return valkekersource
         with open(str(filename), 'r', encoding='UTF-8', errors='replace') as file:
             lines = file.readlines()
             ret = []
@@ -176,7 +175,8 @@ class program():
             file_path = f"{os.path.abspath(os.path.join(path, os.pardir))}\\proxy.txt"
 
             print(Fore.YELLOW, end='')
-            response = input('No Proxies Found, Do you want to scrape proxies? (y/n): ')
+            response = input(
+                'No Proxies Found, Do you want to scrape proxies? (y/n): ')
             print(Style.RESET_ALL, end='')
 
             if response.lower() == 'y':
@@ -200,25 +200,11 @@ class program():
             else:
                 print('Running Proxy Less...')
 
-        if inquirer.confirm(
-            message="Do you want to continue checking a .vlchkr file instead of loading a new .txt?", default=True
-        ).execute():
-            root = tkinter.Tk()
-            file = filedialog.askopenfile(parent=root, mode='rb', title='select file with accounts (login:password)',
-                                          filetype=(("vlchkr", "*.vlchkr"), ("All files", "*.vlchkr")))
-            root.destroy()
-            if file == None:
-                filename = 'None'
-            else:
-                filename = str(file).split("name='")[1].split("'>")[0]
-                valkekersource = systems.vlchkrsource(filename)
-                accounts=None
-        else: 
-            valkekersource = None
-            ctypes.windll.kernel32.SetConsoleTitleW(
-                f'ValChecker {self.version} by liljaba1337 | Loading Accounts')
-            print('loading accounts')
-            accounts = self.get_accounts()
+        ctypes.windll.kernel32.SetConsoleTitleW(
+            f'ValChecker {self.version} by liljaba1337 | Loading Accounts')
+        print('loading accounts')
+
+        accounts = self.get_accounts()
 
         print('loading assets')
         ctypes.windll.kernel32.SetConsoleTitleW(
@@ -229,8 +215,33 @@ class program():
         ctypes.windll.kernel32.SetConsoleTitleW(
             f'ValChecker {self.version} by liljaba1337 | Loading Checker')
         scheck = checker.simplechecker(settings, proxylist, self.version)
-        asyncio.run(scheck.main(accounts, self.count, valkekersource))
+
+        isvalkekersource = False
+        if type(accounts) == systems.vlchkrsource:
+            isvalkekersource = True
+        asyncio.run(scheck.main(accounts, self.count, isvalkekersource))
         return
+
+    def CheckIfFirstStart(self) -> None:
+        with open("system/xd.txt", 'r+') as r:
+            if r.read() == '0':
+                result = win32api.MessageBox(None,
+                                             """Hello! Looks like it's your first start of ValChecker.
+Although you can find the FAQ and the full guide in my discord, I will specify some things here.
+
+
+What is a Riot Limit? When you send a lot of auth requests from one IP, riot blocks you for some time.
+So that's why you should use proxies for checking. If riot bans your IP, you will not be able to login in their launcher or site for ~30 minutes.
+
+Where can I find proxies? Any website you trust, just search for that in the internet. Or you can ask other people on my discord server.
+
+Where can I find combos? Actually, the answer is the same as with proxies. The internet. But if you want to do combos yourself, you can buy a cheap and effective method on my discord server.
+
+
+The link to my discord server can be found in the readme section of the github repository or on the ValChecker title screen.
+
+Good luck!""", "Hello!", 0)
+                r.write("1")
 
 
 pr = program()
