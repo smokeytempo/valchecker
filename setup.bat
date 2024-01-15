@@ -6,5 +6,6 @@ pip install colorama
 pip install keyboard
 pip install inquirerpy
 pip install aiohttp
+pip install pywin32
 
 pause

@@ -4,6 +4,7 @@ import ctypes
 import datetime
 import os
 import time
+from typing import Union
 import traceback
 from datetime import datetime
 from os.path import exists
@@ -134,7 +135,7 @@ class simplechecker():
         self.regions = {'eu': 0, 'na': 0, 'ap': 0,
                         'br': 0, 'kr': 0, 'latam': 0, 'unknown': 0}
 
-    async def main(self, input_: list[str] | vlchkrsource = None, count: int = None, vlchkr: bool = False):
+    async def main(self, input_: Union[list[str], vlchkrsource] = None, count: int = None, vlchkr: bool = False):
         self.count = count
         os.system(f'mode con: cols=150 lines=32')
 

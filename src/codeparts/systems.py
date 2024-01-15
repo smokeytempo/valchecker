@@ -10,7 +10,7 @@ from colorama import Fore, Back
 import requests
 from InquirerPy import inquirer
 from InquirerPy.separator import Separator
-from pandas import Timestamp
+from datetime import datetime
 
 from codeparts import checkers, PCSS
 from codeparts.data import Constants
@@ -313,7 +313,7 @@ class Account:
     entt: str = None
     puuid: str = None
     unverifiedmail: bool = None
-    banuntil: Timestamp = None
+    banuntil: datetime = None
     region: str = None
     country: str = None
     lvl: int = None
@@ -322,8 +322,8 @@ class Account:
     uuids: list[str] = None
     vp: int = None
     rp: int = None
-    lastplayed: Timestamp = None
-    registerdate: Timestamp = None
+    lastplayed: datetime = None
+    registerdate: datetime = None
     gamename: str = None
     tagline: str = None
 
