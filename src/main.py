@@ -26,7 +26,7 @@ class program():
     def __init__(self) -> None:
         self.count = 0
         self.checked = 0
-        self.version = '3.15.4'
+        self.version = '3.15.4.1'
         self.riotlimitinarow = 0
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
@@ -224,7 +224,7 @@ class program():
     def CheckIfFirstStart(self) -> None:
         with open("system/xd.txt", 'r+') as r:
             if r.read() == '0':
-                result = win32api.MessageBox(None,
+                win32api.MessageBox(None,
                                              """Hello! Looks like it's your first start of ValChecker.
 Although you can find the FAQ and the full guide in my discord, I will specify some things here.
 

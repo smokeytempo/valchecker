@@ -27,7 +27,7 @@ class singlelinechecker():
         ).execute()
 
     def main(self) -> None:
-        authenticate = auth.auth()
+        authenticate = auth.Auth()
         while True:
             logpass = input('account (login:password) or "E" to exit >>>')
             if logpass == 'E':
@@ -240,7 +240,7 @@ class simplechecker():
         proxy = sys.getproxy(self.proxylist)
         acc = f'{username}:{password}'
         space = " "
-        authenticate = auth.auth()
+        authenticate = auth.Auth()
         while True:
             try:
                 account = authenticate.auth(
