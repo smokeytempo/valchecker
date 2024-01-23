@@ -26,7 +26,7 @@ class program():
     def __init__(self) -> None:
         self.count = 0
         self.checked = 0
-        self.version = '3.15.3.1'
+        self.version = '3.15.4'
         self.riotlimitinarow = 0
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
@@ -44,6 +44,8 @@ class program():
             print('no internet connection')
             os._exit(0)
         os.system('cls')
+        kernel32 = ctypes.windll.kernel32
+        kernel32.SetConsoleMode(kernel32.GetStdHandle(-10), 128)
         codes = vars(colorama.Fore)
         colors = [codes[color] for color in codes if color not in ['BLACK']]
         colored_name = [random.choice(
@@ -54,13 +56,11 @@ class program():
 
         self.CheckIfFirstStart()
 
-        if 'devtest' in self.version:
-            print(sys.center(f'{Fore.YELLOW}Hi from liljaba'))
-        elif 'beta' in self.version:
+        if 'beta' in self.version:
             print(sys.center(
                 f'{Fore.YELLOW}You have downloaded the BETA version. It can work unstable and contain some bugs.'))
             print(sys.center(
-                f'Follow https://github.com/LIL-JABA/valchecker/releases/latest to download the latest stable release{Fore.RESET}'))
+                f'Visit https://github.com/LIL-JABA/valchecker/releases/latest to download the latest stable release{Fore.RESET}'))
         elif self.lastver != self.version:
             print(sys.center(
                 f'\nnext version {self.lastver} is available!'))
@@ -163,7 +163,7 @@ class program():
         ctypes.windll.kernel32.SetConsoleTitleW(
             f'ValChecker {self.version} by liljaba1337 | Loading Settings')
         print('loading settings')
-        settings = sys.load_settings()
+        settings = sys.load_settings()        
 
         ctypes.windll.kernel32.SetConsoleTitleW(
             f'ValChecker {self.version} by liljaba1337 | Loading Proxies')
@@ -203,7 +203,6 @@ class program():
         ctypes.windll.kernel32.SetConsoleTitleW(
             f'ValChecker {self.version} by liljaba1337 | Loading Accounts')
         print('loading accounts')
-
         accounts = self.get_accounts()
 
         print('loading assets')

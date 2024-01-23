@@ -25,11 +25,10 @@ class SSLAdapter(HTTPAdapter):
         return super(SSLAdapter, self).init_poolmanager(*a, **k)
 
 
-class auth():
+class Auth:
     def __init__(self) -> None:
         path = os.getcwd()
         self.useragent = Constants.RIOTCLIENT
-        self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
 
     def auth(self, logpass: str = None, username=None, password=None, proxy=None) -> Account:
         account = Account()
@@ -44,8 +43,7 @@ class auth():
             session.headers = headers
             session.mount('https://', SSLAdapter())
             if username is None:
-                username = logpass.split(':')[0].strip()
-                password = logpass.split(':')[1].strip()
+                username, password = logpass.split(':')[0].strip(), logpass.split(':')[1].strip()
 
             data = {"acr_values": "urn:riot:bronze",
                     "claims": "",
@@ -59,136 +57,54 @@ class auth():
                 'Content-Type': 'application/json',
                 'User-Agent': f'RiotClient/{self.useragent} %s (Windows;10;;Professional, x64)'
             }
-            try:
-                r = session.post(Constants.AUTH_URL,
-                                 json=data, headers=headers, proxies=proxy, timeout=20)
-                data = {
-                    'type': 'auth',
-                    'username': username,
-                    'password': password
-                }
-                r2 = session.put(Constants.AUTH_URL, json=data,
-                                 headers=headers, proxies=proxy, timeout=20)
-                # input(r2.text)
-                # print(session.get('https://api64.ipify.org?format=json',proxies=proxy).text)
-            except Exception as e:
-                # input(e)
-                account.code = 6
-                return account
-            try:
-                data = r2.json()
-            except:
-                account.code = 6
-                return account
-            if "access_token" in r2.text:
-                pattern = compile(
-                    'access_token=((?:[a-zA-Z]|\d|\.|-|_)*).*id_token=((?:[a-zA-Z]|\d|\.|-|_)*).*expires_in=(\d*)')
-                data = pattern.findall(
-                    data['response']['parameters']['uri'])[0]
-                token = data[0]
-                token_id = data[1]
+            r = session.post(Constants.AUTH_URL, json=data, headers=headers, proxies=proxy, timeout=20)
+            r2 = session.put(Constants.AUTH_URL, json={"type": "auth", "username": username, "password": password},
+                             headers=headers, proxies=proxy, timeout=20)
 
-            elif 'invalid_session_id' in r2.text:
+            data = r2.json()
+            if "access_token" in r2.text:
+                pattern = compile('access_token=((?:[a-zA-Z]|\d|\.|-|_)*).*id_token=((?:[a-zA-Z]|\d|\.|-|_)*).*expires_in=(\d*)')
+                token, token_id, _ = pattern.findall(data['response']['parameters']['uri'])[0]
+            elif any(error in r2.text for error in ['invalid_session_id', 'auth_failure', 'rate_limited', 'multifactor', 'cloudflare']):
                 account.code = 6
-                return account
-            elif "auth_failure" in r2.text:
-                account.code = 3
-                return account
-            elif 'rate_limited' in r2.text:
-                account.code = 1
-                return account
-            elif 'multifactor' in r2.text:
-                account.code = 3
-                return account
-            elif 'cloudflare' in r2.text:
-                account.code = 5
                 return account
             else:
                 account.code = 3
                 return account
 
-            headers = {
-                'User-Agent': f'RiotClient/{self.useragent} %s (Windows;10;;Professional, x64)',
-                'Authorization': f'Bearer {token}',
-            }
-            try:
-                with session.post(Constants.ENTITLEMENT_URL, headers=headers, json={}, proxies=proxy) as r:
-                    entitlement = r.json()['entitlements_token']
-                r = session.post(Constants.USERINFO_URL,
-                                 headers=headers, json={}, proxies=proxy)
-            except:
-                account.code = 6
-                return account
-            # print(r.text)
-            # input()
-            # input(r.text)
+            headers = {'User-Agent': f'RiotClient/{self.useragent} %s (Windows;10;;Professional, x64)',
+                       'Authorization': f'Bearer {token}'}
+            with session.post(Constants.ENTITLEMENT_URL, headers=headers, json={}, proxies=proxy) as r:
+                entitlement = r.json().get('entitlements_token', '')
+            r = session.post(Constants.USERINFO_URL, headers=headers, json={}, proxies=proxy)
             data = r.json()
-            # print(data)
-            # input()
-            gamename = data['acct']['game_name']
-            tagline = data['acct']['tag_line']
-            register_date = data['acct']['created_at']
-            registerdatepatched = datetime.utcfromtimestamp(
-                int(register_date) / 1000.0)
-            puuid = data['sub']
+            gamename, tagline, register_date, puuid = data['acct']['game_name'], data['acct']['tag_line'], data['acct']['created_at'], data['sub']
+
             try:
-                # input(data)
                 data2 = data['ban']
-                # input(data2)
                 data3 = data2['restrictions']
-                # input(data3)
                 typebanned = data3[0]['type']
-                # input(typebanned)
-                # input(typebanned)
-                if typebanned == "PERMANENT_BAN" or typebanned == 'PERMA_BAN':
-                    # input(True)
+                if typebanned in ['PERMANENT_BAN', 'PERMA_BAN'] or 'PERMANENT_BAN' in str(data3) or 'PERMA_BAN' in str(data3):
                     account.code = 4
                     return account
-                elif 'PERMANENT_BAN' in str(data3) or 'PERMA_BAN' in str(data3):
-                    # input(True)
-                    account.code = 4
-                    return account
-                elif typebanned == 'TIME_BAN' or typebanned == 'LEGACY_BAN':
+                elif typebanned in ['TIME_BAN', 'LEGACY_BAN']:
                     expire = data3[0]['dat']['expirationMillis']
-                    expirepatched = datetime.utcfromtimestamp(
-                        int(expire) / 1000.0)
-                    # input(expire)
+                    expirepatched = datetime.utcfromtimestamp(int(expire) / 1000.0)
                     banuntil = expirepatched
                 else:
                     banuntil = None
-                    pass
-            except Exception as e:
-                # print(e)
-                # input(e)
+            except Exception:
                 banuntil = None
-                pass
+
             try:
-                # headers={
-                #    'Authorization': f'Bearer {token}',
-                #    'Content-Type': 'application/json',
-                #    'User-Agent': f'RiotClient/{self.useragent} %s (Windows;10;;Professional, x64)',
-                # }
-
-                # r=session.get('https://email-verification.riotgames.com/api/v1/account/status',headers=headers,json={},proxies=sys.getproxy(self.proxlist)).text
-
-                # mailverif=r.split(',"emailVerified":')[1].split('}')[0]
-
-                mailverif = bool(data['email_verified'])
-
-            except Exception as e:
-                # input(e)
+                mailverif = not bool(data['email_verified'])
+            except Exception:
                 mailverif = True
-            mailverif = not mailverif  # true to false || false to true
-            account.token = token
-            account.entt = entitlement
-            account.puuid = puuid
-            account.unverifiedmail = mailverif
-            account.banuntil = banuntil
-            account.gamename = gamename
-            account.tagline = tagline
-            account.registerdate = registerdatepatched
+
+            account.token, account.tokenid, account.entt, account.puuid = token, token_id, entitlement, puuid
+            account.unverifiedmail, account.banuntil, account.gamename = mailverif, banuntil, gamename
+            account.tagline, account.registerdate = tagline, datetime.utcfromtimestamp(int(register_date) / 1000.0)
             return account
         except Exception as e:
-            account.errmsg = str(traceback.format_exc())
-            account.code = 2
+            account.errmsg, account.code = str(traceback.format_exc()), 2
             return account

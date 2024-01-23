@@ -300,7 +300,12 @@ class simplechecker():
                     if account.unverifiedmail and account.banuntil is None:
                         self.unverifiedmail += 1
                     while True:
-                        sys.get_region2(account, proxy)
+                        sys.get_region(account)
+                        if account.region == None:
+                            sys.get_region2(account)
+                        else:
+                            sys.get_country_and_level_only(account)
+                            
                         if account.region != 'N/A' and account.region != '':
                             if account.banuntil is None:
                                 self.regions[account.region.lower(

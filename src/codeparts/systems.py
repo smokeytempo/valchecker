@@ -27,27 +27,52 @@ class system():
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
 
     @staticmethod
-    def get_region(token: str, entt: str, proxy: dict):
+    def get_region(account) -> None:
         session = requests.Session()
         try:
             headers = {
-                'X-Riot-Entitlements-JWT': entt,
-                'Authorization': 'Bearer {}'.format(token)
+                'User-Agent': f'RiotClient/{Constants.RIOTCLIENT} %s (Windows;10;;Professional, x64)'
             }
             response = session.put(
-                Constants.REGION_URL, headers=headers, proxies=proxy)
+                Constants.REGION_URL, headers=headers, data={"id_token": account.tokenid})
 
-            response = response.json()
-            reg = 'N/A'
-            lvl = ''
-            #input(response)
-
-            return reg, lvl
+            data = response.json()
+            account.region = data['affinities']['live'].lower()
         except Exception as e:
-            return 'N/A', 'N/A'
+            account.region = None
 
     @staticmethod
-    def get_region2(account, proxy: dict={'http':None,'https':None}) -> None:
+    def get_country_and_level_only(account) -> None:
+        session = requests.Session()
+        headers = {"User-Agent": f"RiotClient/{Constants.RIOTCLIENT} %s (Windows;10;;Professional, x64)",
+                   "Pragma": "no-cache",
+                   "Accept": "*/*",
+                   "Content-Type": "application/json",
+                   "Authorization": f"Bearer {account.token}"}
+        userinfo = session.post(
+            Constants.USERINFO_URL, headers=headers)
+        userinfo = userinfo.json()
+        country = userinfo['country'].upper()
+        if account.region in ['latam', 'br']:
+            progregion = 'na'
+
+        # lvl
+        try:
+            headers = {
+                'X-Riot-Entitlements-JWT': account.entt,
+                'Authorization': 'Bearer {}'.format(account.token)
+            }
+            response = session.get(f"https://pd.{progregion}.a.pvp.net/account-xp/v1/players/{account.puuid}", headers=headers)
+            lvl = response.json()['Progress']['Level']
+            #input(lvl)
+        except Exception as e:
+            lvl = -1
+
+        account.country = country
+        account.lvl = lvl
+
+    @staticmethod
+    def get_region2(account) -> None:
         # reg + country
         session = requests.Session()
         headers = {"User-Agent": f"RiotClient/{Constants.RIOTCLIENT} %s (Windows;10;;Professional, x64)",
@@ -70,7 +95,7 @@ class system():
                 fixedregion = Constants.COU2REG[cou3]
             fixedregion = fixedregion.lower()
             progregion = fixedregion
-            if fixedregion == 'latam' or fixedregion == 'br':
+            if account.region in ['latam', 'br']:
                 progregion = 'na'
         except Exception as e:
             # input(e)
@@ -310,6 +335,7 @@ class Account:
     logpass: str = None
     code: int = None
     token: str = None
+    tokenid: str = None
     entt: str = None
     puuid: str = None
     unverifiedmail: bool = None
