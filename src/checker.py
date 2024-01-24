@@ -247,131 +247,136 @@ class simplechecker():
                     acc, proxy=proxy)
                 if account.banuntil != None:
                     stff.checkban(account)
-                if account.code == 2:
-                    with open(f'{self.parentpath}/log.txt', 'a') as f:
-                        f.write(
-                            f'({datetime.now()}) {account.errmsg}\n_________________________________\n')
-                    self.err += 1
-                elif account.code == 1:
-                    if riotlimitinarow < self.max_rlimits:
-                        if riotlimitinarow == 0:
-                            self.inrlimit += 1
+                match account.code:
+                    case 2:
+                        with open(f'{self.parentpath}/log.txt', 'a') as f:
+                            f.write(
+                                f'({datetime.now()}) {account.errmsg}\n_________________________________\n')
+                        self.err += 1
+                    case 1:
+                        if riotlimitinarow < self.max_rlimits:
+                            if riotlimitinarow == 0:
+                                self.inrlimit += 1
+                                print(sys.center(
+                                    f'riot limit. waiting {self.rlimit_wait} seconds'))
+                            time.sleep(self.rlimit_wait)
+                            riotlimitinarow += 1
+                            continue
+                        else:
+                            # if self.print_sys==True:
                             print(sys.center(
-                                f'riot limit. waiting {self.rlimit_wait} seconds'))
-                        time.sleep(self.rlimit_wait)
-                        riotlimitinarow += 1
+                                f'{self.max_rlimits} riot limits in a row. skipping'))
+                            self.inrlimit -= 1
+                            riotlimitinarow = 0
+                            self.rlimits += 1
+                            self.checked += 1
+                            self.printinfo()
+                            with open(f'{self.parentpath}/output/riot_limits.txt', 'a', encoding='UTF-8') as file:
+                                file.write(f'\n{account.logpass}')
+                            break
+                    case 6:
+                        proxy = sys.getproxy(self.proxylist)
+                        self.retries += 1
+                        if self.retries % 10 == 0:
+                            self.printinfo()
+                        time.sleep(1)
                         continue
-                    else:
-                        # if self.print_sys==True:
-                        print(sys.center(
-                            f'{self.max_rlimits} riot limits in a row. skipping'))
-                        self.inrlimit -= 1
-                        riotlimitinarow = 0
-                        self.rlimits += 1
+                    case 3:
                         self.checked += 1
                         self.printinfo()
-                        with open(f'{self.parentpath}/output/riot_limits.txt', 'a', encoding='UTF-8') as file:
-                            file.write(f'\n{account.logpass}')
                         break
-                elif account.code == 6:
-                    proxy = sys.getproxy(self.proxylist)
-                    self.retries += 1
-                    time.sleep(1)
-                    continue
-                elif account.code == 3:
-                    self.checked += 1
-                    self.printinfo()
-                    break
-                elif account.code == 0:
-                    self.checked += 1
-                    self.printinfo()
-                    break
-                elif account.code == 4:
-                    self.banned += 1
-                    self.checked += 1
-                    self.printinfo()
-                    time.sleep(self.cooldown)
-                    break
-                elif account.code == 5:
-                    self.retries += 1
-                    time.sleep(1)
-                    continue
-                else:
-                    if account.unverifiedmail and account.banuntil is None:
-                        self.unverifiedmail += 1
-                    while True:
-                        sys.get_region(account)
-                        if account.region == None:
-                            sys.get_region2(account)
-                        else:
-                            sys.get_country_and_level_only(account)
-                            
-                        if account.region != 'N/A' and account.region != '':
-                            if account.banuntil is None:
-                                self.regions[account.region.lower(
-                                ).strip()] += 1
-                            account.rank = None
-                            try:
-                                if int(account.lvl) < 20 and account.banuntil is None:
-                                    self.locked += 1
-                                    account.rank = 'locked'
-                            except ValueError:
-                                pass
-                            if account.rank is None:
-                                check.ranked(account)
-                            if account.banuntil is None:
+                    case 0:
+                        self.checked += 1
+                        self.printinfo()
+                        break
+                    case 4:
+                        self.banned += 1
+                        self.checked += 1
+                        self.printinfo()
+                        time.sleep(self.cooldown)
+                        break
+                    case 5:
+                        self.retries += 1
+                        if self.retries % 10 == 0:
+                            self.printinfo()
+                        time.sleep(1)
+                        continue
+                    case _:
+                        if account.unverifiedmail and account.banuntil is None:
+                            self.unverifiedmail += 1
+                        while True:
+                            sys.get_region(account)
+                            if account.region == None:
+                                sys.get_region2(account)
+                            else:
+                                sys.get_country_and_level_only(account)
+                                
+                            if account.region != 'N/A' and account.region != '':
+                                if account.banuntil is None:
+                                    self.regions[account.region.lower(
+                                    ).strip()] += 1
+                                account.rank = None
                                 try:
-                                    self.ranks[account.rank.strip().lower().split(' ')[
-                                        0]] += 1
-                                except:
+                                    if int(account.lvl) < 20 and account.banuntil is None:
+                                        self.locked += 1
+                                        account.rank = 'locked'
+                                except ValueError:
+                                    pass
+                                if account.rank is None:
+                                    check.ranked(account)
+                                if account.banuntil is None:
+                                    try:
+                                        self.ranks[account.rank.strip().lower().split(' ')[
+                                            0]] += 1
+                                    except:
+                                        self.ranks['unknown'] += 1
+                                check.skins_en(account)
+                                check.balance(account)
+                                skinscount = len(account.skins)
+                                if skinscount > 0 and account.banuntil == None:
+                                    self.skins += 1
+                                    if skinscount > 70:
+                                        self.skinsam['70+'] += 1
+                                    elif skinscount > 40:
+                                        self.skinsam['40-70'] += 1
+                                    elif skinscount > 35:
+                                        self.skinsam['35-40'] += 1
+                                    elif skinscount > 20:
+                                        self.skinsam['20-35'] += 1
+                                    elif skinscount > 10:
+                                        self.skinsam['10-20'] += 1
+                                    else:
+                                        self.skinsam['1-10'] += 1
+                                check.lastplayed(account)
+                                break
+                            else:
+                                account.vp, account.rp = 'N/A', 'N/A'
+                                account.lastplayed = 'N/A'
+                                if account.banuntil == None:
                                     self.ranks['unknown'] += 1
-                            check.skins_en(account)
-                            check.balance(account)
-                            skinscount = len(account.skins)
-                            if skinscount > 0 and account.banuntil == None:
-                                self.skins += 1
-                                if skinscount > 70:
-                                    self.skinsam['70+'] += 1
-                                elif skinscount > 40:
-                                    self.skinsam['40-70'] += 1
-                                elif skinscount > 35:
-                                    self.skinsam['35-40'] += 1
-                                elif skinscount > 20:
-                                    self.skinsam['20-35'] += 1
-                                elif skinscount > 10:
-                                    self.skinsam['10-20'] += 1
-                                else:
-                                    self.skinsam['1-10'] += 1
-                            check.lastplayed(account)
+                                    self.regions['unknown'] += 1
+                                account.rank = 'N/A'
+                                skinscount = 'N/A'
+                                account.skins = ['N/A']
+                                account.region = 'N/A'
                             break
-                        else:
-                            account.vp, account.rp = 'N/A', 'N/A'
-                            account.lastplayed = 'N/A'
-                            if account.banuntil == None:
-                                self.ranks['unknown'] += 1
-                                self.regions['unknown'] += 1
-                            account.rank = 'N/A'
-                            skinscount = 'N/A'
-                            account.skins = ['N/A']
-                            account.region = 'N/A'
-                        break
-                    skinsformatted = '\n'.join(account.skins)
-                    banuntil = account.banuntil
-                    unverifmail = account.unverifiedmail
-                    lvl = account.lvl
-                    reg = account.region
-                    country = account.country
-                    rank = account.rank
-                    sysrank = rank.strip().lower().split(' ')[0]
-                    lastplayed = account.lastplayed
-                    vp = account.vp
-                    rp = account.rp
+                        skinsformatted = '\n'.join(account.skins)
+                        banuntil = account.banuntil
+                        unverifmail = account.unverifiedmail
+                        lvl = account.lvl
+                        reg = account.region
+                        country = account.country
+                        rank = account.rank
+                        sysrank = rank.strip().lower().split(' ')[0]
+                        lastplayed = account.lastplayed
+                        vp = account.vp
+                        rp = account.rp
 
-                    if account.banuntil != None:
-                        self.tempbanned += 1
-                        self.tempbannedlist.append(acc)
-                        with open(f'{self.outpath}/tempbanned.txt', 'a', encoding='UTF-8') as file:
-                            file.write(f'''
+                        if account.banuntil != None:
+                            self.tempbanned += 1
+                            self.tempbannedlist.append(acc)
+                            with open(f'{self.outpath}/tempbanned.txt', 'a', encoding='UTF-8') as file:
+                                file.write(f'''
 ╔═════════════════════════════════════════════════════════════╗
 ║            | {account.logpass} |{space*(49-len(f'| {account.logpass} |'))}║
 ║ Banned until {banuntil}{space*(61-len(f' Banned until {banuntil}'))}║
@@ -385,17 +390,17 @@ class simplechecker():
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
 ''')
-                    else:
-                        # with open(f'{self.parentpath}/output/valid.json','r+',encoding='utf-8') as f:
-                        #    data=json.load(f)
-                        #    temp=data['valid']
-                        #    toadd={'LogPass':account,'region':reg,'rank':rank,'level':lvl,'lastmatch':lastplayed,'unverifiedmail':unverifmail,'vp':vp,'rp':rp,'skinscount':skinscount,f'skins':skins.strip('\n').split('\n')}
-                        #    temp.append(toadd)
-                        #    f.seek(0)
-                        #    json.dump(data, f, indent=4)
-                        #    f.truncate()
-                        with open(f'{self.outpath}/valid.txt', 'a', encoding='UTF-8') as file:
-                            file.write(f'''
+                        else:
+                            # with open(f'{self.parentpath}/output/valid.json','r+',encoding='utf-8') as f:
+                            #    data=json.load(f)
+                            #    temp=data['valid']
+                            #    toadd={'LogPass':account,'region':reg,'rank':rank,'level':lvl,'lastmatch':lastplayed,'unverifiedmail':unverifmail,'vp':vp,'rp':rp,'skinscount':skinscount,f'skins':skins.strip('\n').split('\n')}
+                            #    temp.append(toadd)
+                            #    f.seek(0)
+                            #    json.dump(data, f, indent=4)
+                            #    f.truncate()
+                            with open(f'{self.outpath}/valid.txt', 'a', encoding='UTF-8') as file:
+                                file.write(f'''
 ╔═════════════════════════════════════════════════════════════╗
 ║            | {account.logpass} |{space*(49-len(f'| {account.logpass} |'))}║
 ║                                                             ║
@@ -409,20 +414,20 @@ class simplechecker():
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
 ''')
-                    # sort
-                    if banuntil == None:
-                        self.valid += 1
-                        self.validlist.append(acc)
-                    bantext = ' '
-                    if rank != 'N/A' and reg != 'N/A':
-                        if banuntil != None:
-                            bantext = f' Banned until {banuntil}'
-                        if not exists(f'{self.outpath}/regions/'):
-                            os.mkdir(f'{self.outpath}/regions/')
-                        if not exists(f'{self.outpath}/regions/{reg}/'):
-                            os.mkdir(f'{self.outpath}/regions/{reg}/')
-                        with open(f'{self.outpath}/regions/{reg}/{sysrank}.txt', 'a', encoding='UTF-8') as file:
-                            file.write(f'''
+                        # sort
+                        if banuntil == None:
+                            self.valid += 1
+                            self.validlist.append(acc)
+                        bantext = ' '
+                        if rank != 'N/A' and reg != 'N/A':
+                            if banuntil != None:
+                                bantext = f' Banned until {banuntil}'
+                            if not exists(f'{self.outpath}/regions/'):
+                                os.mkdir(f'{self.outpath}/regions/')
+                            if not exists(f'{self.outpath}/regions/{reg}/'):
+                                os.mkdir(f'{self.outpath}/regions/{reg}/')
+                            with open(f'{self.outpath}/regions/{reg}/{sysrank}.txt', 'a', encoding='UTF-8') as file:
+                                file.write(f'''
 ╔═════════════════════════════════════════════════════════════╗
 ║            | {account.logpass} |{space*(49-len(f'| {account.logpass} |'))}║
 ║{bantext}{space*(61-len(bantext))}║
@@ -436,25 +441,25 @@ class simplechecker():
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
 ''')
-                    if skinscount > 0 and reg != 'N/A' and banuntil == None:
-                        if not exists(f'{self.outpath}/skins/'):
-                            os.mkdir(f'{self.outpath}/skins/')
-                        if skinscount > 70:
-                            path = f'{self.outpath}/skins/70+/'
-                        elif skinscount > 40:
-                            path = f'{self.outpath}/skins/40-70/'
-                        elif skinscount > 35:
-                            path = f'{self.outpath}/skins/35-40/'
-                        elif skinscount > 20:
-                            path = f'{self.outpath}/skins/20-35/'
-                        elif skinscount > 10:
-                            path = f'{self.outpath}/skins/10-20/'
-                        else:
-                            path = f'{self.outpath}/skins/1-10/'
-                        if not exists(path):
-                            os.mkdir(path)
-                        with open(f'{path}/{reg}.txt', 'a', encoding='UTF-8') as file:
-                            file.write(f'''
+                        if skinscount > 0 and reg != 'N/A' and banuntil == None:
+                            if not exists(f'{self.outpath}/skins/'):
+                                os.mkdir(f'{self.outpath}/skins/')
+                            if skinscount > 70:
+                                path = f'{self.outpath}/skins/70+/'
+                            elif skinscount > 40:
+                                path = f'{self.outpath}/skins/40-70/'
+                            elif skinscount > 35:
+                                path = f'{self.outpath}/skins/35-40/'
+                            elif skinscount > 20:
+                                path = f'{self.outpath}/skins/20-35/'
+                            elif skinscount > 10:
+                                path = f'{self.outpath}/skins/10-20/'
+                            else:
+                                path = f'{self.outpath}/skins/1-10/'
+                            if not exists(path):
+                                os.mkdir(path)
+                            with open(f'{path}/{reg}.txt', 'a', encoding='UTF-8') as file:
+                                file.write(f'''
 ╔═════════════════════════════════════════════════════════════╗
 ║            | {account.logpass} |{space*(49-len(f'| {account.logpass} |'))}║
 ║                                                             ║
