@@ -26,7 +26,7 @@ class program():
     def __init__(self) -> None:
         self.count = 0
         self.checked = 0
-        self.version = '3.15.4.2'
+        self.version = '3.15.4.3'
         self.riotlimitinarow = 0
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
@@ -44,8 +44,8 @@ class program():
             print('no internet connection')
             os._exit(0)
         os.system('cls')
-        kernel32 = ctypes.windll.kernel32
-        kernel32.SetConsoleMode(kernel32.GetStdHandle(-10), 128)
+        #kernel32 = ctypes.windll.kernel32
+        #kernel32.SetConsoleMode(kernel32.GetStdHandle(-10), 128)
         codes = vars(colorama.Fore)
         colors = [codes[color] for color in codes if color not in ['BLACK']]
         colored_name = [random.choice(
