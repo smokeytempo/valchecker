@@ -1,7 +1,3 @@
-<h1 align="center">
-  Discontinued.
-</h1>
-
 [![CodeFactor](https://www.codefactor.io/repository/github/lil-jaba/valchecker/badge/main)](https://www.codefactor.io/repository/github/lil-jaba/valchecker/overview/main)
 <h1 align="center">
   ValKeker
