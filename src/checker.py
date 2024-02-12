@@ -37,20 +37,29 @@ class singlelinechecker():
             account = authenticate.auth(logpass)
             if account.banuntil is not None:
                 stff.checkban(account)
-            elif account.code == 1:
-                print('you have been ratelimited. wait 30-60 seconds and try again')
-                continue
-            elif account.code == 3 or account.code == 0:
-                print('invalid account')
-                continue
-            elif account.code == 4:
-                print('permbanned account')
-                continue
+            match account.code:
+                case 1:
+                    print('you have been ratelimited. wait 30-60 seconds and try again')
+                    continue
+                case 3:
+                    print('invalid account')
+                    continue
+                case 0:
+                    print('invalid account')
+                    continue
+                case 4:
+                    print('permbanned account')
+                    continue
+            sys.get_region(account)
+            if account.region == None:
+                sys.get_region2(account)
+            else:
+                sys.get_country_and_level_only(account)
             sys.get_region2(account)
             if account.region == 'N/A' or account.region == '':
                 print('unknown region')
                 continue
-            if account.lvl < 20:
+            if int(account.lvl) < 20:
                 account.rank = 'locked'
             else:
                 check.ranked(account)
