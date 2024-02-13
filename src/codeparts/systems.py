@@ -63,6 +63,7 @@ class system():
                 'Authorization': 'Bearer {}'.format(account.token)
             }
             response = session.get(f"https://pd.{progregion}.a.pvp.net/account-xp/v1/players/{account.puuid}", headers=headers)
+            #input(response)
             lvl = response.json()['Progress']['Level']
             #input(lvl)
         except Exception as e:
@@ -95,12 +96,12 @@ class system():
                 fixedregion = Constants.COU2REG[cou3]
             fixedregion = fixedregion.lower()
             progregion = fixedregion
-            if account.region in ['latam', 'br']:
+            if progregion in ['latam', 'br']:
                 progregion = 'na'
+            #input(progregion)
         except Exception as e:
             # input(e)
             fixedregion = 'N/A'
-
         # lvl
         try:
             headers = {
@@ -108,9 +109,10 @@ class system():
                 'Authorization': 'Bearer {}'.format(account.token)
             }
             response = session.get(f"https://pd.{progregion}.a.pvp.net/account-xp/v1/players/{account.puuid}", headers=headers)
+            #input(response)
             lvl = response.json()['Progress']['Level']
-            #input(lvl)
         except Exception as e:
+            #input(e)
             lvl = 'N/A'
 
         account.region = fixedregion
