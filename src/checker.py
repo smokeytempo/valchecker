@@ -177,11 +177,11 @@ class simplechecker():
                 f'input number of threads (min 1 max 1000) (proxies: {self.proxycount}) >>>'))
         except ValueError:
             self.threadam = 1
-        self.threadam = self.threadam if 1000 > self.threadam > 0 else self.proxycount if self.proxycount > 1 else 3
+        self.threadam = self.threadam if 1000 > self.threadam > 0 else self.proxycount if self.proxycount > 1 else 1
         num = 0
         self.startedtesting = sys.getmillis()
         self.printinfo()
-        if self.threadam <= 1:
+        if self.threadam == 1:
             for account in accounts:
                 # input(account)
                 account = account.strip()
@@ -189,7 +189,6 @@ class simplechecker():
                 ps = account.split(':')[1]
                 self.checker(us, ps)
         else:
-
             loop = asyncio.get_running_loop()
             tasks = []
             with concurrent.futures.ThreadPoolExecutor() as executor:

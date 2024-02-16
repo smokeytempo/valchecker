@@ -5,7 +5,7 @@ from re import compile
 import ssl
 from typing import Any
 from tkinter import *
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import requests
 from requests.adapters import HTTPAdapter
@@ -141,7 +141,6 @@ class Auth():
                 # input(typebanned)
                 # input(typebanned)
                 if typebanned == "PERMANENT_BAN" or typebanned == 'PERMA_BAN':
-                    # input(True)
                     account.code = 4
                     return account
                 elif 'PERMANENT_BAN' in str(data3) or 'PERMA_BAN' in str(data3):
@@ -152,7 +151,9 @@ class Auth():
                     expire = data3[0]['dat']['expirationMillis']
                     expirepatched = datetime.utcfromtimestamp(
                         int(expire) / 1000.0)
-                    # input(expire)
+                    if expirepatched > datetime.now() + timedelta(days=365 * 20):
+                        account.code = 4
+                        return account
                     banuntil = expirepatched
                 else:
                     banuntil = None

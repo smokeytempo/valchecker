@@ -26,7 +26,7 @@ class program():
     def __init__(self) -> None:
         self.count = 0
         self.checked = 0
-        self.version = '3.15.4.5'
+        self.version = '3.15.5'
         self.riotlimitinarow = 0
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
@@ -173,32 +173,6 @@ class program():
         if proxylist == None:
             path = os.getcwd()
             file_path = f"{os.path.abspath(os.path.join(path, os.pardir))}\\proxy.txt"
-
-            if inquirer.confirm(
-                    message=f"No Proxies Found, Do you want to scrape proxies?",
-                    default=True,
-                    qmark='!',
-                    amark='!'
-                ).execute():
-                f = open('system\\settings.json', 'r+')
-                data = json.load(f)
-                proxyscraper = data['proxyscraper']
-                f.close()
-
-                # Scrape proxies
-                url = proxyscraper
-                proxies = requests.get(url).text.split('\r\n')
-
-                # Save proxies to file
-                with open(file_path, 'w') as f:
-                    f.write("\n".join(proxies))
-
-                # Print number of proxies saved
-                num_proxies = len(proxies)
-                print(f'{num_proxies} Proxies saved to "proxy.txt" file.')
-                proxylist = sys.load_proxy()
-            else:
-                print('Running proxyless...')
 
         ctypes.windll.kernel32.SetConsoleTitleW(
             f'ValChecker {self.version} by liljaba1337 | Loading Accounts')
