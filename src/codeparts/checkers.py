@@ -27,7 +27,7 @@ class checkers():
             # get skins using api
             r = sess.get(
                 f"https://pd.{region}.a.pvp.net/store/v1/entitlements/{account.puuid}/e7c63390-eda7-46e0-bb7a-a6abdacd2433", headers=headers)
-            # input(r.text)
+            #input(r.text)
             Skins = r.json()["Entitlements"]
             # file with skins' names
             with open(f'{self.parentpath}\\src\\assets\\skins.json', 'r', encoding='utf-8') as f:
@@ -56,7 +56,7 @@ class checkers():
             account.skins = skinlist
             account.uuids = skinids
         except Exception as e:
-            input(e)
+            #input(e)
             account.skins = ['N/A']
 
     def balance(self, account) -> None:
