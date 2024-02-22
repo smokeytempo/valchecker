@@ -26,7 +26,7 @@ class program():
     def __init__(self) -> None:
         self.count = 0
         self.checked = 0
-        self.version = '3.15.5'
+        self.version = '3.16.0'
         self.riotlimitinarow = 0
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
@@ -157,7 +157,7 @@ class program():
                     ctypes.windll.kernel32.SetConsoleTitleW(
                         f'ValChecker {self.version} by liljaba1337 | Loading Accounts ({self.count})')
                     ret.append(logpass)
-            return ret
+            return ret, filename.split('/')[-1]
 
     def main(self):
         ctypes.windll.kernel32.SetConsoleTitleW(
@@ -177,7 +177,7 @@ class program():
         ctypes.windll.kernel32.SetConsoleTitleW(
             f'ValChecker {self.version} by liljaba1337 | Loading Accounts')
         print('loading accounts')
-        accounts = self.get_accounts()
+        accounts, comboname = self.get_accounts()
 
         print('loading assets')
         ctypes.windll.kernel32.SetConsoleTitleW(
@@ -187,7 +187,7 @@ class program():
         print('loading checker')
         ctypes.windll.kernel32.SetConsoleTitleW(
             f'ValChecker {self.version} by liljaba1337 | Loading Checker')
-        scheck = checker.simplechecker(settings, proxylist, self.version)
+        scheck = checker.simplechecker(settings, proxylist, self.version, comboname)
 
         isvalkekersource = False
         if type(accounts) == systems.vlchkrsource:
@@ -203,10 +203,10 @@ class program():
 Although you can find the FAQ and the full guide in my discord, I will specify some things here.
 
 
-What is a Riot Limit? When you send a lot of auth requests from one IP, riot blocks you for some time.
+What is a Rate Limit? When you send a lot of auth requests from one IP, riot blocks you for some time.
 So that's why you should use proxies for checking. If riot bans your IP, you will not be able to login in their launcher or site for ~30 minutes.
 
-Where can I find proxies? Any website you trust, just search for that in the internet. Or you can ask other people on my discord server.
+Where can I find proxies? Any website you trust, just search for that in the internet. Or you can buy a cheap UHQ proxy method on my discord server.
 
 Where can I find combos? Actually, the answer is the same as with proxies. The internet. But if you want to do combos yourself, you can buy a cheap and effective method on my discord server.
 

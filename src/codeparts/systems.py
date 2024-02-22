@@ -127,7 +127,7 @@ class system():
             f.close()
             return data
         except:
-            print("can't find settings.json\nplease download it from my github\n")
+            print("can't find settings.json\nplease reinstall the ValChecker\n")
             return False
 
     @staticmethod
@@ -140,14 +140,14 @@ class system():
             rlimit_wait = data['rlimit_wait']
             cooldown = data['cooldown']
             create_folder = data['new_folder']
-            proxyscraper = data['proxyscraper']
+            outformat = data['outformat']
             menu_choices = [
                 Separator(),
                 f'RLimits to skip an acc: {max_rlimits}',
                 f'Wait if there is a RLimit (seconds): {rlimit_wait}',
                 f'Wait between checking accounts (seconds): {cooldown}',
                 f'Create folder for every check: {create_folder}',
-                f'Proxy Scraper URL: {proxyscraper}',
+                f'Format the output file: {outformat}',
                 Separator(),
                 'Exit'
             ]
@@ -157,17 +157,7 @@ class system():
                 default=menu_choices[0],
                 pointer='>'
             ).execute()
-            if edit == menu_choices[0]:
-                root = tkinter.Tk()
-                file = filedialog.askopenfile(parent=root, mode='rb', title='select file with accounts (login:password)',
-                                              filetype=(("txt", "*.txt"), ("All files", "*.txt")))
-                root.destroy()
-                if file == None:
-                    filename = 'None'
-                else:
-                    filename = str(file).split("name='")[1].split("'>")[0]
-                data['default_file'] = filename
-            elif edit == menu_choices[1]:
+            if edit == menu_choices[1]:
                 new_rlimits = input(
                     'enter the number of riot limits to skip this account (min 1) >>>')
                 if int(new_rlimits) < 1 or int(new_rlimits) > 999:
@@ -207,14 +197,18 @@ class system():
                 ).execute().replace('Yes', 'True').replace('No', 'False')
                 data['new_folder'] = newfolder
             elif edit == menu_choices[5]:
-                default_scraperurl = 'https://api.proxyscrape.com/?request=getproxies&proxytype=http&timeout=10000&country=all&ssl=all&anonymity=all'
-                newscraperurl = ''
-                newscraperurl = input(
-                    'Enter URL From Which (HTTP) Proxies Will Be Scraped, Leave Empty To Use ProxySrape: ')
-
-                if len(newscraperurl) == 0:
-                    newscraperurl = default_scraperurl
-                data['proxyscraper'] = newscraperurl
+                choices = [
+                    Separator(),
+                    'Yes',
+                    'No'
+                ]
+                answ = inquirer.select(
+                    message='Do you want your accounts to be formatted in a fancy way?',
+                    choices=choices,
+                    default=choices[0],
+                    pointer='>'
+                ).execute().replace('Yes', 'True').replace('No', 'False')
+                data['outformat'] = answ
             else:
                 return
             f.seek(0)
@@ -399,7 +393,11 @@ class vlchkrsource:
             '20-35': 0,
             '35-40': 0,
             '40-70': 0,
-            '70+': 0
+            '70-100': 0,
+            '100-130': 0,
+            '130-165': 0,
+            '165-200': 0,
+            '200+': 0
         }
     
     def loadfile(self):
