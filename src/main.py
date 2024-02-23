@@ -26,7 +26,7 @@ class program():
     def __init__(self) -> None:
         self.count = 0
         self.checked = 0
-        self.version = '3.16.0'
+        self.version = '3.16.0.1'
         self.riotlimitinarow = 0
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
@@ -136,7 +136,7 @@ class program():
         filename = str(file).split("name='")[1].split("'>")[0]
         if (".vlchkr" in filename):
             valkekersource = systems.vlchkrsource(filename)
-            return valkekersource
+            return valkekersource, filename.split('/')[-1]
         with open(str(filename), 'r', encoding='UTF-8', errors='replace') as file:
             lines = file.readlines()
             ret = []
@@ -148,7 +148,7 @@ class program():
                     amark='!'
                 ).execute():
                     self.count = len(lines)
-                    return lines
+                    return lines, filename.split('/')[-1]
             for logpass in lines:
                 logpass = logpass.strip()
                 # remove doubles
