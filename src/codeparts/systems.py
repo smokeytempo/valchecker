@@ -102,6 +102,7 @@ class system():
         except Exception as e:
             # input(e)
             fixedregion = 'N/A'
+            country = 'N/A'
         # lvl
         try:
             headers = {
