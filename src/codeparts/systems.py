@@ -141,14 +141,12 @@ class system():
             rlimit_wait = data['rlimit_wait']
             cooldown = data['cooldown']
             create_folder = data['new_folder']
-            outformat = data['outformat']
             menu_choices = [
                 Separator(),
                 f'RLimits to skip an acc: {max_rlimits}',
                 f'Wait if there is a RLimit (seconds): {rlimit_wait}',
                 f'Wait between checking accounts (seconds): {cooldown}',
                 f'Create folder for every check: {create_folder}',
-                f'Format the output file: {outformat}',
                 Separator(),
                 'Exit'
             ]
@@ -197,19 +195,6 @@ class system():
                     pointer='>'
                 ).execute().replace('Yes', 'True').replace('No', 'False')
                 data['new_folder'] = newfolder
-            elif edit == menu_choices[5]:
-                choices = [
-                    Separator(),
-                    'Yes',
-                    'No'
-                ]
-                answ = inquirer.select(
-                    message='Do you want your accounts to be formatted in a fancy way?',
-                    choices=choices,
-                    default=choices[0],
-                    pointer='>'
-                ).execute().replace('Yes', 'True').replace('No', 'False')
-                data['outformat'] = answ
             else:
                 return
             f.seek(0)

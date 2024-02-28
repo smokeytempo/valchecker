@@ -92,7 +92,6 @@ class simplechecker():
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
         self.proxylist = proxylist
         self.inrlimit = 0
-        self.formatting = settings['outformat'] == "True"
         self.max_rlimits = settings['max_rlimits']
         self.rlimit_wait = settings['rlimit_wait']
         self.cooldown = int(settings['cooldown'])
@@ -406,8 +405,7 @@ class simplechecker():
                             self.tempbanned += 1
                             self.tempbannedlist.append(acc)
                             with open(f'{self.outpath}/tempbanned.txt', 'a', encoding='UTF-8') as file:
-                                if self.formatting:
-                                    file.write(f'''
+                                file.write(f'''
 ╔═════════════════════════════════════════════════════════════╗
 ║            | {account.logpass} |{space*(49-len(f'| {account.logpass} |'))}║
 ║ Banned until {banuntil}{space*(61-len(f' Banned until {banuntil}'))}║
@@ -421,8 +419,8 @@ class simplechecker():
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
 ''')
-                                else:
-                                    file.write(account.logpass+'\n')
+                            with open(f'{self.outpath}/tempbanned_raw.txt', 'a', encoding='UTF-8') as file:
+                                file.write(account.logpass+'\n')
                         else:
                             # with open(f'{self.parentpath}/output/valid.json','r+',encoding='utf-8') as f:
                             #    data=json.load(f)
@@ -433,8 +431,7 @@ class simplechecker():
                             #    json.dump(data, f, indent=4)
                             #    f.truncate()
                             with open(f'{self.outpath}/valid.txt', 'a', encoding='UTF-8') as file:
-                                if self.formatting:
-                                    file.write(f'''
+                                file.write(f'''
 ╔═════════════════════════════════════════════════════════════╗
 ║            | {account.logpass} |{space*(49-len(f'| {account.logpass} |'))}║
 ║                                                             ║
@@ -448,8 +445,8 @@ class simplechecker():
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
 ''')
-                                else:
-                                    file.write(account.logpass+'\n')
+                            with open(f'{self.outpath}/valid_raw.txt', 'a', encoding='UTF-8') as file:
+                                file.write(account.logpass+'\n')
                         # sort
                         if banuntil == None:
                             self.valid += 1
@@ -463,8 +460,7 @@ class simplechecker():
                             if not exists(f'{self.outpath}/regions/{reg}/'):
                                 os.mkdir(f'{self.outpath}/regions/{reg}/')
                             with open(f'{self.outpath}/regions/{reg}/{sysrank}.txt', 'a', encoding='UTF-8') as file:
-                                if self.formatting:
-                                    file.write(f'''
+                                file.write(f'''
 ╔═════════════════════════════════════════════════════════════╗
 ║            | {account.logpass} |{space*(49-len(f'| {account.logpass} |'))}║
 ║{bantext}{space*(61-len(bantext))}║
@@ -478,8 +474,8 @@ class simplechecker():
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
 ''')
-                                else:
-                                    file.write(account.logpass+'\n')
+                            with open(f'{self.outpath}/regions/{reg}/{sysrank}_raw.txt', 'a', encoding='UTF-8') as file:
+                                file.write(account.logpass+'\n')
                         if skinscount > 0 and reg != 'N/A' and banuntil == None:
                             if not exists(f'{self.outpath}/skins/'):
                                 os.mkdir(f'{self.outpath}/skins/')
@@ -508,8 +504,7 @@ class simplechecker():
                             if not exists(path):
                                 os.mkdir(path)
                             with open(f'{path}/{reg}.txt', 'a', encoding='UTF-8') as file:
-                                if self.formatting:
-                                    file.write(f'''
+                                file.write(f'''
 ╔═════════════════════════════════════════════════════════════╗
 ║            | {account.logpass} |{space*(49-len(f'| {account.logpass} |'))}║
 ║                                                             ║
@@ -523,8 +518,8 @@ class simplechecker():
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
 ''')
-                                else:
-                                    file.write(account.logpass+'\n')
+                            with open(f'{path}/{reg}_raw.txt', 'a', encoding='UTF-8') as file:
+                                file.write(account.logpass+'\n')
             except Exception as e:
                 with open(f'{self.parentpath}/log.txt', 'a', errors='replace', encoding='utf-8') as f:
                     f.write(

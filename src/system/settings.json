@@ -2,6 +2,5 @@
     "max_rlimits": 3,
     "rlimit_wait": 30,
     "cooldown": 0,
-    "new_folder": "True",
-    "outformat": "True"
+    "new_folder": "True"
 }
