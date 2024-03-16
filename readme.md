@@ -12,6 +12,7 @@
 <h3 align="center">
 Please leave a ⭐  if you like it
 </h3>
+The source code is shitty asf. There are a lot of things that require improvement but I DO NOT want to rewrite this project and I DO NOT write code like that anymore.
 
 ## [A complete installation and usage guide](https://liljaba1337.gitbook.io/untitled/)
 
