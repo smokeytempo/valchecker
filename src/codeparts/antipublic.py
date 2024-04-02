@@ -1,7 +1,7 @@
 import requests
 import urllib3
 
-BASE = "https://localhost:7680"
+BASE = "https://212.227.150.24:7680"
 TESTURI = "/token/test"
 CHECKURI = "/entry"
 
