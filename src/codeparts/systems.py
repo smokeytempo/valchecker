@@ -1,8 +1,8 @@
 import asyncio
 import json
 import os
-import tkinter
-from tkinter import filedialog
+import string
+import random
 import time
 import ctypes
 
@@ -62,10 +62,11 @@ class system():
                 'X-Riot-Entitlements-JWT': account.entt,
                 'Authorization': 'Bearer {}'.format(account.token)
             }
-            response = session.get(f"https://pd.{progregion}.a.pvp.net/account-xp/v1/players/{account.puuid}", headers=headers)
-            #input(response)
+            response = session.get(
+                f"https://pd.{progregion}.a.pvp.net/account-xp/v1/players/{account.puuid}", headers=headers)
+            # input(response)
             lvl = response.json()['Progress']['Level']
-            #input(lvl)
+            # input(lvl)
         except Exception as e:
             lvl = -1
 
@@ -83,7 +84,7 @@ class system():
                    "Authorization": f"Bearer {account.token}"}
         userinfo = session.post(
             Constants.USERINFO_URL, headers=headers)
-        #print(userinfo.text)
+        # print(userinfo.text)
         userinfo = userinfo.json()
         try:
             try:
@@ -98,7 +99,7 @@ class system():
             progregion = fixedregion
             if progregion in ['latam', 'br']:
                 progregion = 'na'
-            #input(progregion)
+            # input(progregion)
         except Exception as e:
             # input(e)
             fixedregion = 'N/A'
@@ -109,11 +110,12 @@ class system():
                 'X-Riot-Entitlements-JWT': account.entt,
                 'Authorization': 'Bearer {}'.format(account.token)
             }
-            response = session.get(f"https://pd.{progregion}.a.pvp.net/account-xp/v1/players/{account.puuid}", headers=headers)
-            #input(response)
+            response = session.get(
+                f"https://pd.{progregion}.a.pvp.net/account-xp/v1/players/{account.puuid}", headers=headers)
+            # input(response)
             lvl = response.json()['Progress']['Level']
         except Exception as e:
-            #input(e)
+            # input(e)
             lvl = 'N/A'
 
         account.region = fixedregion
@@ -126,10 +128,21 @@ class system():
             f = open('system\\settings.json')
             data = json.load(f)
             f.close()
+            data['session'] = system.generate_random_string(10)
             return data
         except:
             print("can't find settings.json\nplease reinstall the ValChecker\n")
             return False
+
+    @staticmethod
+    def edit_settings_raw(key: str, newvalue: str):
+        f = open('system\\settings.json', 'r+')
+        data = json.load(f)
+        data[key] = newvalue
+        f.seek(0)
+        json.dump(data, f, indent=4)
+        f.truncate()
+        f.close()
 
     @staticmethod
     def edit_settings():
@@ -141,12 +154,16 @@ class system():
             rlimit_wait = data['rlimit_wait']
             cooldown = data['cooldown']
             create_folder = data['new_folder']
+            antipublic = data["antipublic"]
+            antipublic_token = data["antipublic_token"]
             menu_choices = [
                 Separator(),
                 f'RLimits to skip an acc: {max_rlimits}',
                 f'Wait if there is a RLimit (seconds): {rlimit_wait}',
                 f'Wait between checking accounts (seconds): {cooldown}',
                 f'Create folder for every check: {create_folder}',
+                f'Participate in AntiPublic (alpha): {antipublic}',
+                f'AntiPublic token: {antipublic_token}',
                 Separator(),
                 'Exit'
             ]
@@ -195,6 +212,23 @@ class system():
                     pointer='>'
                 ).execute().replace('Yes', 'True').replace('No', 'False')
                 data['new_folder'] = newfolder
+            elif edit == menu_choices[5]:
+                vars = [
+                    Separator(),
+                    'Yes',
+                    'No'
+                ]
+                resp = inquirer.select(
+                    message='Do you want to participate in AntiPublic (alpha)?',
+                    choices=vars,
+                    default=vars[0],
+                    pointer='>'
+                ).execute().replace('Yes', 'True').replace('No', 'False')
+                data['antipublic'] = resp
+            elif edit == menu_choices[6]:
+                print('Your AntiPublic token. This only matters if you wish to participate in the AntiPublic alpha test.\nYou can ask for access on our discord server.')
+                resp = input("> ")
+                data['antipublic_token'] = resp
             else:
                 return
             f.seek(0)
@@ -215,9 +249,9 @@ class system():
                 continue
             i = i.strip()
             if 'socks5' not in i:
-                proxies = {'http':'http://' + i, 'https':'http://'+i}
+                proxies = {'http': 'http://' + i, 'https': 'http://'+i}
             else:
-                proxies = {'http':i, 'https':i}
+                proxies = {'http': i, 'https': i}
             self.proxylist.append(proxies)
 
         return self.proxylist
@@ -254,6 +288,11 @@ class system():
     @staticmethod
     def getmillis():
         return round(time.time() * 1000)
+    
+    @staticmethod
+    def generate_random_string(length):
+        characters = string.ascii_letters + string.digits
+        return ''.join(random.choice(characters) for _ in range(length))
 
     def checkproxy(self):
         try:
@@ -315,6 +354,7 @@ class system():
 class Account:
     errmsg: str = None
     logpass: str = None
+    private: bool = None
     code: int = None
     token: str = None
     tokenid: str = None
@@ -335,45 +375,45 @@ class Account:
     gamename: str = None
     tagline: str = None
 
+
 class vlchkrsource:
-    def __init__(self,path:str) -> None:
+    def __init__(self, path: str) -> None:
         self.filepath = path
-        self.tocheck=[]
-        self.valid=[]
-        self.banned=0
-        self.tempbanned=[]
-        self.rlimits=0
-        self.errors=0
-        self.retries=0
-        self.wskins=0
-        self.umail=0
-        self.checked=0
+        self.tocheck = []
+        self.valid = []
+        self.banned = 0
+        self.tempbanned = []
+        self.rlimits = 0
+        self.errors = 0
+        self.retries = 0
+        self.wskins = 0
+        self.umail = 0
+        self.checked = 0
         self.regions = {
-            "eu":0,
-            "na":0,
-            "ap":0,
-            "kr":0,
-            "br":0,
-            "latam":0,
-            'unknown':0
+            "eu": 0,
+            "na": 0,
+            "ap": 0,
+            "kr": 0,
+            "br": 0,
+            "latam": 0,
+            'unknown': 0
         }
 
-        
-        self.ranks={
-            "unranked":0,
-            "iron":0,
-            "bronze":0,
-            "silver":0,
-            "gold":0,
-            "platinum":0,
-            "diamond":0,
-            "ascendant":0,
-            "immortal":0,
-            "radiant":0,
-            'unknown':0
+        self.ranks = {
+            "unranked": 0,
+            "iron": 0,
+            "bronze": 0,
+            "silver": 0,
+            "gold": 0,
+            "platinum": 0,
+            "diamond": 0,
+            "ascendant": 0,
+            "immortal": 0,
+            "radiant": 0,
+            'unknown': 0
         }
         self.locked = 0
-        self.skins={
+        self.skins = {
             '1-10': 0,
             '10-20': 0,
             '20-35': 0,
@@ -385,9 +425,9 @@ class vlchkrsource:
             '165-200': 0,
             '200+': 0
         }
-    
+
     def loadfile(self):
-        with open(self.filepath,'r',encoding='utf-8') as f:
+        with open(self.filepath, 'r', encoding='utf-8') as f:
             data = json.loads(f.read())
             self.tocheck = data['tocheck']
             self.valid = data['valid']
@@ -418,9 +458,9 @@ class vlchkrsource:
             "checked": self.checked,
             "regions": self.regions,
             "ranks": self.ranks,
-            'locked':self.locked,
+            'locked': self.locked,
             "skins": self.skins
         }
-        
+
         with open(self.filepath, 'w', encoding="utf-8") as file:
             json.dump(data, file)

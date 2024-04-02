@@ -81,7 +81,7 @@ class program():
             'Exit'
         ]
         print(sys.center('\nhttps://github.com/LIL-JABA/valchecker\n'))
-        print(sys.center('https://discord.gg/GRzTYuhCgA\n'))
+        print(sys.center('https://discord.gg/zoofil\n'))
         res = inquirer.select(
             message="\nUse arrow keys to select and ENTER to confirm\nPlease select an option:",
             choices=menu_choices,
@@ -94,7 +94,8 @@ class program():
             input('finished checking. press ENTER to exit')
             pr.start()
         elif res == menu_choices[2]:
-            slchecker = checker.singlelinechecker()
+            settings = sys.load_settings()
+            slchecker = checker.singlelinechecker(settings["antipublic_token"] if settings["antipublic"] == "True" else "", settings["session"])
             slchecker.main()
             pr.start()
         elif res == menu_choices[3]:
@@ -163,7 +164,7 @@ class program():
         ctypes.windll.kernel32.SetConsoleTitleW(
             f'ValChecker {self.version} by liljaba1337 | Loading Settings')
         print('loading settings')
-        settings = sys.load_settings()        
+        settings = sys.load_settings()
 
         ctypes.windll.kernel32.SetConsoleTitleW(
             f'ValChecker {self.version} by liljaba1337 | Loading Proxies')

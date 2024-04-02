@@ -12,7 +12,7 @@ from InquirerPy import inquirer
 
 from colorama import Fore
 
-from codeparts import auth, checkers, stuff, systems
+from codeparts import auth, checkers, stuff, systems, antipublic
 from codeparts.systems import vlchkrsource
 
 check = checkers.checkers()
@@ -21,12 +21,20 @@ stff = stuff.staff()
 
 
 class singlelinechecker():
-    def __init__(self) -> None:
+    def __init__(self, APtoken:str = "", session:str = "") -> None:
+        self.APtoken = APtoken
+        self.session = session
         self.checkskins = inquirer.confirm(
             message='wanna capture skins?', default=True, qmark=''
         ).execute()
 
     def main(self) -> None:
+        useAP = not self.APtoken == ""
+        if useAP:
+            ap = antipublic.AntiPublic(self.APtoken, self.session)
+            if not ap.test():
+                print("Your AntiPublic token is invalid or the server is down. Please ask the dev for a new one (on our discord server).")
+                useAP = False
         authenticate = auth.Auth()
         while True:
             logpass = input('account (login:password) or "E" to exit >>>')
@@ -35,6 +43,9 @@ class singlelinechecker():
             if not ':' in logpass:
                 continue
             account = authenticate.auth(logpass)
+            isPrivate = "N/A"
+            if useAP:
+                isPrivate = ap.check(logpass)
             if account.banuntil is not None:
                 stff.checkban(account)
             match account.code:
@@ -76,6 +87,7 @@ region: {account.region}    country: {account.country}
 rank: {account.rank}    lvl: {account.lvl}
 vp: {account.vp}    rp: {account.rp}
 last game: {account.lastplayed}
+private: {isPrivate}
 https://tracker.gg/valorant/profile/riot/{account.gamename.replace(' ','%20')}%23{account.tagline}/overview
 ''')
             if self.checkskins:
@@ -118,6 +130,14 @@ class simplechecker():
         self.cpmtext = self.cpm
 
         self.checked = 0
+        self.private = -1
+        self.useAP = settings["antipublic"] == "True"
+        if self.useAP:
+            self.private = 0
+            self.ap = antipublic.AntiPublic(settings['antipublic_token'], settings['session'])
+            if not self.ap.test():
+                self.private = -1
+                self.useAP = False
         self.valid = 0
         self.banned = 0
         self.tempbanned = 0
@@ -320,6 +340,8 @@ class simplechecker():
                         time.sleep(1)
                         continue
                     case _:
+                        if self.useAP:
+                            account.private = self.ap.check(account.logpass)
                         if account.unverifiedmail and account.banuntil is None:
                             self.unverifiedmail += 1
                         while True:
@@ -415,6 +437,7 @@ class simplechecker():
 ║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
 ║ Creation date: {account.registerdate}{space*(61-len(f' Creation date: {account.registerdate}'))}║
 ║ Gamename: {account.gamename}#{account.tagline}{space*(61-len(f' Gamename: {account.gamename}#{account.tagline}'))}║
+║ Private: {account.private}{space*(61-len(f' Private: {account.private}'))}║
 ╠═════════════════════════════════════════════════════════════╣
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
@@ -441,6 +464,7 @@ class simplechecker():
 ║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
 ║ Creation date: {account.registerdate}{space*(61-len(f' Creation date: {account.registerdate}'))}║
 ║ Gamename: {account.gamename}#{account.tagline}{space*(61-len(f' Gamename: {account.gamename}#{account.tagline}'))}║
+║ Private: {account.private}{space*(61-len(f' Private: {account.private}'))}║
 ╠═════════════════════════════════════════════════════════════╣
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
@@ -470,6 +494,7 @@ class simplechecker():
 ║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
 ║ Creation date: {account.registerdate}{space*(61-len(f' Creation date: {account.registerdate}'))}║
 ║ Gamename: {account.gamename}#{account.tagline}{space*(61-len(f' Gamename: {account.gamename}#{account.tagline}'))}║
+║ Private: {account.private}{space*(61-len(f' Private: {account.private}'))}║
 ╠═════════════════════════════════════════════════════════════╣
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
@@ -514,6 +539,7 @@ class simplechecker():
 ║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
 ║ Creation date: {account.registerdate}{space*(61-len(f' Creation date: {account.registerdate}'))}║
 ║ Gamename: {account.gamename}#{account.tagline}{space*(61-len(f' Gamename: {account.gamename}#{account.tagline}'))}║
+║ Private: {account.private}{space*(61-len(f' Private: {account.private}'))}║
 ╠═════════════════════════════════════════════════════════════╣
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
@@ -526,6 +552,8 @@ class simplechecker():
                         f'({datetime.now()}) {str(traceback.format_exc())}\n_________________________________\n')
                 self.err += 1
             self.checked += 1
+            if account.private:
+                self.private += 1
             if riotlimitinarow > 0:
                 self.inrlimit -= 1
             riotlimitinarow = 0
@@ -554,10 +582,14 @@ class simplechecker():
         green = Fore.LIGHTGREEN_EX
         red = Fore.LIGHTRED_EX
         space = " "
+        privatepercent = "-1%"
+        if self.useAP:
+            privatepercent = self.private/self.valid*100 if self.valid != 0 else 0.0
+            privatepercent = f'{str(round(privatepercent,1))}%'
         percent = self.valid/self.checked*100 if self.checked != 0 else 0.0
         percent = f'{str(round(percent,1))}%'
         ctypes.windll.kernel32.SetConsoleTitleW(
-            f'ValChecker {self.version}  |  Checked {self.checked}/{self.count}  |  {self.cpmtext} CPM  |  Hitrate {percent}  |  Est. time: {self.esttime}  |  {self.comboname}')
+            f'ValChecker {self.version}  |  Checked {self.checked}/{self.count}  |  {self.cpmtext} CPM  |  Hitrate {percent}  |  Private Rate {privatepercent}  |  Est. time: {self.esttime}  |  {self.comboname}')
         os.system('cls')
         print(f'''
     {reset}
@@ -578,7 +610,7 @@ class simplechecker():
 {cyan} ┏━ Not main ━━━━━━━━━━━━━━━━━━━━━━━━━━┓ ┃ [{reset}>{cyan}] {reset}Unranked      >>:{cyan}[{green}{self.ranks['unranked']}{cyan}]{space * (18 - len(str(self.ranks['unranked'])))}┃ ┃ [{reset}>{cyan}] {reset}165-200         >>:{cyan}[{green}{self.skinsam['165-200']}{cyan}]{space * (29 - len(str(self.skinsam['165-200'])))}┃
 {cyan} ┃ [{reset}>{cyan}] {reset}With Skins       >>:{cyan}[{green}{self.skins}{cyan}]{space * (10 - len(str(self.skins)))}┃ ┃ [{reset}>{cyan}] {reset}Iron          >>:{cyan}[{green}{self.ranks['iron']}{cyan}]{space * (18 - len(str(self.ranks['iron'])))}┃ ┃ [{reset}>{cyan}] {reset}200+            >>:{cyan}[{green}{self.skinsam['200+']}{cyan}]{space * (29 - len(str(self.skinsam['200+'])))}┃
 {cyan} ┃ [{reset}>{cyan}] {reset}Unverified Mail  >>:{cyan}[{green}{self.unverifiedmail}{cyan}]{space * (10 - len(str(self.unverifiedmail)))}┃ ┃ [{reset}>{cyan}] {reset}Bronze        >>:{cyan}[{green}{self.ranks['bronze']}{cyan}]{space * (18 - len(str(self.ranks['bronze'])))}┃ ┃                                                       ┃
-{cyan} ┃                                     ┃ ┃ [{reset}>{cyan}] {reset}Silver        >>:{cyan}[{green}{self.ranks['silver']}{cyan}]{space * (18 - len(str(self.ranks['silver'])))}┃ ┃                                                       ┃
+{cyan} ┃ [{reset}>{cyan}] {reset}Private          >>:{cyan}[{green}{self.private}{cyan}] ({privatepercent}){space * (7 - len(str(self.private)) - len(str(privatepercent)))}┃ ┃ [{reset}>{cyan}] {reset}Silver        >>:{cyan}[{green}{self.ranks['silver']}{cyan}]{space * (18 - len(str(self.ranks['silver'])))}┃ ┃                                                       ┃
 {cyan} ┃                                     ┃ ┃ [{reset}>{cyan}] {reset}Gold          >>:{cyan}[{green}{self.ranks['gold']}{cyan}]{space * (18 - len(str(self.ranks['gold'])))}┃ ┃                                                       ┃
 {cyan} ┃                                     ┃ ┃ [{reset}>{cyan}] {reset}Platinum      >>:{cyan}[{green}{self.ranks['platinum']}{cyan}]{space * (18 - len(str(self.ranks['platinum'])))}┃ ┃                                                       ┃
 {cyan} ┃                                     ┃ ┃ [{reset}>{cyan}] {reset}Diamond       >>:{cyan}[{green}{self.ranks['diamond']}{cyan}]{space * (18 - len(str(self.ranks['diamond'])))}┃ ┃                                                       ┃
