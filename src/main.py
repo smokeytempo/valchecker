@@ -26,7 +26,7 @@ class program():
     def __init__(self) -> None:
         self.count = 0
         self.checked = 0
-        self.version = '3.17'
+        self.version = '3.17.0.1'
         self.riotlimitinarow = 0
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
@@ -81,7 +81,7 @@ class program():
             'Exit'
         ]
         print(sys.center('\nhttps://github.com/LIL-JABA/valchecker\n'))
-        print(sys.center('https://discord.gg/zoofil\n'))
+        print(sys.center('https://discord.gg/vapenation\n'))
         res = inquirer.select(
             message="\nUse arrow keys to select and ENTER to confirm\nPlease select an option:",
             choices=menu_choices,
