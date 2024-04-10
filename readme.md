@@ -1,3 +1,4 @@
+# The server got deleted. I will create a new one in the evening. If you need to contact me, you can find my telegram in my github profile
 
 <h1 align="center">
   ValKeker
