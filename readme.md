@@ -1,5 +1,3 @@
-# The server got deleted. I will create a new one in the evening. If you need to contact me, you can find my telegram in my github profile
-
 <h1 align="center">
   ValKeker
 </h1>
@@ -13,9 +11,8 @@
 <h3 align="center">
 Please leave a ⭐  if you like it
 </h3>
-The source code is shitty asf. There are a lot of things that require improvement but I DO NOT want to rewrite this project and I DO NOT write code like that anymore.
 
 ## [A complete installation and usage guide](https://liljaba1337.gitbook.io/untitled/)
 
 
-<a href="https://discord.gg/qV4hAn42CB"><img src="https://discordapp.com/api/guilds/1185648506820644945/widget.png?style=banner2"></a>
+<a href="https://discord.gg/z8453UWXRc"><img src="https://discordapp.com/api/guilds/1227667638742683729/widget.png?style=banner2"></a>
