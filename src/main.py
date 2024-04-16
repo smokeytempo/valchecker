@@ -26,7 +26,7 @@ class program():
     def __init__(self) -> None:
         self.count = 0
         self.checked = 0
-        self.version = '3.17.0.1'
+        self.version = '3.17.0.2'
         self.riotlimitinarow = 0
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
