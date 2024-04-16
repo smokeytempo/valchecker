@@ -26,7 +26,7 @@ class checkers():
 
             # get skins using api
             r = sess.get(
-                f"https://pd.{region}.a.pvp.net/store/v1/entitlements/{account.puuid}/e7c63390-eda7-46e0-bb7a-a6abdacd2433", headers=headers)
+                f"https://pd.{region}.a.pvp.net/store/v1/entitlements/{account.puuid}/e7c63390-eda7-46e0-bb7a-a6abdacd2433", headers={**headers, **Constants.PVPNETHEADERSBASE})
             #input(r.text)
             Skins = r.json()["Entitlements"]
             # file with skins' names
@@ -69,7 +69,7 @@ class checkers():
                    }
         try:
             r = requests.get(
-                f"https://pd.{region}.a.pvp.net/store/v1/wallet/{account.puuid}", headers=headers)
+                f"https://pd.{region}.a.pvp.net/store/v1/wallet/{account.puuid}", headers={**headers, **Constants.PVPNETHEADERSBASE})
             # input(r.text)
 
             vp = int(r.json()["Balances"]
@@ -99,7 +99,7 @@ class checkers():
                        "X-Riot-ClientVersion": "release-05.12-shipping-21-808353",
                        "X-Riot-ClientPlatform": Constants.CLIENTPLATFORM}
             ranked = sess.get(
-                f"https://pd.{region}.a.pvp.net/mmr/v1/players/{account.puuid}/competitiveupdates", headers=headers)
+                f"https://pd.{region}.a.pvp.net/mmr/v1/players/{account.puuid}/competitiveupdates", headers={**headers, **Constants.PVPNETHEADERSBASE})
             if '","Matches":[]}' in ranked.text:
                 rank = "unranked"
             else:
@@ -125,7 +125,7 @@ class checkers():
                        "X-Riot-ClientPlatform": Constants.CLIENTPLATFORM
                        }
             r = requests.get(
-                f"https://pd.{region}.a.pvp.net/match-history/v1/history/{account.puuid}?startIndex=0&endIndex=10", headers=headers)
+                f"https://pd.{region}.a.pvp.net/match-history/v1/history/{account.puuid}?startIndex=0&endIndex=10", headers={**headers, **Constants.PVPNETHEADERSBASE})
             data = r.json()
             # input(data)
             data2 = data["History"]

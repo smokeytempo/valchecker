@@ -542,3 +542,7 @@ Zm9ybU9TVmVyc2lvbiI6ICIxMC4wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0
     RIOTCLIENT = ''
     ICONURL = 'https://media.valorant-api.com/weaponskins/{}/displayicon.png'
     ICONURL2 = 'https://media.valorant-api.com/weaponskinlevels/{}/displayicon.png'
+    PVPNETHEADERSBASE = {
+                        "X-Riot-ClientVersion": "release-01.08-shipping-10-471230",
+                        "X-Riot-ClientPlatform": "ew0KCSJwbGF0Zm9ybVR5cGUiOiAiUEMiLA0KCSJwbGF0Zm9ybU9TIjogIldpbmRvd3MiLA0KCSJwbGF0Zm9ybU9TVmVyc2lvbiI6ICIxMC4wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9"
+                    }

@@ -63,11 +63,12 @@ class system():
                 'Authorization': 'Bearer {}'.format(account.token)
             }
             response = session.get(
-                f"https://pd.{progregion}.a.pvp.net/account-xp/v1/players/{account.puuid}", headers=headers)
-            # input(response)
+                f"https://pd.{progregion}.a.pvp.net/account-xp/v1/players/{account.puuid}", headers={**headers, **Constants.PVPNETHEADERSBASE})
+            #input(response.text)
             lvl = response.json()['Progress']['Level']
             # input(lvl)
         except Exception as e:
+            #input(e)
             lvl = -1
 
         account.country = country
@@ -84,7 +85,7 @@ class system():
                    "Authorization": f"Bearer {account.token}"}
         userinfo = session.post(
             Constants.USERINFO_URL, headers=headers)
-        # print(userinfo.text)
+        #input(userinfo.text)
         userinfo = userinfo.json()
         try:
             try:
@@ -111,12 +112,12 @@ class system():
                 'Authorization': 'Bearer {}'.format(account.token)
             }
             response = session.get(
-                f"https://pd.{progregion}.a.pvp.net/account-xp/v1/players/{account.puuid}", headers=headers)
-            # input(response)
+                f"https://pd.{progregion}.a.pvp.net/account-xp/v1/players/{account.puuid}", headers={**headers, **Constants.PVPNETHEADERSBASE})
+            #input(response.text)
             lvl = response.json()['Progress']['Level']
         except Exception as e:
-            # input(e)
-            lvl = 'N/A'
+            #input(e)
+            lvl = -1
 
         account.region = fixedregion
         account.country = country
