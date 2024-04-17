@@ -373,7 +373,7 @@ class simplechecker():
                                 check.skins_en(account)
                                 check.balance(account)
                                 skinscount = len(account.skins)
-                                if account.skins[0] == "N/A":
+                                if len(account.skins) == 1 and account.skins[0] == "N/A":
                                     skinscount = -1
                                 if skinscount > 0 and account.banuntil == None:
                                     self.skins += 1
