@@ -26,7 +26,8 @@ class program():
     def __init__(self) -> None:
         self.count = 0
         self.checked = 0
-        self.version = '3.17.0.4'
+        with open("system/ver.txt", 'r') as r:
+            self.version = r.read().strip()
         self.riotlimitinarow = 0
         path = os.getcwd()
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
@@ -53,8 +54,6 @@ class program():
         print(sys.get_spaces_to_center('ValChecker by liljaba1337') +
               (''.join(colored_name))+colorama.Fore.RESET)
         print(sys.center(f'v{self.version}'))
-
-        self.CheckIfFirstStart()
 
         if 'beta' in self.version:
             print(sys.center(
@@ -195,27 +194,6 @@ class program():
             isvalkekersource = True
         asyncio.run(scheck.main(accounts, self.count, isvalkekersource))
         return
-
-    def CheckIfFirstStart(self) -> None:
-        with open("system/xd.txt", 'r+') as r:
-            if r.read() == '0':
-                win32api.MessageBox(None,
-                                             """Hello! Looks like it's your first start of ValChecker.
-Although you can find the FAQ and the full guide in my discord, I will specify some things here.
-
-
-What is a Rate Limit? When you send a lot of auth requests from one IP, riot blocks you for some time.
-So that's why you should use proxies for checking. If riot bans your IP, you will not be able to login in their launcher or site for ~30 minutes.
-
-Where can I find proxies? Any website you trust, just search for that in the internet. Or you can buy a cheap UHQ proxy method on my discord server.
-
-Where can I find combos? Actually, the answer is the same as with proxies. The internet. But if you want to do combos yourself, you can buy a cheap and effective method on my discord server.
-
-
-The link to my discord server can be found in the readme section of the github repository or on the ValChecker title screen.
-
-Good luck!""", "Hello!", 0)
-                r.write("1")
 
 
 pr = program()

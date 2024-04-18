@@ -328,6 +328,8 @@ class simplechecker():
                         self.printinfo()
                         break
                     case 4:
+                        with open(f'{self.outpath}/permbanned.txt', 'a', encoding='UTF-8') as file:
+                            file.write(f'{account.logpass}\n')
                         self.banned += 1
                         self.checked += 1
                         self.printinfo()
@@ -373,7 +375,7 @@ class simplechecker():
                                 check.skins_en(account)
                                 check.balance(account)
                                 skinscount = len(account.skins)
-                                if len(account.skins) == 1 and account.skins[0] == "N/A":
+                                if skinscount == 1 and account.skins[0] == "N/A":
                                     skinscount = -1
                                 if skinscount > 0 and account.banuntil == None:
                                     self.skins += 1
