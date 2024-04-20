@@ -26,7 +26,8 @@ class SSLAdapter(HTTPAdapter):
 
 
 class Auth():
-    def __init__(self) -> None:
+    def __init__(self, isDebug = False) -> None:
+        self.isDebug = isDebug
         path = os.getcwd()
         self.useragent = Constants.RIOTCLIENT
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
@@ -189,6 +190,11 @@ class Auth():
             account.gamename = gamename
             account.tagline = tagline
             account.registerdate = registerdatepatched
+            if self.isDebug:
+                print(puuid)
+                print(entitlement+"\n-------")
+                print(token)
+                input()
             return account
         except Exception as e:
             account.errmsg = str(traceback.format_exc())

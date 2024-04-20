@@ -21,12 +21,15 @@ stff = stuff.staff()
 
 
 class singlelinechecker():
-    def __init__(self, APtoken:str = "", session:str = "") -> None:
+    def __init__(self, APtoken:str = "", session:str = "", isDebug = False) -> None:
+        self.isDebug = isDebug
         self.APtoken = APtoken
         self.session = session
-        self.checkskins = inquirer.confirm(
-            message='wanna capture skins?', default=True, qmark=''
-        ).execute()
+        self.checkskins = False
+        if not self.isDebug:
+            self.checkskins = inquirer.confirm(
+                message='wanna capture skins?', default=True, qmark=''
+            ).execute()
 
     def main(self) -> None:
         useAP = not self.APtoken == ""
@@ -35,9 +38,13 @@ class singlelinechecker():
             if not ap.test():
                 print("Your AntiPublic token is invalid or the server is down. Please ask the dev for a new one (on our discord server).")
                 useAP = False
-        authenticate = auth.Auth()
+        authenticate = auth.Auth(self.isDebug)
         while True:
-            logpass = input('account (login:password) or "E" to exit >>>')
+            if self.isDebug:
+                input(">")
+                logpass = "valcheckerdebug:Fuckyou1337!"
+            else:
+                logpass = input('account (login:password) or "E" to exit >>>')
             if logpass == 'E':
                 break
             if not ':' in logpass:

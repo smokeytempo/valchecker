@@ -4,7 +4,7 @@ import json
 import os
 import random
 import tkinter
-import win32api
+import sys as s
 from tkinter import filedialog
 from InquirerPy import inquirer
 from InquirerPy.separator import Separator
@@ -198,5 +198,10 @@ class program():
 
 pr = program()
 if __name__ == '__main__':
+    args = s.argv
+    if '-d' in args:
+        slchecker = checker.singlelinechecker("", "_debug_session", True)
+        slchecker.main()
+        os._exit(0)
     print('starting')
     pr.start()
