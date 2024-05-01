@@ -55,12 +55,7 @@ class program():
               (''.join(colored_name))+colorama.Fore.RESET)
         print(sys.center(f'v{self.version}'))
 
-        if 'beta' in self.version:
-            print(sys.center(
-                f'{Fore.YELLOW}You have downloaded the BETA version. It can work unstable and contain some bugs.'))
-            print(sys.center(
-                f'Visit https://github.com/LIL-JABA/valchecker/releases/latest to download the latest stable release{Fore.RESET}'))
-        elif self.lastver != self.version:
+        if self.lastver != self.version:
             print(sys.center(
                 f'\nnext version {self.lastver} is available!'))
             if inquirer.confirm(
@@ -90,7 +85,7 @@ class program():
         ).execute()
         if res == menu_choices[1]:
             self.main()
-            input('finished checking. press ENTER to exit')
+            input('finished checking. press ENTER or the power button on your PC to exit')
             pr.start()
         elif res == menu_choices[2]:
             settings = sys.load_settings()
@@ -102,7 +97,7 @@ class program():
             pr.start()
         elif res == menu_choices[4]:
             valid.customsort()
-            input('done. press ENTER to exit')
+            input('done. press ENTER or the power button on your PC to exit')
             pr.start()
         elif res == menu_choices[5]:
             sys.checkproxy()
@@ -140,19 +135,10 @@ class program():
         with open(str(filename), 'r', encoding='UTF-8', errors='replace') as file:
             lines = file.readlines()
             ret = []
-            if len(lines) > 100000:
-                if inquirer.confirm(
-                    message=f"You have more than 100k accounts ({len(lines)}). Do you want to skip the sorting part? (it removes doubles and bad logpasses but can be long)",
-                    default=True,
-                    qmark='!',
-                    amark='!'
-                ).execute():
-                    self.count = len(lines)
-                    return lines, filename.split('/')[-1]
             for logpass in lines:
                 logpass = logpass.strip()
                 # remove doubles
-                if logpass not in ret and ':' in logpass:
+                if logpass not in ret and len(logpass.split(':')) == 2:
                     self.count += 1
                     ctypes.windll.kernel32.SetConsoleTitleW(
                         f'ValChecker {self.version} by liljaba1337 | Loading Accounts ({self.count})')
