@@ -90,7 +90,7 @@ class program():
         elif res == menu_choices[2]:
             settings = sys.load_settings()
             slchecker = checker.singlelinechecker(settings["antipublic_token"] if settings["antipublic"] == "True" else "", settings["session"])
-            slchecker.main()
+            asyncio.run(slchecker.main())
             pr.start()
         elif res == menu_choices[3]:
             sys.edit_settings()
@@ -187,7 +187,7 @@ if __name__ == '__main__':
     args = s.argv
     if '-d' in args:
         slchecker = checker.singlelinechecker("", "_debug_session", True)
-        slchecker.main()
+        asyncio.run(slchecker.main())
         os._exit(0)
     print('starting')
     pr.start()

