@@ -237,7 +237,8 @@ class simplechecker():
                     try:
                         us = accounts[num].split(':')[0]
                         ps = accounts[num].split(':')[1]
-                        task = loop.create_task(self.checker(us,ps))
+                        task = loop.run_in_executor(executor, asyncio.run, self.checker(us,ps))
+                        #task = loop.create_task(self.checker(us,ps))
                         #task = loop.run_in_executor(
                         #    executor, self.checker, us, ps)
                         tasks.append(task)
