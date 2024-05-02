@@ -2,18 +2,15 @@
 
 import contextlib
 import ctypes
-import json
 import ssl
 import sys
 import warnings
-from base64 import urlsafe_b64decode
 from secrets import token_urlsafe
-from typing import Dict, List, Optional, Sequence, Tuple, Union
-from urllib.parse import parse_qsl, urlsplit
+from typing import Optional, Sequence, Tuple
 
 import aiohttp
 
-__all__ = (
+__all__ = tuple((
     "RiotAuthenticationError",
     "RiotAuthError",
     "RiotMultifactorError",
@@ -21,19 +18,19 @@ __all__ = (
     "RiotUnknownErrorTypeError",
     "RiotUnknownResponseTypeError",
     "RiotAuth",
-)
+))
 
 
 class AuthClient:
     RIOT_CLIENT_USER_AGENT = token_urlsafe(111)
-    CIPHERS13 = ":".join(
+    CIPHERS13 = str(":".join(
         (
             "TLS_CHACHA20_POLY1305_SHA256",
             "TLS_AES_128_GCM_SHA256",
             "TLS_AES_256_GCM_SHA384",
         )
-    )
-    CIPHERS = ":".join(
+    ))
+    CIPHERS = str(":".join(
         (
             "ECDHE-ECDSA-CHACHA20-POLY1305",
             "ECDHE-RSA-CHACHA20-POLY1305",
@@ -51,8 +48,8 @@ class AuthClient:
             "AES256-SHA",
             "DES-CBC3-SHA",
         )
-    )
-    SIGALGS = ":".join(
+    ))
+    SIGALGS = str(":".join(
         (
             "ecdsa_secp256r1_sha256",
             "rsa_pss_rsae_sha256",
@@ -64,7 +61,7 @@ class AuthClient:
             "rsa_pkcs1_sha512",
             "rsa_pkcs1_sha1",
         )
-    )
+    ))
 
     def __init__(self) -> None:
         self._auth_ssl_ctx = AuthClient.create_riot_auth_ssl_ctx()
@@ -81,7 +78,7 @@ class AuthClient:
     def create_riot_auth_ssl_ctx() -> ssl.SSLContext:
         ssl_ctx = ssl.create_default_context()
 
-        addr = id(ssl_ctx) + sys.getsizeof(object())
+        addr = int(id(ssl_ctx) + sys.getsizeof(object()))
         ssl_ctx_addr = ctypes.cast(addr, ctypes.POINTER(ctypes.c_void_p)).contents
 
         libssl: Optional[ctypes.CDLL] = None
@@ -123,9 +120,9 @@ class AuthClient:
             ("sub", "user_id"),
             ("exp", "expires_at"),
         ),
-        **kwargs,
+        **kwargs:any,
     ) -> None:
-        predefined_keys = [key for key in self.__dict__.keys() if key[0] != "_"]
+        predefined_keys = list([key for key in self.__dict__.keys() if key[0] != "_"])
 
         self.__dict__.update(
             (key, val) for key, val in kwargs.items() if key in predefined_keys
@@ -137,7 +134,7 @@ class AuthClient:
                 (key, val) for key, val in additional_data if key in predefined_keys
             )
 
-    async def createSession(self):
+    async def createSession(self) -> aiohttp.ClientSession:
         self._cookie_jar.clear()
 
         conn = aiohttp.TCPConnector(ssl=self._auth_ssl_ctx)

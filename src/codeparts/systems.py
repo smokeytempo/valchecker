@@ -38,7 +38,7 @@ class system():
 
             data = response.json()
             account.region = data['affinities']['live'].lower()
-        except Exception as e:
+        except Exception:
             account.region = None
 
     @staticmethod
@@ -67,7 +67,7 @@ class system():
             #input(response.text)
             lvl = response.json()['Progress']['Level']
             # input(lvl)
-        except Exception as e:
+        except Exception:
             #input(e)
             lvl = -1
 

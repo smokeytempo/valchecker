@@ -41,5 +41,5 @@ class log:
         a=self.t.get('1.0',tkinter.END)
         if len(a.splitlines())>51:
             self.t.delete('1.0', tkinter.END)
-        date=datetime.now() if printtime==True else ''
+        date=datetime.now() if printtime is True else ''
         self.t.insert(tkinter.END,f'({date}) {text}\n')

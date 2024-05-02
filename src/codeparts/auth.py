@@ -1,10 +1,8 @@
 import os
-from collections import OrderedDict
 from re import compile
 import ssl
 import traceback
 from typing import Any
-from tkinter import *
 from datetime import datetime, timedelta
 
 import sys
@@ -31,16 +29,16 @@ class SSLAdapter(HTTPAdapter):
 
 
 class Auth():
-    def __init__(self, isDebug = False) -> None:
-        self.isDebug = isDebug
-        path = os.getcwd()
+    def __init__(self, isDebug : bool = False) -> None:
+        self.isDebug = bool(isDebug)
+        path = str(os.getcwd())
         self.useragent = Constants.RIOTCLIENT
-        self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
+        self.parentpath = str(os.path.abspath(os.path.join(path, os.pardir)))
 
-    async def auth(self, logpass: str = None, username=None, password=None, proxy=None) -> Account:
+    async def auth(self, logpass : str = None, username : str =None, password : str =None, proxy=None) -> Account:
         account = Account()
         try:
-            account.logpass = logpass
+            account.logpass = str(logpass)
             session = requests.Session()
             ac = AuthClient()
             authsession = await ac.createSession()
@@ -71,38 +69,40 @@ class Auth():
                     Constants.AUTH_URL,
                     json=body,
                     headers=headers,
-                    proxy = proxy["http"] if proxy != None else None
-                ) as r:
-                    raw = await r.text()
-                    #input(raw)
+                    proxy = proxy["http"] if proxy is not None else None
+                ):
+                    pass
+                #) as r:
+                    #debugvalue_raw = await r.text()
+                    #input(debugvalue_raw)
 
                 # R2
-                data = {
-                    'type': 'auth',
-                    'username': username,
-                    'password': password
-                }
+                data = dict({
+                    'type': str('auth'),
+                    'username': str(username),
+                    'password': str(password)
+                })
                 async with authsession.put(
                     Constants.AUTH_URL,
                     json=data,
                     headers=headers,
-                    proxy = proxy["http"] if proxy != None else None
+                    proxy = proxy["http"] if proxy is not None else None
                 ) as r:
                     try:
                         data = await r.json()
-                    except:
-                        account.code = 6
+                    except Exception:
+                        account.code = int(6)
                         await authsession.close()
                         return account
-                    r2text = await r.text()                
+                    r2text = str(await r.text())        
                 await authsession.close()
-            except Exception as e:
-                #input(e)
+            except Exception:
+                #input(Exception)
                 #input(traceback.format_exc())
                 await authsession.close()
                 if self.isDebug:
                     input(traceback.format_exc())
-                account.code = 6
+                account.code = int(6)
                 return account
             if "access_token" in r2text:
                 pattern = compile(
@@ -111,37 +111,36 @@ class Auth():
                     data['response']['parameters']['uri'])[0]
                 token = data[0]
                 token_id = data[1]
-
             elif 'invalid_session_id' in r2text:
-                account.code = 6
+                account.code = int(6)
                 return account
             elif "auth_failure" in r2text:
-                account.code = 3
+                account.code = int(3)
                 return account
             elif 'rate_limited' in r2text:
-                account.code = 1
+                account.code = int(1)
                 return account
             elif 'multifactor' in r2text:
-                account.code = 3
+                account.code = int(3)
                 return account
             elif 'cloudflare' in r2text:
-                account.code = 5
+                account.code = int(5)
                 return account
             else:
-                account.code = 3
+                account.code = int(3)
                 return account
 
-            headers = {
-                'User-Agent': f'RiotClient/{self.useragent} %s (Windows;10;;Professional, x64)',
-                'Authorization': f'Bearer {token}',
-            }
+            headers = dict({
+                'User-Agent': str(f'RiotClient/{self.useragent} %s (Windows;10;;Professional, x64)'),
+                'Authorization': str(f'Bearer {token}'),
+            })
             try:
                 with session.post(Constants.ENTITLEMENT_URL, headers=headers, json={}, proxies=proxy) as r:
                     entitlement = r.json()['entitlements_token']
                 r = session.post(Constants.USERINFO_URL,
                                  headers=headers, json={}, proxies=proxy)
-            except:
-                account.code = 6
+            except Exception:
+                account.code = int(6)
                 return account
             # print(r.text)
             # input()
@@ -152,7 +151,7 @@ class Auth():
             gamename = data['acct']['game_name']
             tagline = data['acct']['tag_line']
             register_date = data['acct']['created_at']
-            registerdatepatched = datetime.utcfromtimestamp(
+            registerdatepatched = datetime.fromtimestamp(
                 int(register_date) / 1000.0)
             puuid = data['sub']
             try:
@@ -165,34 +164,34 @@ class Auth():
                 # input(typebanned)
                 # input(typebanned)
                 if typebanned == "PERMANENT_BAN" or typebanned == 'PERMA_BAN':
-                    account.code = 4
+                    account.code = int(4)
                     return account
                 elif 'PERMANENT_BAN' in str(data3) or 'PERMA_BAN' in str(data3):
                     # input(True)
-                    account.code = 4
+                    account.code = int(4)
                     return account
                 elif typebanned == 'TIME_BAN' or typebanned == 'LEGACY_BAN':
                     expire = data3[0]['dat']['expirationMillis']
-                    expirepatched = datetime.utcfromtimestamp(
+                    expirepatched = datetime.fromtimestamp(
                         int(expire) / 1000.0)
                     if expirepatched > datetime.now() + timedelta(days=365 * 20):
-                        account.code = 4
+                        account.code = int(4)
                         return account
                     banuntil = expirepatched
                 else:
                     banuntil = None
                     pass
-            except Exception as e:
-                # print(e)
-                # input(e)
+            except Exception:
+                # print(Exception)
+                # input(Exception)
                 banuntil = None
                 pass
             try:
-                # headers={
+                # headers= dict({
                 #    'Authorization': f'Bearer {token}',
                 #    'Content-Type': 'application/json',
                 #    'User-Agent': f'RiotClient/{self.useragent} %s (Windows;10;;Professional, x64)',
-                # }
+                # })
 
                 # r=session.get('https://email-verification.riotgames.com/api/v1/account/status',headers=headers,json={},proxies=sys.getproxy(self.proxlist)).text
 
@@ -200,18 +199,18 @@ class Auth():
 
                 mailverif = bool(data['email_verified'])
 
-            except Exception as e:
-                # input(e)
+            except Exception:
+                # input(Exception)
                 mailverif = True
-            mailverif = not mailverif
-            account.tokenid = token_id
-            account.token = token
-            account.entt = entitlement
-            account.puuid = puuid
-            account.unverifiedmail = mailverif
+            mailverif = bool(not mailverif)
+            account.tokenid = str(token_id)
+            account.token = str(token)
+            account.entt = str(entitlement)
+            account.puuid = str(puuid)
+            account.unverifiedmail = str(mailverif)
             account.banuntil = banuntil
-            account.gamename = gamename
-            account.tagline = tagline
+            account.gamename = str(gamename)
+            account.tagline = str(tagline)
             account.registerdate = registerdatepatched
             if self.isDebug:
                 print(puuid)
@@ -219,8 +218,8 @@ class Auth():
                 print(token)
                 input()
             return account
-        except Exception as e:
-            input(e)
+        except Exception:
+            input(Exception)
             account.errmsg = str(traceback.format_exc())
-            account.code = 2
+            account.code = int(2)
             return account

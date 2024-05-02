@@ -1,6 +1,5 @@
 import asyncio
 import ctypes
-import json
 import os
 import random
 import tkinter
@@ -11,7 +10,6 @@ from InquirerPy.separator import Separator
 import colorama
 
 import requests
-from colorama import Fore, Style
 
 import checker
 from codeparts import checkers, systems, validsort
@@ -34,10 +32,10 @@ class program():
         try:
             self.lastver = requests.get(
                 'https://api.github.com/repos/lil-jaba/valchecker/releases').json()[0]['tag_name']
-        except:
+        except Exception:
             self.lastver = self.version
 
-    def start(self):
+    def start(self) -> None:
         try:
             print('internet check')
             requests.get('https://github.com')
@@ -50,7 +48,7 @@ class program():
         codes = vars(colorama.Fore)
         colors = [codes[color] for color in codes if color not in ['BLACK']]
         colored_name = [random.choice(
-            colors) + char for char in f'ValChecker by liljaba1337']
+            colors) + char for char in 'ValChecker by liljaba1337']
         print(sys.get_spaces_to_center('ValChecker by liljaba1337') +
               (''.join(colored_name))+colorama.Fore.RESET)
         print(sys.center(f'v{self.version}'))
@@ -89,7 +87,7 @@ class program():
             pr.start()
         elif res == menu_choices[2]:
             settings = sys.load_settings()
-            slchecker = checker.singlelinechecker(settings["antipublic_token"] if settings["antipublic"] == "True" else "", settings["session"])
+            slchecker = checker.singlelinechecker(settings["antipublic_token"] if settings["antipublic"] is True else "", settings["session"])
             asyncio.run(slchecker.main())
             pr.start()
         elif res == menu_choices[3]:
@@ -116,36 +114,44 @@ class program():
         elif res == menu_choices[8]:
             os._exit(0)
 
-    def get_accounts(self):
-        filetypes = (
-            ("", ("*.txt", "*.vlchkr")),
-            ("All files", "*.*")
-        )
+    def get_accounts(self) -> tuple:
+        """
+        Get accounts from a file or a .vlchkr file
+
+        :return: tuple
+        """
+        filetypes = (("", (".txt", ".vlchkr")), ("All files", "."))
         root = tkinter.Tk()
-        file = filedialog.askopenfile(parent=root, mode='rb', title='Select a file with combos OR .vlchkr ro continue checking',
-                                      filetypes=filetypes)
+        file = filedialog.askopenfile(
+            parent=root,
+            mode="rb",
+            title="Select a file with combos OR .vlchkr ro continue checking",
+            filetypes=filetypes,
+        )
         root.destroy()
-        os.system('cls')
-        if file == None:
+        os.system("cls")
+        if file is None:
             os._exit(0)
         filename = str(file).split("name='")[1].split("'>")[0]
-        if (".vlchkr" in filename):
+        if ".vlchkr" in filename:
             valkekersource = systems.vlchkrsource(filename)
-            return valkekersource, filename.split('/')[-1]
-        with open(str(filename), 'r', encoding='UTF-8', errors='replace') as file:
-            lines = file.readlines()
-            ret = []
-            for logpass in lines:
-                logpass = logpass.strip()
-                # remove doubles
-                if logpass not in ret and len(logpass.split(':')) == 2:
-                    self.count += 1
-                    ctypes.windll.kernel32.SetConsoleTitleW(
-                        f'ValChecker {self.version} by liljaba1337 | Loading Accounts ({self.count})')
-                    ret.append(logpass)
-            return ret, filename.split('/')[-1]
+            return valkekersource, filename.split("/")[-1]
 
-    def main(self):
+        ret = []
+        seen = set()
+        with open(str(filename), "r", encoding="UTF-8", errors="replace") as file:
+            for logpass in file:
+                logpass = str(logpass.strip())
+                if logpass not in seen:
+                    self.count += 1
+                    ret.append(logpass)
+                    seen.add(logpass)
+        ctypes.windll.kernel32.SetConsoleTitleW(
+                        f"ValChecker {self.version} by liljaba1337 | Loading Accounts ({self.count})"
+                    )
+        return ret, filename.split("/")[-1]
+
+    def main(self) -> None:
         ctypes.windll.kernel32.SetConsoleTitleW(
             f'ValChecker {self.version} by liljaba1337 | Loading Settings')
         print('loading settings')
@@ -155,10 +161,6 @@ class program():
             f'ValChecker {self.version} by liljaba1337 | Loading Proxies')
         print('loading proxies')
         proxylist = sys.load_proxy()
-
-        if proxylist == None:
-            path = os.getcwd()
-            file_path = f"{os.path.abspath(os.path.join(path, os.pardir))}\\proxy.txt"
 
         ctypes.windll.kernel32.SetConsoleTitleW(
             f'ValChecker {self.version} by liljaba1337 | Loading Accounts')
@@ -175,9 +177,9 @@ class program():
             f'ValChecker {self.version} by liljaba1337 | Loading Checker')
         scheck = checker.simplechecker(settings, proxylist, self.version, comboname)
 
-        isvalkekersource = False
+        isvalkekersource = bool(False)
         if type(accounts) == systems.vlchkrsource:
-            isvalkekersource = True
+            isvalkekersource = bool(True)
         asyncio.run(scheck.main(accounts, self.count, isvalkekersource))
         return
 
