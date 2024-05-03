@@ -121,10 +121,10 @@ class simplechecker:
         self.newfolder = bool(settings["new_folder"])
         if self.newfolder:
             dtnw = str(datetime.now()).replace(" ", "_").replace(":", ".")
-            self.outpath = self.parentpath + f"\\output\\{dtnw}"
+            self.outpath = self.parentpath + f"/output/{dtnw}"
             os.mkdir(self.outpath)
         else:
-            self.outpath = self.parentpath + "\\output"
+            self.outpath = self.parentpath + "/output"
 
         self.send_tempban = bool(False)
         self.send_woskins = bool(False)
@@ -237,8 +237,8 @@ class simplechecker:
             count = int(len(input_.tocheck))
         else:
             accounts = input_
-            open(f"{self.outpath}\\record.vlchkr", "w").close()
-            vlchkr = systems.vlchkrsource(f"{self.outpath}\\record.vlchkr")
+            open(f"{self.outpath}/record.vlchkr", "w").close()
+            vlchkr = systems.vlchkrsource(f"{self.outpath}/record.vlchkr")
             vlchkr.savefile()
 
         try:
@@ -275,18 +275,15 @@ class simplechecker:
                         tasks = [task for task in tasks if not task.done()]
                         await asyncio.sleep(0.1)
                     try:
-<<<<<<< HEAD
-                        str(us = accounts[num].split(":")[0])
-                        str(ps = accounts[num].split(":")[1])
+                        us = str(accounts[num].split(":")[0])
+                        ps = str(accounts[num].split(":")[1])
                         task = loop.run_in_executor(executor, self.checker, us, ps)
-=======
                         us = accounts[num].split(':')[0]
                         ps = accounts[num].split(':')[1]
                         task = loop.run_in_executor(executor, asyncio.run, self.checker(us,ps))
                         #task = loop.create_task(self.checker(us,ps))
                         #task = loop.run_in_executor(
                         #    executor, self.checker, us, ps)
->>>>>>> de4b23051eb6c896b6786bbe0e211b3c4ce94f0c
                         tasks.append(task)
                         # print(f'Added task for account {us}:{ps}. Current tasks: {len(tasks)}')
                         num += 1

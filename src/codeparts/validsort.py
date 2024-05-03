@@ -2,7 +2,6 @@ import ctypes
 import os
 from InquirerPy import inquirer
 from InquirerPy.separator import Separator
-from tkinter import *
 #from tkcalendar import Calendar
 
 class validsort():
@@ -14,7 +13,7 @@ class validsort():
     def customsort(self):
         self.allfolders=[Separator(),"default file (output/valid.txt)",Separator()]
         for file in os.listdir(f'{self.parentpath}\\output'):
-            if not '.txt' in file and not 'regions' in file:
+            if '.txt' not in file and 'regions' not in file:
                 self.allfolders.append(file)
         
         folder = inquirer.select(
@@ -24,8 +23,10 @@ class validsort():
             pointer='>'
         ).execute()
 
-        if folder==self.allfolders[1]: folder=f'{self.parentpath}/output/valid.txt'
-        else: folder=f'{self.parentpath}/output/{folder}/valid.txt'
+        if folder==self.allfolders[1]: 
+            folder=f'{self.parentpath}/output/valid.txt'
+        else: 
+            folder=f'{self.parentpath}/output/{folder}/valid.txt'
 
         clearno=[
             Separator(),
@@ -151,7 +152,7 @@ class validsort():
                                 gothis=False
                         #if gothis==False:
                         #    print('lvl no')
-                    except:
+                    except Exception:
                         pass
 
                 if skins !='':
@@ -165,7 +166,7 @@ class validsort():
                                 gothis=False
                         #if gothis==False:
                         #    print('sk no')
-                    except Exception as e:
+                    except Exception:
                         pass
                 
                 if vp != '':
@@ -179,7 +180,7 @@ class validsort():
                                 gothis=False
                         #if gothis==False:
                         #    print('vp no')
-                    except:
+                    except Exception:
                         pass
 
                 if rp != '':
@@ -193,7 +194,7 @@ class validsort():
                                 gothis=False
                         #if gothis==False:
                         #    print('rp no')
-                    except Exception as e:
+                    except Exception:
                         pass
 
                 if str(mail) != '' and f'full access: {str(mail)}' not in account:
@@ -205,7 +206,7 @@ class validsort():
                     gothis=False
                 
                 sorted+=1
-                if gothis==True:
+                if gothis is True:
                     with open(f'{self.parentpath}/output/sorted.txt','a',encoding='UTF-8') as f:
                         f.write('╔═════════════════════════════════════════════════════════════╗'+accounttowrite)#####################
                     matches+=1
@@ -213,7 +214,7 @@ class validsort():
                 else:
                     print(f'sorted {sorted}/{count}')
 
-            except Exception as e:
+            except Exception:
                 sorted+=1
                 print(f'sorted {sorted}/{count} (error)')
                 pass

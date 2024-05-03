@@ -19,6 +19,10 @@ syst = systems.system()
 
 if sys.platform == 'win32':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+elif sys.platform == 'linux':
+    asyncio.set_event_loop_policy(asyncio.DefaultEventLoopPolicy())
+elif sys.platform == 'darwin':
+    asyncio.set_event_loop_policy(asyncio.SelectorEventLoopPolicy())
 
 class SSLAdapter(HTTPAdapter):
     def init_poolmanager(self, *a: Any, **k: Any) -> None:

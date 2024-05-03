@@ -2,6 +2,6 @@ urllib3
 requests
 colorama
 keyboard
-inquirerpy
+InquirerPy
 aiohttp
-pywin32
+clear

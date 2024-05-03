@@ -25,10 +25,10 @@ class fastcheck:
         self.newfolder=settings['new_folder']
         if self.newfolder=='True':
             dtnw=str(datetime.now()).replace(' ','_').replace(':','.')
-            self.outpath=self.parentpath+f'\\output\\{dtnw}'
+            self.outpath=self.parentpath+f'/output/{dtnw}'
             os.mkdir(self.outpath)
         else:
-            self.outpath=self.parentpath+'\\output'
+            self.outpath=self.parentpath+'/output'
             
         self.cpm=0
         self.startedcount=0
@@ -44,10 +44,10 @@ class fastcheck:
         self.unverifiedmail=0
 
         
-        self.proxycount=len(proxylist) if self.proxylist != None else 0
+        self.proxycount=len(proxylist) if self.proxylist is not None else 0
 
         self.count=count
-        os.system(f'mode con: cols=120 lines=25')
+        os.system('mode con: cols=120 lines=25')
         self.threadam=1
         input(f'0 threads; {self.proxycount} proxies (enter to start) >>>')
         self.threadam= self.threadam if 1000>self.threadam>0 else self.proxycount if self.proxycount > 1 else 3
@@ -73,7 +73,7 @@ class fastcheck:
                         threading.Thread(target=self.checker,args=(us,ps)).start()
                         #self.printinfo()
                         num+=1
-                    except:
+                    except Exception:
                         print("Checked all")
 
     
@@ -81,11 +81,6 @@ class fastcheck:
         riotlimitinarow=0
         proxy=syst.getproxy(self.proxylist)
         account=f'{username}:{password}'
-        reset = Fore.RESET
-        cyan = Fore.CYAN
-        green = Fore.LIGHTGREEN_EX
-        red = Fore.LIGHTRED_EX
-        space = " "
         authenticate=auth.auth(self.useragent)
         while True:
             try:
@@ -95,7 +90,7 @@ class fastcheck:
                 #mailverif=authenticate.mailverif
                 #uuid=authenticate.user_id
                 #banuntil=authenticate.banuntil
-                if banuntil!=None:
+                if banuntil is not None:
                     banuntil=stff.checkban(banuntil)
                 if token == 2:
                     with open(f'{self.parentpath}/log.txt','a') as f:
@@ -122,7 +117,7 @@ class fastcheck:
                             file.write(f'\n{account}')
                         break
                 elif token==6:
-                    if mailverif==True:
+                    if mailverif is True:
                         proxy=syst.getproxy(self.proxylist)
                     self.retries+=1
                     time.sleep(1)
@@ -143,13 +138,13 @@ class fastcheck:
                     continue
                 else:
                     self.valid+=1
-                    if mailverif==True and banuntil==None:
+                    if mailverif is True and banuntil is None:
                         self.unverifiedmail+=1
                     
                     if banuntil is None:
                         with open(f'{self.outpath}\\fastcheck_valid.txt','a',encoding='utf-8') as f:
                             f.write(account+'\n')
-            except:
+            except Exception:
                 with open(f'{self.parentpath}/log.txt','a',errors='replace',encoding='utf-8') as f:
                     f.write(f'({datetime.now()}) {str(traceback.format_exc())}\n_________________________________\n')
                 self.err+=1

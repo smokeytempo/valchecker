@@ -30,7 +30,7 @@ class checkers():
             #input(r.text)
             Skins = r.json()["Entitlements"]
             # file with skins' names
-            with open(f'{self.parentpath}\\src\\assets\\skins.json', 'r', encoding='utf-8') as f:
+            with open(f'{self.parentpath}/src/assets/skins.json', 'r', encoding='utf-8') as f:
                 response = json.load(f)
 
             # there could be a list but im 1 iq
@@ -110,7 +110,7 @@ class checkers():
                 rank = RankIDtoRank[rankid]
             account.rank = rank
         except Exception:
-            # input(e)
+            # input(Exception)
             account.rank = 'err'
 
     def lastplayed(self, account):
@@ -138,14 +138,14 @@ class checkers():
             unix_time1 = int(data3)
             result_s2 = datetime.utcfromtimestamp(unix_time1 / 1000.0)
             time = str(result_s2)
-        except Exception as e:
-            # print(e)
+        except Exception:
+            # print(Exception)
             time = "N/A"
         account.lastplayed = time
 
     def skinprice(self, skin: str):
         try:
             price = Constants.skinprice[skin]
-        except:
+        except Exception:
             price = 0
         return price

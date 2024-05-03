@@ -2,11 +2,16 @@ import asyncio
 import ctypes
 import os
 import random
-import tkinter
 import sys as s
-from tkinter import filedialog
+try:
+    import tkinter
+    from tkinter import filedialog
+except ImportError:
+    pass
 from InquirerPy import inquirer
 from InquirerPy.separator import Separator
+from InquirerPy.validator import PathValidator
+from clear import clear
 import colorama
 
 import requests
@@ -18,20 +23,20 @@ from codeparts.systems import system
 check = checkers.checkers()
 sys = systems.system()
 valid = validsort.validsort()
-
+OPERATING_SYSTEM = str(s.platform)
 
 class program():
     def __init__(self) -> None:
-        self.count = 0
-        self.checked = 0
+        self.count = int(0)
+        self.checked = int(0)
         with open("system/ver.txt", 'r') as r:
             self.version = r.read().strip()
-        self.riotlimitinarow = 0
-        path = os.getcwd()
-        self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
+        self.riotlimitinarow = int(0)
+        path = str(os.getcwd())
+        self.parentpath = str(os.path.abspath(os.path.join(path, os.pardir)))
         try:
-            self.lastver = requests.get(
-                'https://api.github.com/repos/lil-jaba/valchecker/releases').json()[0]['tag_name']
+            self.lastver = str(requests.get(
+                'https://api.github.com/repos/lil-jaba/valchecker/releases').json()[0]['tag_name'])
         except Exception:
             self.lastver = self.version
 
@@ -42,7 +47,7 @@ class program():
         except requests.exceptions.ConnectionError:
             print('no internet connection')
             os._exit(0)
-        os.system('cls')
+        clear()
         #kernel32 = ctypes.windll.kernel32
         #kernel32.SetConsoleMode(kernel32.GetStdHandle(-10), 128)
         codes = vars(colorama.Fore)
@@ -84,35 +89,32 @@ class program():
         if res == menu_choices[1]:
             self.main()
             input('finished checking. press ENTER or the power button on your PC to exit')
-            pr.start()
         elif res == menu_choices[2]:
             settings = sys.load_settings()
             slchecker = checker.singlelinechecker(settings["antipublic_token"] if settings["antipublic"] is True else "", settings["session"])
             asyncio.run(slchecker.main())
-            pr.start()
         elif res == menu_choices[3]:
             sys.edit_settings()
-            pr.start()
         elif res == menu_choices[4]:
             valid.customsort()
             input('done. press ENTER or the power button on your PC to exit')
-            pr.start()
         elif res == menu_choices[5]:
             sys.checkproxy()
-            pr.start()
         elif res == menu_choices[6]:
-            os.system('cls')
+            clear()
             print(f'''
     valchecker v{self.version} by liljaba1337
 
+    Cleaned and Modified by WeCanCodeTrust
     yo whatsup
 
   [~] - press ENTER to return
             ''')
             input()
-            pr.start()
+            
         elif res == menu_choices[8]:
             os._exit(0)
+        pr.start()
 
     def get_accounts(self) -> tuple:
         """
@@ -121,15 +123,24 @@ class program():
         :return: tuple
         """
         filetypes = (("", (".txt", ".vlchkr")), ("All files", "."))
-        root = tkinter.Tk()
-        file = filedialog.askopenfile(
-            parent=root,
-            mode="rb",
-            title="Select a file with combos OR .vlchkr ro continue checking",
-            filetypes=filetypes,
-        )
-        root.destroy()
-        os.system("cls")
+        if consolemode:
+            print("Press Tab to show files in directory Press Enter to select file")
+            file = inquirer.filepath(
+                message="Select a file with combos OR .vlchkr ro continue checking:\n",
+                default=os.getcwd(),
+                validate=PathValidator(is_file=True, message="Input is not a file"),
+                only_files=True,
+            ).execute()
+        elif not consolemode:
+            root = tkinter.Tk()
+            file = filedialog.askopenfile(
+                parent=root,
+                mode="rb",
+                title="Select a file with combos OR .vlchkr ro continue checking",
+                filetypes=filetypes,
+            )
+            root.destroy()
+        clear()
         if file is None:
             os._exit(0)
         filename = str(file).split("name='")[1].split("'>")[0]
@@ -146,35 +157,57 @@ class program():
                     self.count += 1
                     ret.append(logpass)
                     seen.add(logpass)
-        ctypes.windll.kernel32.SetConsoleTitleW(
-                        f"ValChecker {self.version} by liljaba1337 | Loading Accounts ({self.count})"
-                    )
+        if OPERATING_SYSTEM.startswith('win'):  
+            ctypes.windll.kernel32.SetConsoleTitleW(
+            f"ValChecker {self.version} by liljaba1337 | Loading Accounts ({self.count})"
+            )
+        elif OPERATING_SYSTEM.startswith('linux') or OPERATING_SYSTEM.startswith('darwin'):
+            s.stdout.write(f"\033]0;ValChecker {self.version} by liljaba1337 | Loading Accounts ({self.count})\a")
+            s.stdout.flush()
         return ret, filename.split("/")[-1]
 
     def main(self) -> None:
-        ctypes.windll.kernel32.SetConsoleTitleW(
-            f'ValChecker {self.version} by liljaba1337 | Loading Settings')
+        if OPERATING_SYSTEM.startswith('win'):
+            ctypes.windll.kernel32.SetConsoleTitleW(
+                f'ValChecker {self.version} by liljaba1337 | Loading Settings')
+        elif OPERATING_SYSTEM.startswith('linux') or OPERATING_SYSTEM.startswith('darwin'):
+            s.stdout.write(f"\033]0;ValChecker {self.version} by liljaba1337 | Loading Settings\a")
+            s.stdout.flush()
         print('loading settings')
         settings = sys.load_settings()
-
-        ctypes.windll.kernel32.SetConsoleTitleW(
-            f'ValChecker {self.version} by liljaba1337 | Loading Proxies')
+        if OPERATING_SYSTEM.startswith("win"):
+            ctypes.windll.kernel32.SetConsoleTitleW(
+                f'ValChecker {self.version} by liljaba1337 | Loading Proxies')
+        elif OPERATING_SYSTEM.startswith('linux') or OPERATING_SYSTEM.startswith('darwin'):
+            s.stdout.write(f"\033]0;ValChecker {self.version} by liljaba1337 | Loading Proxies\a")
+            s.stdout.flush()
         print('loading proxies')
         proxylist = sys.load_proxy()
-
-        ctypes.windll.kernel32.SetConsoleTitleW(
-            f'ValChecker {self.version} by liljaba1337 | Loading Accounts')
+        if OPERATING_SYSTEM.startswith('win'):
+            ctypes.windll.kernel32.SetConsoleTitleW(
+                f'ValChecker {self.version} by liljaba1337 | Loading Accounts')
+        elif OPERATING_SYSTEM.startswith('linux') or OPERATING_SYSTEM.startswith('darwin'):
+            s.stdout.write(f"\033]0;ValChecker {self.version} by liljaba1337 | Loading Accounts\a")
+            s.stdout.flush()
         print('loading accounts')
         accounts, comboname = self.get_accounts()
 
         print('loading assets')
-        ctypes.windll.kernel32.SetConsoleTitleW(
-            f'ValChecker {self.version} by liljaba1337 | Loading Assets')
+        if OPERATING_SYSTEM.startswith('win'):
+            ctypes.windll.kernel32.SetConsoleTitleW(
+                f'ValChecker {self.version} by liljaba1337 | Loading Assets')
+        elif OPERATING_SYSTEM.startswith('linux') or OPERATING_SYSTEM.startswith('darwin'):
+            s.stdout.write(f"\033]0;ValChecker {self.version} by liljaba1337 | Loading Assets\a")
+            s.stdout.flush()
         sys.load_assets()
 
         print('loading checker')
-        ctypes.windll.kernel32.SetConsoleTitleW(
-            f'ValChecker {self.version} by liljaba1337 | Loading Checker')
+        if OPERATING_SYSTEM.startswith('win'):
+            ctypes.windll.kernel32.SetConsoleTitleW(
+                f'ValChecker {self.version} by liljaba1337 | Loading Checker')
+        elif OPERATING_SYSTEM.startswith('linux') or OPERATING_SYSTEM.startswith('darwin'):
+            s.stdout.write(f"\033]0;ValChecker {self.version} by liljaba1337 | Loading Checker\a")
+            s.stdout.flush()
         scheck = checker.simplechecker(settings, proxylist, self.version, comboname)
 
         isvalkekersource = bool(False)
@@ -191,5 +224,18 @@ if __name__ == '__main__':
         slchecker = checker.singlelinechecker("", "_debug_session", True)
         asyncio.run(slchecker.main())
         os._exit(0)
+    elif '-c' in args:
+        consolemode = True
+    elif ["-h", "--help"] in args:
+        print('ValChecker by liljaba1337\n\n-h, --help: show this message\n-c: run in console mode\n-d: run in debug mode\n')
+        os._exit(0)
+    else:
+        consolemode = False
     print('starting')
+    if not consolemode:
+        try:
+            import tkinter
+            from tkinter import filedialog
+        except ImportError:
+            raise ImportError('tkinter is not installed on your system. Please install it to use the GUI or use the console mode -c')
     pr.start()

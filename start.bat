@@ -1,5 +1,12 @@
 @echo off
 
 cd src
-python main.py
+set /P choice="debug [d] consolemode [c] normal [enter]:"
+if "%choice%" == "d" (
+    python main.py -d
+) else if "%choice%" == "c" (
+    python main.py -c
+) else (
+    python main.py
+)
 pause
