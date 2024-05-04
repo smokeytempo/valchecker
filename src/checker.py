@@ -6,6 +6,7 @@ import os
 import time
 from typing import Union
 import traceback
+from datetime import datetime
 from os.path import exists
 from InquirerPy import inquirer
 
@@ -30,7 +31,7 @@ class singlelinechecker:
                 message="wanna capture skins?", default=True, qmark=""
             ).execute()
 
-    def main(self) -> None:
+    async def main(self) -> None:
         useAP = not self.APtoken == ""
         if useAP:
             ap = antipublic.AntiPublic(self.APtoken, self.session)
@@ -50,7 +51,7 @@ class singlelinechecker:
                 break
             if ":" not in logpass:
                 continue
-            account = authenticate.auth(logpass)
+            account = await authenticate.auth(logpass)
             isPrivate = "N/A"
             if useAP:
                 isPrivate = ap.check(logpass)
@@ -110,9 +111,10 @@ class simplechecker:
     ) -> None:
         path = os.getcwd()
         self.comboname = str(comboname)
-        self.version = list(version)
+        self.version = str(version)
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
-        self.proxylist = list(proxylist)
+        print(proxylist)
+        self.proxylist = proxylist
         self.inrlimit = int(0)
         self.max_rlimits = int(settings["max_rlimits"])
         self.rlimit_wait = int(settings["rlimit_wait"])
@@ -264,7 +266,7 @@ class simplechecker:
                 account = account.strip()
                 us = str(account.split(":")[0])
                 ps = str(account.split(":")[1])
-                self.checker(us, ps)
+                await self.checker(us, ps)
         else:
             loop = asyncio.get_running_loop()
             tasks = []
@@ -277,9 +279,6 @@ class simplechecker:
                     try:
                         us = str(accounts[num].split(":")[0])
                         ps = str(accounts[num].split(":")[1])
-                        task = loop.run_in_executor(executor, self.checker, us, ps)
-                        us = accounts[num].split(':')[0]
-                        ps = accounts[num].split(':')[1]
                         task = loop.run_in_executor(executor, asyncio.run, self.checker(us,ps))
                         #task = loop.create_task(self.checker(us,ps))
                         #task = loop.run_in_executor(
@@ -324,7 +323,7 @@ class simplechecker:
             #             except:
             #                 print("Checked all")
 
-    def checker(self, username, password) -> None:
+    async def checker(self, username, password) -> None:
         # print('running')
         riotlimitinarow = int(0)
         proxy = sys.getproxy(self.proxylist)
@@ -333,7 +332,7 @@ class simplechecker:
         authenticate = auth.Auth()
         while True:
             try:
-                account = authenticate.auth(acc, proxy=proxy)
+                account = await authenticate.auth(acc, proxy=proxy)
                 if account.banuntil is not None:
                     stff.checkban(account)
                 match account.code:
@@ -417,14 +416,14 @@ class simplechecker:
                             if account.region != "N/A" and account.region != "":
                                 if account.banuntil is None:
                                     self.regions[account.region.lower().strip()] += 1
-                                account.rank = ModuleNotFoundError
+                                account.rank = None
                                 try:
                                     if (
                                         int(account.lvl) < 20
                                         and account.banuntil is None
                                     ):
                                         self.locked += 1
-                                        account.rank = str("locked")
+                                        account.rank = "locked"
                                 except ValueError:
                                     pass
                                 if account.rank is None:

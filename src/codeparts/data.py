@@ -538,6 +538,10 @@ class Constants:
         'RU': 'eu',
         'TR1': 'eu'
     }
+    AUTH_URL = "https://auth.riotgames.com/api/v1/authorization"
+    REGION_URL = 'https://riot-geo.pas.si.riotgames.com/pas/v1/product/valorant'
+    VERIFED_URL = "https://email-verification.riotgames.com/api/v1/account/status"
+    ENTITLEMENT_URL = 'https://entitlements.auth.riotgames.com/api/token/v1'
     USERINFO_URL = "https://auth.riotgames.com/userinfo"
     RIOTCLIENT = ''
     ICONURL = 'https://media.valorant-api.com/weaponskins/{}/displayicon.png'

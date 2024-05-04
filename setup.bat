@@ -1,8 +1,8 @@
 @echo off
 
-echo install requirements
+echo Installing requirements, please wait
 pip install -r requirements.txt > nul
-echo install requirements done
+echo Done
 
 set /P choice="Do you want to run the program now? (y/n): "
 

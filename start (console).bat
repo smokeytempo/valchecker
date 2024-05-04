@@ -1,6 +1,6 @@
 @echo off
 
 cd src
-python main.py -d
+python main.py -c
 
 pause
