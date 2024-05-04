@@ -7,3 +7,4 @@ src/system/settings.json
 output/sorted.txt
 proxy.txt
 log.txt
+.vs/

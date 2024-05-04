@@ -38,7 +38,7 @@ class system():
 
             data = response.json()
             account.region = data['affinities']['live'].lower()
-        except Exception as e:
+        except Exception:
             account.region = None
 
     @staticmethod
@@ -67,7 +67,7 @@ class system():
             #input(response.text)
             lvl = response.json()['Progress']['Level']
             # input(lvl)
-        except Exception as e:
+        except Exception:
             #input(e)
             lvl = -1
 
@@ -239,7 +239,7 @@ class system():
 
     def load_proxy(self):
         self.proxylist = []
-        with open(f"{self.parentpath}\\proxy.txt", "r") as f:
+        with open(f"{self.parentpath}/proxy.txt", "r") as f:
             file_lines1 = f.readlines()
             if len(file_lines1) == 0:
                 return

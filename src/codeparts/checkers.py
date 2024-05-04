@@ -10,8 +10,8 @@ sess = requests.Session()
 
 class checkers():
     def __init__(self) -> None:
-        path = os.getcwd()
-        self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
+        path = str(os.getcwd())
+        self.parentpath = str(os.path.abspath(os.path.join(path, os.pardir)))
 
     def skins_en(self, account) -> None:
         # riot api counts latam and br as NA so u have to do this shit
@@ -19,10 +19,10 @@ class checkers():
         if region.lower() == 'latam' or region.lower() == 'br':
             region = 'na'
         try:
-            headers = {
+            headers = dict({
                 "X-Riot-Entitlements-JWT": account.entt,
                 "Authorization": f"Bearer {account.token}"
-            }
+            })
 
             # get skins using api
             r = sess.get(
@@ -30,7 +30,7 @@ class checkers():
             #input(r.text)
             Skins = r.json()["Entitlements"]
             # file with skins' names
-            with open(f'{self.parentpath}\\src\\assets\\skins.json', 'r', encoding='utf-8') as f:
+            with open(f'{self.parentpath}/src/assets/skins.json', 'r', encoding='utf-8') as f:
                 response = json.load(f)
 
             # there could be a list but im 1 iq
@@ -48,16 +48,16 @@ class checkers():
                             skinids.append(skinid.strip())
                             break
 
-                except Exception as e:
-                    # input(e)
+                except Exception:
+                    # input(Exception)
                     pass
 
             # input(skinlist)
-            account.skins = skinlist
-            account.uuids = skinids
-        except Exception as e:
-            #input(e)
-            account.skins = ['N/A']
+            account.skins = list(skinlist)
+            account.uuids = list(skinids)
+        except Exception:
+            #input(Exception)
+            account.skins = list(['N/A'])
 
     def balance(self, account) -> None:
         region = account.region
@@ -76,7 +76,7 @@ class checkers():
                      ["85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741"])
             rp = int(r.json()["Balances"]
                      ["e59aa87c-4cbf-517a-5983-6e81511be9b7"])
-        except:
+        except Exception:
             vp = 'N/A'
             rp = 'N/A'
         account.vp = vp
@@ -88,7 +88,7 @@ class checkers():
             region = 'na'
         try:
 
-            if account.entt == False:
+            if account.entt is False:
                 return False
             RankIDtoRank = {"0": "Unranked", "1": "", "2": "", "3": "Iron 1", "4": "Iron 2", "5": "Iron 3",
                             "6": "Bronze 1", "7": "Bronze 2", "8": "Bronze 3", "9": "Silver 1", "10": "Silver 2", "11": "Silver 3", "12": "Gold 1",
@@ -109,8 +109,8 @@ class checkers():
                     ranked.json()['Matches'][0]['MatchStartTime'] / 1000.0)
                 rank = RankIDtoRank[rankid]
             account.rank = rank
-        except Exception as e:
-            # input(e)
+        except Exception:
+            # input(Exception)
             account.rank = 'err'
 
     def lastplayed(self, account):
@@ -138,14 +138,14 @@ class checkers():
             unix_time1 = int(data3)
             result_s2 = datetime.utcfromtimestamp(unix_time1 / 1000.0)
             time = str(result_s2)
-        except Exception as e:
-            # print(e)
+        except Exception:
+            # print(Exception)
             time = "N/A"
         account.lastplayed = time
 
     def skinprice(self, skin: str):
         try:
             price = Constants.skinprice[skin]
-        except:
+        except Exception:
             price = 0
         return price
