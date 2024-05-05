@@ -145,12 +145,12 @@ class simplechecker:
         self.private = int(-1)
         self.useAP = bool(settings["antipublic"])
         if self.useAP:
-            if self.ap.test():
-                self.private = int(0)
-                self.useAP = True
             self.ap = antipublic.AntiPublic(
                 str(settings["antipublic_token"]), settings["session"]
             )
+            if self.ap.test():
+                self.private = int(0)
+                self.useAP = True
         self.valid = int(0)
         self.banned = int(0)
         self.tempbanned = int(0)
