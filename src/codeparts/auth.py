@@ -74,10 +74,9 @@ class Auth():
                     json=body,
                     headers=headers,
                     proxy = proxy["http"] if proxy is not None else None
-                ):
+                ) as r:
                     pass
-                #) as r:
-                    #debugvalue_raw = await r.text()
+                    debugvalue_raw = await r.text()
                     #input(debugvalue_raw)
 
                 # R2
@@ -94,14 +93,15 @@ class Auth():
                 ) as r:
                     try:
                         data = await r.json()
-                    except Exception:
+                        #input(data)
+                    except Exception as e:
+                        #input(e)
                         account.code = int(6)
                         await authsession.close()
                         return account
                     r2text = str(await r.text())        
                 await authsession.close()
-            except Exception:
-                #input(Exception)
+            except Exception as e:
                 #input(traceback.format_exc())
                 await authsession.close()
                 if self.isDebug:
@@ -143,7 +143,7 @@ class Auth():
                     entitlement = r.json()['entitlements_token']
                 r = session.post(Constants.USERINFO_URL,
                                  headers=headers, json={}, proxies=proxy)
-            except Exception:
+            except Exception as e:
                 account.code = int(6)
                 return account
             # print(r.text)
@@ -223,7 +223,7 @@ class Auth():
                 input()
             return account
         except Exception:
-            input(Exception)
+            #input(Exception)
             account.errmsg = str(traceback.format_exc())
             account.code = int(2)
             return account
