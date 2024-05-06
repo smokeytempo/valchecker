@@ -136,7 +136,7 @@ class program():
             file = filedialog.askopenfile(
                 parent=root,
                 mode="rb",
-                title="Select a file with combos OR .vlchkr ro continue checking",
+                title="Select a file with combos OR .vlchkr to continue checking",
                 filetypes=filetypes,
             )
             root.destroy()
@@ -153,7 +153,7 @@ class program():
         with open(str(filename), "r", encoding="UTF-8", errors="replace") as file:
             for logpass in file:
                 logpass = str(logpass.strip())
-                if logpass not in seen:
+                if logpass not in seen and len(logpass.split(':')) == 2:
                     self.count += 1
                     ret.append(logpass)
                     seen.add(logpass)

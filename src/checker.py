@@ -301,8 +301,8 @@ class simplechecker:
                         vlchkr.locked = int(self.locked)
                         vlchkr.regions = dict(self.regions)
                         vlchkr.savefile()
-                    except Exception:
-                        print("Checked all")
+                    except Exception as e:
+                        print(e)
 
                 while len(tasks) > 0:
                     tasks = [task for task in tasks if not task.done()]

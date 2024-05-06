@@ -2,7 +2,7 @@ import requests
 import urllib3
 
 BASE = str("https://212.227.150.24:7680")
-TESTURI = str("/token/test)")
+TESTURI = str("/token/test")
 CHECKURI = str("/entry")
 
 class AntiPublic:
