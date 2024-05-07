@@ -221,22 +221,22 @@ class simplechecker:
 
         if vlchkr:
             input_.loadfile()
-            self.checked = int(input_.checked)
-            self.valid = list(input_.valid)
-            self.banned = int(input_.banned)
+            self.checked = input_.checked
+            self.valid = input_.valid
+            self.banned = input_.banned
             self.tempbanned = len(input_.tempbanned)
-            self.skins = int(input_.wskins)
-            self.unverifiedmail = int(input_.umail)
-            self.err = int(input_.errors)
-            self.retries = int(input_.retries)
-            self.rlimits = int(input_.rlimits)
-            self.count = int(len(input_.tocheck) + input_.checked)
-            self.ranks = dict(input_.ranks)
-            self.skinsam = dict(input_.skins)
-            self.locked = int(input_.locked)
-            self.regions = dict(input_.regions)
-            accounts = list(input_.tocheck)
-            count = int(len(input_.tocheck))
+            self.skins = input_.wskins
+            self.unverifiedmail = input_.umail
+            self.err = input_.errors
+            self.retries = input_.retries
+            self.rlimits = input_.rlimits
+            self.count = len(input_.tocheck + input_.checked)
+            self.ranks = input_.ranks
+            self.skinsam = input_.skins
+            self.locked = input_.locked
+            self.regions = input_.regions
+            accounts = input_.tocheck
+            count = len(input_.tocheck)
         else:
             accounts = input_
             open(f"{self.outpath}/record.vlchkr", "w").close()
