@@ -96,7 +96,7 @@ class Auth():
                         #input(data)
                     except Exception as e:
                         #input(e)
-                        account.code = int(6)
+                        account.code = 6
                         await authsession.close()
                         return account
                     r2text = str(await r.text())        
@@ -106,7 +106,7 @@ class Auth():
                 await authsession.close()
                 if self.isDebug:
                     input(traceback.format_exc())
-                account.code = int(6)
+                account.code = 6
                 return account
             if "access_token" in r2text:
                 pattern = compile(
@@ -116,22 +116,22 @@ class Auth():
                 token = data[0]
                 token_id = data[1]
             elif 'invalid_session_id' in r2text:
-                account.code = int(6)
+                account.code = 6
                 return account
             elif "auth_failure" in r2text:
-                account.code = int(3)
+                account.code = 3
                 return account
             elif 'rate_limited' in r2text:
-                account.code = int(1)
+                account.code = 1
                 return account
             elif 'multifactor' in r2text:
-                account.code = int(3)
+                account.code = 3
                 return account
             elif 'cloudflare' in r2text:
-                account.code = int(5)
+                account.code = 5
                 return account
             else:
-                account.code = int(3)
+                account.code = 3
                 return account
 
             headers = dict({
@@ -144,7 +144,7 @@ class Auth():
                 r = session.post(Constants.USERINFO_URL,
                                  headers=headers, json={}, proxies=proxy)
             except Exception as e:
-                account.code = int(6)
+                account.code = 6
                 return account
             # print(r.text)
             # input()
@@ -159,35 +159,34 @@ class Auth():
                 int(register_date) / 1000.0)
             puuid = data['sub']
             try:
-                # input(data)
+                #input(data)
                 data2 = data['ban']
                 # input(data2)
                 data3 = data2['restrictions']
                 # input(data3)
-                typebanned = data3[0]['type']
-                # input(typebanned)
-                # input(typebanned)
-                if typebanned == "PERMANENT_BAN" or typebanned == 'PERMA_BAN':
-                    account.code = int(4)
-                    return account
-                elif 'PERMANENT_BAN' in str(data3) or 'PERMA_BAN' in str(data3):
-                    # input(True)
-                    account.code = int(4)
-                    return account
-                elif typebanned == 'TIME_BAN' or typebanned == 'LEGACY_BAN':
-                    expire = data3[0]['dat']['expirationMillis']
-                    expirepatched = datetime.fromtimestamp(
-                        int(expire) / 1000.0)
-                    if expirepatched > datetime.now() + timedelta(days=365 * 20):
-                        account.code = int(4)
-                        return account
-                    banuntil = expirepatched
-                else:
+                if len(data3) == 0:
                     banuntil = None
-                    pass
-            except Exception:
+                else:
+                    typebanned = data3[0]['type']
+                    if typebanned == "PERMANENT_BAN" or typebanned == 'PERMA_BAN':
+                        account.code = int(4)
+                        banuntil = None
+                    elif 'PERMANENT_BAN' in str(data3) or 'PERMA_BAN' in str(data3):
+                        account.code = int(4)
+                        banuntil = None
+                    elif typebanned == 'TIME_BAN' or typebanned == 'LEGACY_BAN':
+                        expire = data3[0]['dat']['expirationMillis']
+                        expirepatched = datetime.fromtimestamp(
+                            int(expire) / 1000.0)
+                        if expirepatched > datetime.now() + timedelta(days=365 * 20):
+                            account.code = 4
+                        banuntil = expirepatched
+                    else:
+                        banuntil = None
+                        pass
+            except Exception as e:
                 # print(Exception)
-                # input(Exception)
+                #input(e)
                 banuntil = None
                 pass
             try:
@@ -222,8 +221,8 @@ class Auth():
                 print(token)
                 input()
             return account
-        except Exception:
-            #input(Exception)
+        except Exception as e:
+            input(traceback.format_exc())
             account.errmsg = str(traceback.format_exc())
             account.code = int(2)
             return account

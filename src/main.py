@@ -210,9 +210,9 @@ class program():
             s.stdout.flush()
         scheck = checker.simplechecker(settings, proxylist, self.version, comboname)
 
-        isvalkekersource = bool(False)
+        isvalkekersource = False
         if type(accounts) == systems.vlchkrsource:
-            isvalkekersource = bool(True)
+            isvalkekersource = True
         asyncio.run(scheck.main(accounts, self.count, isvalkekersource))
         return
 

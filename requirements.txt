@@ -5,3 +5,4 @@ keyboard
 InquirerPy
 aiohttp
 clear
+pywin32

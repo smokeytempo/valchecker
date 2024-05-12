@@ -151,20 +151,18 @@ class system():
             os.system('cls')
             f = open('system\\settings.json', 'r+')
             data = json.load(f)
-            max_rlimits = data['max_rlimits']
-            rlimit_wait = data['rlimit_wait']
             cooldown = data['cooldown']
-            create_folder = data['new_folder']
+            skip_kr = data['skip_kr']
             antipublic = data["antipublic"]
             antipublic_token = data["antipublic_token"]
+            check_banned = data["check_banned"]
             menu_choices = [
                 Separator(),
-                f'RLimits to skip an acc: {max_rlimits}',
-                f'Wait if there is a RLimit (seconds): {rlimit_wait}',
                 f'Wait between checking accounts (seconds): {cooldown}',
-                f'Create folder for every check: {create_folder}',
+                f'Skip korean (kr region) accounts: {skip_kr}',
                 f'Participate in AntiPublic (alpha): {antipublic}',
                 f'AntiPublic token: {antipublic_token}',
+                f'Check banned accounts: {check_banned}',
                 Separator(),
                 'Exit'
             ]
@@ -175,45 +173,25 @@ class system():
                 pointer='>'
             ).execute()
             if edit == menu_choices[1]:
-                new_rlimits = input(
-                    'enter the number of riot limits to skip this account (min 1) >>>')
-                if int(new_rlimits) < 1 or int(new_rlimits) > 999:
-                    return
-                try:
-                    data['max_rlimits'] = int(new_rlimits)
-                except:
-                    print('u have to type a num from 1 to 999 (3 recommended)')
-                    return
-            elif edit == menu_choices[2]:
-                new_maxrlimits = input(
-                    'enter the number of seconds to wait if there is a riot limit (min 1) >>>')
-                if int(new_maxrlimits) < 1 or int(new_maxrlimits) > 99999:
-                    return
-                try:
-                    data['rlimit_wait'] = int(new_maxrlimits)
-                except:
-                    print('u have to type a num from 1 to 99999 (30 recommended)')
-                    return
-            elif edit == menu_choices[3]:
                 new_cd = input(
                     'enter the number of seconds to wait between checking accounts (min 0) >>>')
                 if int(new_cd) < 0 or int(new_cd) > 99999:
                     return
                 data['cooldown'] = int(new_cd)
-            elif edit == menu_choices[4]:
-                createfolder = [
+            elif edit == menu_choices[2]:
+                answ = [
                     Separator(),
                     'Yes',
                     'No'
                 ]
-                newfolder = inquirer.select(
-                    message='do you want to create a new folder every time u start the checker?',
-                    choices=createfolder,
-                    default=createfolder[0],
+                sdadsa = inquirer.select(
+                    message='do you want to skip KR accounts (completely useless)?',
+                    choices=answ,
+                    default=answ[0],
                     pointer='>'
                 ).execute().replace('Yes', 'True').replace('No', 'False')
-                data['new_folder'] = newfolder
-            elif edit == menu_choices[5]:
+                data['skip_kr'] = sdadsa
+            elif edit == menu_choices[3]:
                 vars = [
                     Separator(),
                     'Yes',
@@ -226,10 +204,23 @@ class system():
                     pointer='>'
                 ).execute().replace('Yes', 'True').replace('No', 'False')
                 data['antipublic'] = resp
-            elif edit == menu_choices[6]:
+            elif edit == menu_choices[4]:
                 print('Your AntiPublic token. This only matters if you wish to participate in the AntiPublic alpha test.\nYou can ask for access on our discord server.')
                 resp = input("> ")
                 data['antipublic_token'] = resp
+            elif edit == menu_choices[5]:
+                vars = [
+                    Separator(),
+                    'Yes',
+                    'No'
+                ]
+                resp = inquirer.select(
+                    message='Do you want to check permbanned accounts as if they\'re valid?',
+                    choices=vars,
+                    default=vars[0],
+                    pointer='>'
+                ).execute().replace('Yes', 'True').replace('No', 'False')
+                data['check_banned'] = resp
             else:
                 return
             f.seek(0)
@@ -363,6 +354,7 @@ class Account:
     puuid: str = None
     unverifiedmail: bool = None
     banuntil: datetime = None
+    isPermbanned: bool = False
     region: str = None
     country: str = None
     lvl: int = None
@@ -381,10 +373,9 @@ class vlchkrsource:
     def __init__(self, path: str) -> None:
         self.filepath = path
         self.tocheck = []
-        self.valid = []
+        self.valid = 0
         self.banned = 0
-        self.tempbanned = []
-        self.rlimits = 0
+        self.tempbanned = 0
         self.errors = 0
         self.retries = 0
         self.wskins = 0
@@ -434,7 +425,6 @@ class vlchkrsource:
             self.valid = data['valid']
             self.banned = data['banned']
             self.tempbanned = data['tempbanned']
-            self.rlimits = data['rlimits']
             self.errors = data['errors']
             self.retries = data['retries']
             self.wskins = data['wskins']
@@ -451,7 +441,6 @@ class vlchkrsource:
             "valid": self.valid,
             "banned": self.banned,
             "tempbanned": self.tempbanned,
-            "rlimits": self.rlimits,
             "errors": self.errors,
             "retries": self.retries,
             "wskins": self.wskins,
