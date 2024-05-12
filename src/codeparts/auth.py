@@ -218,7 +218,8 @@ class Auth():
             if self.isDebug:
                 print(puuid)
                 print(entitlement+"\n-------")
-                print(token)
+                print(token+"\n-------")
+                print(token_id)
                 input()
             return account
         except Exception as e:

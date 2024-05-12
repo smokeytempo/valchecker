@@ -110,8 +110,8 @@ class simplechecker:
         self, settings: list, proxylist: list, version: str, comboname: str
     ) -> None:
         path = os.getcwd()
-        self.comboname = str(comboname)
-        self.version = str(version)
+        self.comboname = comboname
+        self.version = version
         self.parentpath = os.path.abspath(os.path.join(path, os.pardir))
         print(proxylist)
         self.proxylist = proxylist
@@ -376,6 +376,7 @@ class simplechecker:
                     self.unverifiedmail += 1
                 while True:
                     sys.get_region(account)
+                    #input(account.region)
                     if account.region is None:
                         sys.get_region2(account)
                     else:

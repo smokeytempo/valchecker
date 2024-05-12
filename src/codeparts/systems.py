@@ -31,11 +31,13 @@ class system():
         session = requests.Session()
         try:
             headers = {
-                'User-Agent': f'RiotClient/{Constants.RIOTCLIENT} %s (Windows;10;;Professional, x64)'
+                'User-Agent': f'RiotClient/{Constants.RIOTCLIENT} %s (Windows;10;;Professional, x64)',
+                "Authorization": f"Bearer {account.token}"
             }
             response = session.put(
-                Constants.REGION_URL, headers=headers, data={"id_token": account.tokenid})
+                Constants.REGION_URL, headers=headers, json={"id_token": account.tokenid})
 
+            #input(response.text)
             data = response.json()
             account.region = data['affinities']['live'].lower()
         except Exception:
@@ -233,7 +235,7 @@ class system():
         with open(f"{self.parentpath}/proxy.txt", "r") as f:
             file_lines1 = f.readlines()
             if len(file_lines1) == 0:
-                return
+                return None
             proxies = file_lines1
 
         for i in proxies:

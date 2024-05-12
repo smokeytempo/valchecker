@@ -3,6 +3,7 @@ import ctypes
 import os
 import random
 import sys as s
+from ctypes import windll
 try:
     import tkinter
     from tkinter import filedialog
@@ -208,6 +209,10 @@ class program():
         elif OPERATING_SYSTEM.startswith('linux') or OPERATING_SYSTEM.startswith('darwin'):
             s.stdout.write(f"\033]0;ValChecker {self.version} by liljaba1337 | Loading Checker\a")
             s.stdout.flush()
+        
+        if proxylist is None:
+            windll.user32.MessageBoxW(0, "You are trying to start the checker without using any proxies. "+
+        "I strongly recommend you not to do that, since it can cause your IP to get banned by Riot. To buy good proxies, you can join my Discord server.", "PROXYLESS ALERT", 4144)
         scheck = checker.simplechecker(settings, proxylist, self.version, comboname)
 
         isvalkekersource = False
