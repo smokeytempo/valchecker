@@ -69,7 +69,6 @@ class singlelinechecker:
                     continue
                 case 4:
                     print("permbanned account")
-                    continue
             sys.get_region(account)
             if account.region is None:
                 sys.get_region2(account)

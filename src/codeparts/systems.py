@@ -55,6 +55,7 @@ class system():
             Constants.USERINFO_URL, headers=headers)
         userinfo = userinfo.json()
         country = userinfo['country'].upper()
+        progregion = account.region
         if account.region in ['latam', 'br']:
             progregion = 'na'
 
@@ -68,8 +69,8 @@ class system():
                 f"https://pd.{progregion}.a.pvp.net/account-xp/v1/players/{account.puuid}", headers={**headers, **Constants.PVPNETHEADERSBASE})
             #input(response.text)
             lvl = response.json()['Progress']['Level']
-            # input(lvl)
-        except Exception:
+            #input(lvl)
+        except Exception as e:
             #input(e)
             lvl = -1
 
