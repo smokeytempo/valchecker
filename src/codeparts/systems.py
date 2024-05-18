@@ -40,8 +40,9 @@ class system():
             #input(response.text)
             data = response.json()
             account.region = data['affinities']['live'].lower()
-        except Exception:
+        except Exception as e:
             account.region = None
+            account.errmsg = e
 
     @staticmethod
     def get_country_and_level_only(account) -> None:

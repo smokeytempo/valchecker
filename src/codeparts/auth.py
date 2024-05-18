@@ -102,7 +102,7 @@ class Auth():
                     r2text = str(await r.text())        
                 await authsession.close()
             except Exception as e:
-                #input(traceback.format_exc())
+                input(traceback.format_exc())
                 await authsession.close()
                 if self.isDebug:
                     input(traceback.format_exc())
@@ -223,7 +223,7 @@ class Auth():
                 input()
             return account
         except Exception as e:
-            input(traceback.format_exc())
+            #input(traceback.format_exc())
             account.errmsg = str(traceback.format_exc())
             account.code = int(2)
             return account

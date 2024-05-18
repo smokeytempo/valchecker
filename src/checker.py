@@ -71,10 +71,10 @@ class singlelinechecker:
                     print("permbanned account")
             sys.get_region(account)
             if account.region is None:
+                print(f"Couldn't get the region using the main method\nPlease send this error to the dev:\n{account.errmsg}")
                 sys.get_region2(account)
             else:
                 sys.get_country_and_level_only(account)
-            sys.get_region2(account)
             if account.region == "N/A" or account.region == "":
                 print("unknown region")
                 continue
@@ -377,6 +377,13 @@ class simplechecker:
                     sys.get_region(account)
                     #input(account.region)
                     if account.region is None:
+                        with open(
+                        f"{self.parentpath}/log.txt",
+                        "a",
+                        errors="replace",
+                        encoding="utf-8",
+                        ) as f:
+                            f.write(f"({datetime.now()}) {account.errmsg}\n_________________________________\n")
                         sys.get_region2(account)
                     else:
                         sys.get_country_and_level_only(account)
