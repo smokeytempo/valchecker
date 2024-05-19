@@ -169,6 +169,7 @@ class simplechecker:
             "ascendant": 0,
             "immortal": 0,
             "radiant": 0,
+            "locked": 0,
             "unknown": 0,
         }
         self.skinsam = {
@@ -183,7 +184,6 @@ class simplechecker:
             "165-200": 0,
             "200+": 0,
         }
-        self.locked = int(0)
 
         self.regions = {
             "eu": 0,
@@ -222,7 +222,6 @@ class simplechecker:
             self.count = len(input_.tocheck) + input_.checked
             self.ranks = input_.ranks
             self.skinsam = input_.skins
-            self.locked = input_.locked
             self.regions = input_.regions
             accounts = input_.tocheck
             count = len(input_.tocheck)
@@ -286,7 +285,6 @@ class simplechecker:
                         vlchkr.tocheck = accounts[num:]
                         vlchkr.ranks = self.ranks
                         vlchkr.skins = self.skinsam
-                        vlchkr.locked = self.locked
                         vlchkr.regions = self.regions
                         vlchkr.savefile()
                     except Exception as e:
@@ -401,6 +399,7 @@ class simplechecker:
                             account.rank = "Locked"
                         elif not self.precise_rank:
                             check.ranked(account)
+                        #print(account.rank)
 
                         if account.banuntil is None and not account.isPermbanned:
                             try:
@@ -705,7 +704,7 @@ class simplechecker:
 {cyan} ┃                                     ┃ ┃ [{reset}>{cyan}] {reset}Ascendant     >>:{cyan}[{green}{self.ranks['ascendant']}{cyan}]{space * (18 - len(str(self.ranks['ascendant'])))}┃ ┃                                                       ┃
 {cyan} ┃                                     ┃ ┃ [{reset}>{cyan}] {reset}Immortal      >>:{cyan}[{green}{self.ranks['immortal']}{cyan}]{space * (18 - len(str(self.ranks['immortal'])))}┃ ┃                                                       ┃
 {cyan} ┃                                     ┃ ┃ [{reset}>{cyan}] {reset}Radiant       >>:{cyan}[{green}{self.ranks['radiant']}{cyan}]{space * (18 - len(str(self.ranks['radiant'])))}┃ ┃                                                       ┃
-{cyan} ┃                                     ┃ ┃ [{reset}>{cyan}] {reset}Locked        >>:{cyan}[{green}{self.locked}{cyan}]{space * (18 - len(str(self.locked)))}┃ ┃                                                       ┃
+{cyan} ┃                                     ┃ ┃ [{reset}>{cyan}] {reset}Locked        >>:{cyan}[{green}{self.ranks["locked"]}{cyan}]{space * (18 - len(str(self.ranks["locked"])))}┃ ┃                                                       ┃
 {cyan} ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛ ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛{reset}
 {Fore.LIGHTCYAN_EX} Estimated remaining time: {self.esttime}{reset}
 

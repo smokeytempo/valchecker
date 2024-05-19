@@ -40,7 +40,7 @@ class system():
             response = session.put(
                 Constants.REGION_URL, headers=headers, json={"id_token": account.tokenid})
 
-            print(response.text)
+            #print(response.text)
             data = response.json()
             account.region = data['affinities']['live'].lower()
         except Exception as e:
@@ -436,6 +436,7 @@ class vlchkrsource:
             "ascendant": 0,
             "immortal": 0,
             "radiant": 0,
+            "locked": 0,
             'unknown': 0
         }
         self.locked = 0
@@ -466,7 +467,6 @@ class vlchkrsource:
             self.checked = data['checked']
             self.regions = data['regions']
             self.ranks = data['ranks']
-            self.locked = data['locked']
             self.skins = data['skins']
 
     def savefile(self):
@@ -482,7 +482,6 @@ class vlchkrsource:
             "checked": self.checked,
             "regions": self.regions,
             "ranks": self.ranks,
-            'locked': self.locked,
             "skins": self.skins
         }
 
