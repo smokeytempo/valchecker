@@ -370,7 +370,7 @@ class simplechecker:
                         pass
                 if self.useAP:
                     account.private = self.ap.check(account.logpass)
-                if account.unverifiedmail and account.banuntil is None:
+                if account.unverifiedmail and account.banuntil is None and not account.isPermbanned:
                     self.unverifiedmail += 1
                 while True:
                     sys.get_region(account)

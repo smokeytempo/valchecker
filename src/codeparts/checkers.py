@@ -14,7 +14,6 @@ class checkers():
         self.parentpath = str(os.path.abspath(os.path.join(path, os.pardir)))
 
     def skins_en(self, account) -> None:
-        # riot api counts latam and br as NA so u have to do this shit
         region = account.region
         if region.lower() == 'latam' or region.lower() == 'br':
             region = 'na'
@@ -24,40 +23,22 @@ class checkers():
                 "Authorization": f"Bearer {account.token}"
             })
 
-            # get skins using api
             r = sess.get(
                 f"https://pd.{region}.a.pvp.net/store/v1/entitlements/{account.puuid}/e7c63390-eda7-46e0-bb7a-a6abdacd2433", headers={**headers, **Constants.PVPNETHEADERSBASE})
             #input(r.text)
             Skins = r.json()["Entitlements"]
-            # file with skins' names
             with open(f'{self.parentpath}/src/assets/skins.json', 'r', encoding='utf-8') as f:
-                response = json.load(f)
+                skinsdata = json.load(f)
 
-            # there could be a list but im 1 iq
             skinlist = []
-            skinids = []
             for skin in Skins:
-                # find skin's name by it's id
-                try:
-                    skinid = skin['ItemID']
-                    for i in response['data']:
-                        if skinid in str(i):
-                            if i['displayName'] in skinlist:
-                                break
-                            skinlist.append(i['displayName'])
-                            skinids.append(skinid.strip())
-                            break
+                skinid = skin['ItemID']
+                if skinid in skinsdata:
+                    skinlist.append(skinsdata[skinid])
 
-                except Exception:
-                    # input(Exception)
-                    pass
-
-            # input(skinlist)
-            account.skins = list(skinlist)
-            account.uuids = list(skinids)
+            account.skins = skinlist
         except Exception:
-            #input(Exception)
-            account.skins = list(['N/A'])
+            account.skins = ['N/A']
 
     def balance(self, account) -> None:
         region = account.region
