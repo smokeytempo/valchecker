@@ -78,10 +78,10 @@ class singlelinechecker:
             if account.region == "N/A" or account.region == "":
                 print("unknown region")
                 continue
-            if int(account.lvl) < 20:
-                account.rank = "locked"
-            else:
-                check.ranked(account)
+
+            check.ranked(account)
+            if account.rank == "Unranked" and account.lvl < 20:
+                account.rank = "Locked"
             if self.checkskins:
                 check.skins_en(account)
             check.balance(account)
@@ -123,6 +123,7 @@ class simplechecker:
         os.mkdir(self.outpath)
 
         self.skip_kr = bool(settings["skip_kr"])
+        self.precise_rank = bool(settings["precise_rank"])
         # print(self.send_stats,self.send_tempban,self.send_ukreg,self.send_wfshorty,self.send_woskins)
 
         # input()
@@ -392,22 +393,19 @@ class simplechecker:
                     if account.region != "N/A" and account.region != "":
                         if account.banuntil is None and not account.isPermbanned:
                             self.regions[account.region.lower().strip()] += 1
+                            
                         account.rank = None
-                        try:
-                            if (
-                                int(account.lvl) < 20
-                                and account.banuntil is None
-                            ):
-                                self.locked += 1
-                                account.rank = "locked"
-                        except ValueError:
-                            pass
-                        if account.rank is None:
+                        if self.precise_rank:
                             check.ranked(account)
+                        if (account.rank == "Unranked" or not self.precise_rank) and account.lvl < 20:
+                            account.rank = "Locked"
+                        elif not self.precise_rank:
+                            check.ranked(account)
+
                         if account.banuntil is None and not account.isPermbanned:
                             try:
                                 self.ranks[
-                                    account.rank.strip().lower().split(" ")[0]
+                                    account.rank.lower().split(" ")[0]
                                 ] += 1
                             except Exception:
                                 self.ranks["unknown"] += 1

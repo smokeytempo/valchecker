@@ -24,7 +24,6 @@ from codeparts.systems import system
 check = checkers.checkers()
 sys = systems.system()
 valid = validsort.validsort()
-OPERATING_SYSTEM = str(s.platform)
 
 class program():
     def __init__(self) -> None:
@@ -47,6 +46,11 @@ class program():
             requests.get('https://github.com')
         except requests.exceptions.ConnectionError:
             print('no internet connection')
+            os._exit(0)
+
+        print("checking certificates")
+        if not sys.check_certificates():
+            print("You don't have the required certificate installed\nPlease download and install it from https://crt.sh/?d=2835394")
             os._exit(0)
         clear()
         #kernel32 = ctypes.windll.kernel32
@@ -158,57 +162,29 @@ class program():
                     self.count += 1
                     ret.append(logpass)
                     seen.add(logpass)
-        if OPERATING_SYSTEM.startswith('win'):  
-            ctypes.windll.kernel32.SetConsoleTitleW(
-            f"ValChecker {self.version} by liljaba1337 | Loading Accounts ({self.count})"
-            )
-        elif OPERATING_SYSTEM.startswith('linux') or OPERATING_SYSTEM.startswith('darwin'):
-            s.stdout.write(f"\033]0;ValChecker {self.version} by liljaba1337 | Loading Accounts ({self.count})\a")
-            s.stdout.flush()
+        
+        sys.set_console_title(f"ValChecker {self.version} by liljaba1337 | Loading Accounts ({self.count})")
         return ret, filename.split("/")[-1]
 
     def main(self) -> None:
-        if OPERATING_SYSTEM.startswith('win'):
-            ctypes.windll.kernel32.SetConsoleTitleW(
-                f'ValChecker {self.version} by liljaba1337 | Loading Settings')
-        elif OPERATING_SYSTEM.startswith('linux') or OPERATING_SYSTEM.startswith('darwin'):
-            s.stdout.write(f"\033]0;ValChecker {self.version} by liljaba1337 | Loading Settings\a")
-            s.stdout.flush()
+        sys.set_console_title(f'ValChecker {self.version} by liljaba1337 | Loading Settings')
         print('loading settings')
         settings = sys.load_settings()
-        if OPERATING_SYSTEM.startswith("win"):
-            ctypes.windll.kernel32.SetConsoleTitleW(
-                f'ValChecker {self.version} by liljaba1337 | Loading Proxies')
-        elif OPERATING_SYSTEM.startswith('linux') or OPERATING_SYSTEM.startswith('darwin'):
-            s.stdout.write(f"\033]0;ValChecker {self.version} by liljaba1337 | Loading Proxies\a")
-            s.stdout.flush()
+
+        sys.set_console_title(f'ValChecker {self.version} by liljaba1337 | Loading Proxies')
         print('loading proxies')
         proxylist = sys.load_proxy()
-        if OPERATING_SYSTEM.startswith('win'):
-            ctypes.windll.kernel32.SetConsoleTitleW(
-                f'ValChecker {self.version} by liljaba1337 | Loading Accounts')
-        elif OPERATING_SYSTEM.startswith('linux') or OPERATING_SYSTEM.startswith('darwin'):
-            s.stdout.write(f"\033]0;ValChecker {self.version} by liljaba1337 | Loading Accounts\a")
-            s.stdout.flush()
+
+        sys.set_console_title(f'ValChecker {self.version} by liljaba1337 | Loading Accounts')
         print('loading accounts')
         accounts, comboname = self.get_accounts()
 
+        sys.set_console_title(f'ValChecker {self.version} by liljaba1337 | Loading Assets')
         print('loading assets')
-        if OPERATING_SYSTEM.startswith('win'):
-            ctypes.windll.kernel32.SetConsoleTitleW(
-                f'ValChecker {self.version} by liljaba1337 | Loading Assets')
-        elif OPERATING_SYSTEM.startswith('linux') or OPERATING_SYSTEM.startswith('darwin'):
-            s.stdout.write(f"\033]0;ValChecker {self.version} by liljaba1337 | Loading Assets\a")
-            s.stdout.flush()
         sys.load_assets()
 
+        sys.set_console_title(f'ValChecker {self.version} by liljaba1337 | Loading Checker')
         print('loading checker')
-        if OPERATING_SYSTEM.startswith('win'):
-            ctypes.windll.kernel32.SetConsoleTitleW(
-                f'ValChecker {self.version} by liljaba1337 | Loading Checker')
-        elif OPERATING_SYSTEM.startswith('linux') or OPERATING_SYSTEM.startswith('darwin'):
-            s.stdout.write(f"\033]0;ValChecker {self.version} by liljaba1337 | Loading Checker\a")
-            s.stdout.flush()
         
         if proxylist is None:
             windll.user32.MessageBoxW(0, "You are trying to start the checker without using any proxies. "+

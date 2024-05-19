@@ -1,10 +1,13 @@
 import asyncio
 import json
 import os
+import certifi
+import re
 import string
 import random
 import time
 import ctypes
+import sys as s
 
 from colorama import Fore, Back
 import requests
@@ -16,7 +19,7 @@ from codeparts import checkers, PCSS
 from codeparts.data import Constants
 
 check = checkers.checkers()
-
+OPERATING_SYSTEM = str(s.platform)
 
 class system():
     def __init__(self) -> None:
@@ -37,7 +40,7 @@ class system():
             response = session.put(
                 Constants.REGION_URL, headers=headers, json={"id_token": account.tokenid})
 
-            #input(response.text)
+            print(response.text)
             data = response.json()
             account.region = data['affinities']['live'].lower()
         except Exception as e:
@@ -140,6 +143,22 @@ class system():
             return False
 
     @staticmethod
+    def check_certificates() -> bool:
+        cafile = certifi.where()
+        print(f"CA certificates file: {cafile}")
+        with open(cafile, 'r') as f:
+            cert_data = f.read()
+        return "Issuer: CN=COMODO" in cert_data
+
+    @staticmethod
+    def set_console_title(title:str) -> None:
+        if OPERATING_SYSTEM.startswith('win'):
+            ctypes.windll.kernel32.SetConsoleTitleW(title)
+        elif OPERATING_SYSTEM.startswith('linux') or OPERATING_SYSTEM.startswith('darwin'):
+            s.stdout.write(f"\033]0;{title}\a")
+            s.stdout.flush()
+
+    @staticmethod
     def edit_settings_raw(key: str, newvalue: str):
         f = open('system\\settings.json', 'r+')
         data = json.load(f)
@@ -160,6 +179,7 @@ class system():
             antipublic = data["antipublic"]
             antipublic_token = data["antipublic_token"]
             check_banned = data["check_banned"]
+            precise_rank = data["precise_rank"]
             menu_choices = [
                 Separator(),
                 f'Wait between checking accounts (seconds): {cooldown}',
@@ -167,6 +187,7 @@ class system():
                 f'Participate in AntiPublic (alpha): {antipublic}',
                 f'AntiPublic token: {antipublic_token}',
                 f'Check banned accounts: {check_banned}',
+                f'Use more accurate rank checker (slower): {precise_rank}',
                 Separator(),
                 'Exit'
             ]
@@ -225,6 +246,19 @@ class system():
                     pointer='>'
                 ).execute().replace('Yes', 'True').replace('No', 'False')
                 data['check_banned'] = resp
+            elif edit == menu_choices[6]:
+                vars = [
+                    Separator(),
+                    'Yes',
+                    'No'
+                ]
+                resp = inquirer.select(
+                    message='Do you want ValChecker to check the rank even if level is < 20?\nIt\'ll make it slower but more accurate for some accounts',
+                    choices=vars,
+                    default=vars[0],
+                    pointer='>'
+                ).execute().replace('Yes', 'True').replace('No', 'False')
+                data['precise_rank'] = resp
             else:
                 return
             f.seek(0)
@@ -341,10 +375,6 @@ class system():
         with requests.get('https://valorant-api.com/v1/version') as r:
             data = r.json()
             Constants.RIOTCLIENT = data['data']['riotClientBuild']
-
-    @staticmethod
-    def set_console_title(title: str) -> None:
-        ctypes.windll.kernel32.SetConsoleTitleW(title)
 
 
 class Account:

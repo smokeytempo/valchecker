@@ -101,7 +101,7 @@ class checkers():
             ranked = sess.get(
                 f"https://pd.{region}.a.pvp.net/mmr/v1/players/{account.puuid}/competitiveupdates", headers={**headers, **Constants.PVPNETHEADERSBASE})
             if '","Matches":[]}' in ranked.text:
-                rank = "unranked"
+                rank = "Unranked"
             else:
                 # input(ranked.json())
                 rankid = str(ranked.json()['Matches'][0]['TierAfterUpdate'])
