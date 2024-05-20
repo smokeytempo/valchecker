@@ -32,6 +32,7 @@ class singlelinechecker:
             ).execute()
 
     async def main(self) -> None:
+        sys.load_assets()
         useAP = not self.APtoken == ""
         if useAP:
             ap = antipublic.AntiPublic(self.APtoken, self.session)

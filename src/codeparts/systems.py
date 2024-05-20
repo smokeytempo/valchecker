@@ -368,7 +368,13 @@ class system():
         # skinlist
         with requests.get('https://valorant-api.com/v1/weapons/skins/') as r:
             data = json.loads(r.text)
-            skins_data = {i["uuid"]:i["displayName"] for i in data["data"]}
+            skins_data = {}
+            for skin in data["data"]:
+                skins_data[skin["uuid"]] = skin["displayName"]
+                if "levels" in skin:
+                    for _skin in skin["levels"]:
+                        skins_data[_skin["uuid"]] = str(_skin["displayName"]).split(" Level")[0]
+
             with open(f'{self.parentpath}\\src\\assets\\skins.json', 'w', encoding='utf-8') as f:
                 json.dump(skins_data, f, sort_keys=False, indent=4)
 

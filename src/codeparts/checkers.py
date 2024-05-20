@@ -31,13 +31,18 @@ class checkers():
                 skinsdata = json.load(f)
 
             skinlist = []
-            for skin in Skins:
-                skinid = skin['ItemID']
-                if skinid in skinsdata:
-                    skinlist.append(skinsdata[skinid])
+            for x in Skins:
+                itemid = x["ItemID"]
+                if itemid not in skinsdata:
+                    continue
+                skinname = skinsdata[itemid]
+                if skinname in skinlist:
+                    continue
+                skinlist.append(skinname)
 
             account.skins = skinlist
-        except Exception:
+        except Exception as e:
+            #print(e)
             account.skins = ['N/A']
 
     def balance(self, account) -> None:
