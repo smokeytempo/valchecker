@@ -44,7 +44,7 @@ class singlelinechecker:
         authenticate = auth.Auth(self.isDebug)
         while True:
             if self.isDebug:
-                input(">")
+                input("hit enter")
                 logpass = "valcheckerdebug:Fuckyou1337!"
             else:
                 logpass = input('account (login:password) or "E" to exit >>>')
@@ -321,6 +321,7 @@ class simplechecker:
                 account = await authenticate.auth(acc, proxy=proxy)
                 if account.banuntil is not None:
                     stff.checkban(account)
+                #input(account.code)
                 match account.code:
                     case 2:
                         with open(f"{self.parentpath}/log.txt", "a") as f:

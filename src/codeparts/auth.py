@@ -199,21 +199,20 @@ class Auth():
                 # r=session.get('https://email-verification.riotgames.com/api/v1/account/status',headers=headers,json={},proxies=sys.getproxy(self.proxlist)).text
 
                 # mailverif=r.split(',"emailVerified":')[1].split('}')[0]
-
+                #print(data)
                 mailverif = bool(data['email_verified'])
 
             except Exception:
                 # input(Exception)
                 mailverif = True
-            mailverif = bool(not mailverif)
-            account.tokenid = str(token_id)
-            account.token = str(token)
-            account.entt = str(entitlement)
-            account.puuid = str(puuid)
-            account.unverifiedmail = str(mailverif)
+            account.tokenid = token_id
+            account.token = token
+            account.entt = entitlement
+            account.puuid = puuid
+            account.unverifiedmail = not mailverif
             account.banuntil = banuntil
-            account.gamename = str(gamename)
-            account.tagline = str(tagline)
+            account.gamename = gamename
+            account.tagline = tagline
             account.registerdate = registerdatepatched
             if self.isDebug:
                 print(puuid)
@@ -224,6 +223,6 @@ class Auth():
             return account
         except Exception as e:
             #input(traceback.format_exc())
-            account.errmsg = str(traceback.format_exc())
+            account.errmsg = traceback.format_exc()
             account.code = int(2)
             return account
