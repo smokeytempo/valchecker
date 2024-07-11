@@ -1,37 +1,40 @@
-#!/usr/bin/python3
 import asyncio
 import time
 from concurrent.futures import ThreadPoolExecutor
-
 import ctypes
 import requests
 import os
-from colorama import Fore, Style
+from colorama import Fore, Back, Style, init
 
+init(autoreset=True)
 
 class ProxyChecker:
-    def get_proxy_judge(self):
-        default_proxy_judge = "http://api.ipify.org/"
-        prompt = "> Enter Proxy Judge (Leave Empty For Default: {}): ".format(default_proxy_judge)
-        proxy_judge = input(prompt).strip()
+    def __init__(self):
+        self.loaded_proxies = 0
+        self.valid_proxies = 0
+        self.dead_proxies = 0
+        self.good_proxies = 0
+        self.moderate_proxies = 0
+        self.slow_proxies = 0
+        self.THREADS_NUM = 0
+        self.valid_proxy_list = []
+        self.CHECK_URL = "http://api.ipify.org/"
 
-        if not proxy_judge:
-            proxy_judge = default_proxy_judge
-        elif not proxy_judge.startswith(('http://', 'https://')):
-            proxy_judge = 'http://' + proxy_judge
-
-        try:
-            response = requests.get(proxy_judge, timeout=self.TIMEOUT)
-        except Exception as e:
-            print(Fore.LIGHTRED_EX + 'Invalid Proxy Judge, Try Again : ' + str(e) + Style.RESET_ALL)
-            return ''
-
-        if response.status_code != 200:
-            print(Fore.LIGHTRED_EX + 'Invalid Proxy Judge, Try Again' + Style.RESET_ALL)
-            return ''
-
-        print(Fore.YELLOW + 'Proxy Judge Set To: ' + proxy_judge + Style.RESET_ALL)
-        return proxy_judge
+    def update_gui(self):
+        os.system('cls' if os.name == 'nt' else 'clear')
+        gui = f'''
+    {Fore.CYAN}┌─ Proxy Stats ────────────────────────────┐
+    {Fore.CYAN}│{Style.RESET_ALL}{Fore.WHITE} Loaded proxies {Fore.WHITE}>>: {Fore.CYAN}[{Fore.WHITE}{self.loaded_proxies}{Fore.CYAN}]{' ' * (41 - len(str(self.loaded_proxies)) - 21)}{Fore.CYAN}│
+    {Fore.CYAN}│{Style.RESET_ALL}{Fore.WHITE} Valid proxies  {Fore.WHITE}>>: {Fore.CYAN}[{Fore.GREEN}{self.valid_proxies}{Fore.CYAN}]{' ' * (41 - len(str(self.valid_proxies)) - 21)}{Fore.CYAN}│
+    {Fore.CYAN}│{Style.RESET_ALL}{Fore.WHITE} Dead proxies   {Fore.WHITE}>>: {Fore.CYAN}[{Fore.YELLOW}{self.dead_proxies}{Fore.CYAN}]{' ' * (41 - len(str(self.dead_proxies)) - 21)}{Fore.CYAN}│
+    {Fore.CYAN}├──────────────────────────────────────────┤
+    {Fore.CYAN}│{Style.RESET_ALL}{Fore.WHITE} Good           {Fore.WHITE}>>: {Fore.CYAN}[{Fore.GREEN}{self.good_proxies}{Fore.CYAN}]{' ' * (41 - len(str(self.good_proxies)) - 21)}{Fore.CYAN}│
+    {Fore.CYAN}│{Style.RESET_ALL}{Fore.WHITE} Moderate       {Fore.WHITE}>>: {Fore.CYAN}[{Fore.GREEN}{self.moderate_proxies}{Fore.CYAN}]{' ' * (41 - len(str(self.moderate_proxies)) - 21)}{Fore.CYAN}│
+    {Fore.CYAN}│{Style.RESET_ALL}{Fore.WHITE} Slow           {Fore.WHITE}>>: {Fore.CYAN}[{Fore.GREEN}{self.slow_proxies}{Fore.CYAN}]{' ' * (41 - len(str(self.slow_proxies)) - 21)}{Fore.CYAN}│
+    {Fore.CYAN}├──────────────────────────────────────────┤
+    {Fore.CYAN}│{Style.RESET_ALL} Threads        {Fore.WHITE}>>: {Fore.CYAN}[{Fore.GREEN}{self.THREADS_NUM}{Fore.CYAN}]{' ' * (41 - len(str(self.THREADS_NUM)) - 21)}{Fore.CYAN}│
+    {Fore.CYAN}└──────────────────────────────────────────┘{Style.RESET_ALL}'''
+        print(gui)
 
     def get_num_threads(self):
         default_num_threads = 1
@@ -53,55 +56,23 @@ class ProxyChecker:
         print(Fore.YELLOW + 'Number of threads set to ' + str(num_threads) + Style.RESET_ALL)
         return num_threads
 
-    def get_trueResponse_code(self):
-        default_response_code = 200
-        prompt = f'> Enter Response Code To Check (Leave Empty For Default: {default_response_code}): '
-        response_code = input(prompt).strip()
-
-        if not response_code:
-            response_code = default_response_code
-
-        try:
-            response_code = int(response_code)
-            print(Fore.YELLOW + 'Response Code Check set to ' + str(response_code) + Style.RESET_ALL)
-        except ValueError:
-            print(Fore.LIGHTRED_EX + 'Invalid number of threads, please enter an integer' + Style.RESET_ALL)
-            return self.get_trueResponse_code()
-
-        return response_code
-
     def main(self, proxies: list) -> list:
-        self.CMD_CLEAR_TERM = "cls"
+        self.CMD_CLEAR_TERM = "cls" if os.name == 'nt' else 'clear'
         self.TIMEOUT = (3.05, 10)
         self.checked = 0
-        self.goods = []
-        self.bad = 0
-
         self.proxies = proxies
+        self.loaded_proxies = len(proxies)
 
         ctypes.windll.kernel32.SetConsoleTitleW("ValChecker | Proxy Checker")
 
-        self.URL = ""
-        #get proxy judge
-        while not self.URL:
-            self.URL = self.get_proxy_judge()
-        print()
-
-        #get number of threads
         self.THREADS_NUM = 0
         while self.THREADS_NUM == 0:
             self.THREADS_NUM = self.get_num_threads()
         print()
 
-        # get response code to check
-        self.RESPONSE_CODE = 0
-        while self.RESPONSE_CODE == 0:
-            self.RESPONSE_CODE = self.get_trueResponse_code()
-        print()
-
         print("Starting checking...")
         time.sleep(1)
-        os.system(self.CMD_CLEAR_TERM)
+        self.update_gui()
 
     async def check_proxies(self) -> list:
         with ThreadPoolExecutor(max_workers=self.THREADS_NUM) as executor:
@@ -109,39 +80,42 @@ class ProxyChecker:
             tasks = []
             for proxy in self.proxies:
                 tasks.append(loop.run_in_executor(executor, self.check_proxy, proxy))
-            #await asyncio.gather(*tasks)
+            await asyncio.gather(*tasks)
 
-        print(Fore.LIGHTGREEN_EX + 'Total ' + str(len(self.goods)) + ' GOOD Proxies Found')
-        print(Fore.LIGHTRED_EX + 'And ' + str(len(self.proxies) - len(self.goods)) + ' are bad')
-        return self.goods
-
-    def check_proxy_code(self,proxy):
-        self.code = -1
-        try:
-            session = requests.Session()
-            session.trust_env = False
-            session.headers['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36'
-            session.max_redirects = 300
-            print(Fore.LIGHTYELLOW_EX + 'Checking...  ' + proxy['http'])
-            self.r = session.get(self.URL, proxies=proxy, timeout=self.TIMEOUT,allow_redirects=True)
-            self.code = self.r.status_code
-            return None
-        except Exception as e:
-            return e
+        self.update_gui()
+        return self.valid_proxy_list
 
     def check_proxy(self, proxy):
         try:
-            response = self.check_proxy_code(proxy)
-            if response is not None or self.r.status_code != self.RESPONSE_CODE:
-                print(Fore.LIGHTRED_EX, end='')
+            session = requests.Session()
+            session.trust_env = False
+            session.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            session.max_redirects = 300
+
+            start_time = time.time()
+            response = session.get(self.CHECK_URL, proxies=proxy, timeout=self.TIMEOUT, allow_redirects=True)
+            end_time = time.time()
+
+            response_time = (end_time - start_time) * 1000  
+
+            if response.status_code == 200:
+                self.valid_proxies += 1
+                self.valid_proxy_list.append(proxy['http'].split('//')[1])
+                if response_time <= 100:
+                    self.good_proxies += 1
+                elif response_time <= 500:
+                    self.moderate_proxies += 1
+                else:
+                    self.slow_proxies += 1
             else:
-                print(Fore.LIGHTGREEN_EX, end='')
-                if proxy['http'].split('//')[1] not in self.goods:
-                    self.goods.append(proxy['http'].split('//')[1])
-            print(f'response: {self.code} ({response})')
-        except KeyboardInterrupt:
-            print(Fore.LIGHTGREEN_EX + '\nExit.')
-            exit()
+                self.dead_proxies += 1
+
+        except Exception:
+            self.dead_proxies += 1
+
         self.checked += 1
+        if self.checked % 4 == 0:  
+            self.update_gui()
 
         ctypes.windll.kernel32.SetConsoleTitleW(f"Proxy Checker | {self.checked}/{len(self.proxies)} | Threads: {self.THREADS_NUM}")
+
