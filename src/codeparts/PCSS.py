@@ -130,15 +130,14 @@ class ProxyChecker:
                     else:
                         self.slow_proxies += 1
                     
-                    break  # Exit after finding a working proxy type
+                    break  
             except (RequestException, socket.error):
                 pass
         else:
-            # If we reach here, the proxy is dead
             self.dead_proxies += 1
 
         self.checked += 1
-        if self.checked % 10 == 0:  # Update GUI every 10 checked proxies
+        if self.checked % 5 == 0:  
             self.update_gui()
 
         ctypes.windll.kernel32.SetConsoleTitleW(f"Proxy Checker | {self.checked}/{len(self.proxies)} | Threads: {self.THREADS_NUM}")
