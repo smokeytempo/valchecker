@@ -240,7 +240,7 @@ class system():
                     'No'
                 ]
                 resp = inquirer.select(
-                    message='Do you want to check permbanned accounts as if they\'re valid?',
+                    message='Do you want to check permbanned accounts like valid?',
                     choices=vars,
                     default=vars[0],
                     pointer='>'
@@ -340,8 +340,7 @@ class system():
         ).execute():
             with open(f"{self.parentpath}\\proxy.txt", "w") as f:
                 f.write('\n'.join(good))
-        print(f'{Back.RED}THIS TOOL CHECKS WHETHER THE CHECKER CAN CONNECT TO\nYOUR PROXIES OR NOT.{Back.RESET}\n\
-{Back.RED}IT DOES NOT GUARANTEE THEY WILL WORK\nIN THE MAIN CHECKER BECAUSE RIOT BANS PUB PROXIES{Back.RESET}')
+        print(f'{Fore.RED}THIS TOOL CHECKS WHETHER THE CHECKER CAN CONNECT TO\nYOUR PROXIES OR NOT.\nIT DOES NOT GUARANTEE THEY WILL WORK\nIN THE MAIN CHECKER BECAUSE RIOT BANS PUBLIC PROXIES{Fore.RESET}')
         input('press enter to return')
         os.system('mode 120,30')
 

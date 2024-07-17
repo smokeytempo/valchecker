@@ -72,7 +72,6 @@ class singlelinechecker:
                     print("permbanned account")
             sys.get_region(account)
             if account.region is None:
-                print(f"Couldn't get the region using the main method\nPlease send this error to the dev:\n{account.errmsg}")
                 sys.get_region2(account)
             else:
                 sys.get_country_and_level_only(account)
