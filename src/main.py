@@ -20,10 +20,13 @@ import requests
 import checker
 from codeparts import checkers, systems, validsort
 from codeparts.systems import system
+from codeparts.localization import LocalizationBase
 
 check = checkers.checkers()
 sys = systems.system()
 valid = validsort.validsort()
+LocalizationBase.initialize(sys.load_settings()["lang"])
+localizer = LocalizationBase.localizer.data
 
 class program():
     def __init__(self) -> None:
@@ -42,15 +45,14 @@ class program():
 
     def start(self) -> None:
         try:
-            print('internet check')
+            print(localizer["tech"]["internetcheck"])
             requests.get('https://github.com')
         except requests.exceptions.ConnectionError:
-            print('no internet connection')
+            print(localizer["tech"]["noconn"])
             os._exit(0)
 
-        print("checking certificates")
         if not sys.check_certificates():
-            print("You don't have the required certificate installed\nPlease download and install it from https://crt.sh/?d=2835394")
+            print(localizer["tech"]["nocert"])
             os._exit(0)
         clear()
         #kernel32 = ctypes.windll.kernel32
@@ -58,34 +60,33 @@ class program():
         codes = vars(colorama.Fore)
         colors = [codes[color] for color in codes if color not in ['BLACK']]
         colored_name = [random.choice(
-            colors) + char for char in 'ValChecker by liljaba1337']
-        print(sys.get_spaces_to_center('ValChecker by liljaba1337') +
+            colors) + char for char in localizer["parts"]["titles"]["base"].format(f"v{self.lastver}")]
+        print(sys.get_spaces_to_center(localizer["parts"]["titles"]["base"].format(f"v{self.lastver}")) +
               (''.join(colored_name))+colorama.Fore.RESET)
         print(sys.center(f'v{self.version}'))
 
         if self.lastver != self.version:
-            print(sys.center(
-                f'\nnext version {self.lastver} is available!'))
+            print(sys.center(localizer["tech"]["nextver"]))
             if inquirer.confirm(
-                message="{}Would you like to download it now?".format(system.get_spaces_to_center('Would you like to download it now? (Y/n)')), default=True, qmark=''
+                message=system.get_spaces_to_center(f'{localizer["tech"]["nextverq"]} (Y/n)'+localizer["tech"]["nextverq"]), default=True, qmark=''
             ).execute():
                 os.system(f'{self.parentpath}/updater.bat')
                 os._exit(0)
         menu_choices = [
             Separator(),
-            'Start Checker',
-            'Single-Line Checker',
-            'Edit Settings',
-            'Sort Valid',
-            'Test Proxy',
-            'Info',
+            localizer["parts"]["mainmenu"]["start"],
+            localizer["parts"]["mainmenu"]["startsl"],
+            localizer["parts"]["mainmenu"]["editset"],
+            localizer["parts"]["mainmenu"]["sortval"],
+            localizer["parts"]["mainmenu"]["testproxy"],
+            localizer["parts"]["mainmenu"]["info"],
             Separator(),
-            'Exit'
+            localizer["parts"]["mainmenu"]["exit"]
         ]
         print(sys.center('\nhttps://github.com/LIL-JABA/valchecker\n'))
         print(sys.center('https://discord.gg/vapenation\n'))
         res = inquirer.select(
-            message="\nUse arrow keys to select and ENTER to confirm\nPlease select an option:",
+            message=localizer["parts"]["mainmenu"]["guide"],
             choices=menu_choices,
             default=menu_choices[0],
             pointer='>',
@@ -93,7 +94,7 @@ class program():
         ).execute()
         if res == menu_choices[1]:
             self.main()
-            input('finished checking. press ENTER or the power button on your PC to exit')
+            input(localizer["parts"]["checker"]["finished"])
         elif res == menu_choices[2]:
             settings = sys.load_settings()
             slchecker = checker.singlelinechecker(settings["antipublic_token"] if settings["antipublic"] is True else "", settings["session"])
@@ -102,7 +103,7 @@ class program():
             sys.edit_settings()
         elif res == menu_choices[4]:
             valid.customsort()
-            input('done. press ENTER or the power button on your PC to exit')
+            input(localizer["parts"]["mainmenu"]["done"])
         elif res == menu_choices[5]:
             sys.checkproxy()
         elif res == menu_choices[6]:
@@ -112,6 +113,10 @@ class program():
 
     Cleaned and Modified by WeCanCodeTrust
     yo whatsup
+
+    translated into {localizer["metadata"]["name"]} by {localizer["metadata"]["by"]}
+
+    https://open.spotify.com/track/1AZKHiqBKfdBxVcWUnJJUj
 
   [~] - press ENTER to return
             ''')
@@ -129,9 +134,9 @@ class program():
         """
         filetypes = (("", (".txt", ".vlchkr")), ("All files", "."))
         if consolemode:
-            print("Press Tab to show files in directory Press Enter to select file")
+            print(localizer["tech"]["accselection"])
             file = inquirer.filepath(
-                message="Select a file with combos OR .vlchkr ro continue checking:\n",
+                message=localizer["tech"]["accselectiontitle"]+"\n",
                 default=os.getcwd(),
                 validate=PathValidator(is_file=True, message="Input is not a file"),
                 only_files=True,
@@ -141,7 +146,7 @@ class program():
             file = filedialog.askopenfile(
                 parent=root,
                 mode="rb",
-                title="Select a file with combos OR .vlchkr to continue checking",
+                title=localizer["tech"]["accselectiontitle"],
                 filetypes=filetypes,
             )
             root.destroy()
@@ -163,32 +168,32 @@ class program():
                     ret.append(logpass)
                     seen.add(logpass)
         
-        sys.set_console_title(f"ValChecker {self.version} by liljaba1337 | Loading Accounts ({self.count})")
+        sys.set_console_title(f"{localizer["parts"]["titles"]["base"]} | {localizer["parts"]["titles"]["accs"]} ({self.count})")
         return ret, filename.split("/")[-1]
 
     def main(self) -> None:
-        sys.set_console_title(f'ValChecker {self.version} by liljaba1337 | Loading Settings')
-        print('loading settings')
+        base = f"{localizer["parts"]["titles"]["base"]} | "
+        sys.set_console_title(base+localizer["parts"]["titles"]["sett"])
+        print(localizer["parts"]["titles"]["sett"])
         settings = sys.load_settings()
 
-        sys.set_console_title(f'ValChecker {self.version} by liljaba1337 | Loading Proxies')
-        print('loading proxies')
+        sys.set_console_title(base+localizer["parts"]["titles"]["prox"])
+        print(localizer["parts"]["titles"]["prox"])
         proxylist = sys.load_proxy()
 
-        sys.set_console_title(f'ValChecker {self.version} by liljaba1337 | Loading Accounts')
-        print('loading accounts')
+        sys.set_console_title(base+localizer["parts"]["titles"]["accs"])
+        print(localizer["parts"]["titles"]["accs"])
         accounts, comboname = self.get_accounts()
 
-        sys.set_console_title(f'ValChecker {self.version} by liljaba1337 | Loading Assets')
-        print('loading assets')
+        sys.set_console_title(base+localizer["parts"]["titles"]["assets"])
+        print(localizer["parts"]["titles"]["assets"])
         sys.load_assets()
 
-        sys.set_console_title(f'ValChecker {self.version} by liljaba1337 | Loading Checker')
-        print('loading checker')
+        sys.set_console_title(base+localizer["parts"]["titles"]["checker"])
+        print(localizer["parts"]["titles"]["checker"])
         
         if proxylist is None:
-            windll.user32.MessageBoxW(0, "You are trying to start the checker without using any proxies. "+
-        "I strongly recommend you not to do that, since it can cause your IP to get banned by Riot. To buy good proxies, you can join my Discord server.", "PROXYLESS ALERT", 4144)
+            windll.user32.MessageBoxW(0, localizer["tech"]["proxylessalert"], localizer["tech"]["proxylessalerttitle"], 4144)
         scheck = checker.simplechecker(settings, proxylist, self.version, comboname)
 
         isvalkekersource = False
@@ -218,5 +223,5 @@ if __name__ == '__main__':
             import tkinter
             from tkinter import filedialog
         except ImportError:
-            raise ImportError('tkinter is not installed on your system. Please install it to use the GUI or use the console mode -c')
+            raise ImportError(localizer["tech"]["notkintererr"])
     pr.start()

@@ -4,5 +4,6 @@
     "check_banned": "False",
     "precise_rank": "False",
     "antipublic_token": "",
-    "antipublic": "False"
+    "antipublic": "False",
+    "lang":"English"
 }
