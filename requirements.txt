@@ -5,4 +5,5 @@ keyboard
 InquirerPy
 aiohttp
 clear
+requests[socks]
 pywin32
