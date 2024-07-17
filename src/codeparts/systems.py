@@ -338,7 +338,7 @@ class system():
             message="Do you want to delete the bad ones?", default=True
         ).execute():
             with open(f"{self.parentpath}\\proxy.txt", "w") as f:
-        f.write('\n'.join([f"{proxy[0]}:{proxy[1]}" for proxy in good_proxies]))
+                f.write('\n'.join([f"{proxy[0]}:{proxy[1]}" for proxy in good_proxies]))
         
         print(f'{Back.RED}THIS TOOL CHECKS WHETHER THE CHECKER CAN CONNECT TO\nYOUR PROXIES OR NOT.{Back.RESET}\n\
     {Back.RED}IT DOES NOT GUARANTEE THEY WILL WORK\nIN THE MAIN CHECKER BECAUSE RIOT BANS PUB PROXIES{Back.RESET}')
