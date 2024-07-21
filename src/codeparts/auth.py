@@ -86,35 +86,37 @@ class Auth():
                     proxy = proxy["http"] if proxy is not None else None
                 ) as r:
                     debugvalue_raw = await r.text()
-                    #print(debugvalue_raw)
+                    if self.isDebug:
+                        print(debugvalue_raw)
 
                 # R2
-                data = dict({
+                data = {
                     "type": "auth",
                     "username": username,
                     "password": password
-                })
+                }
                 async with authsession.put(
                     Constants.AUTH_URL,
                     json=data,
                     headers=headers,
                     proxy = proxy["http"] if proxy is not None else None
                 ) as r:
-                    try:
-                        data = await r.json()
-                        #input(data)
-                    except Exception as e:
-                        #input(e)
-                        account.code = 6
-                        await authsession.close()
-                        return account
+                    body = await r.text()
+                    if self.isDebug:
+                        print(body)
+                    data = await r.json()
                     r2text = str(await r.text())        
                 await authsession.close()
-            except Exception as e:
-                #input(traceback.format_exc())
+            except aiohttp.ClientResponseError as e:
                 await authsession.close()
                 if self.isDebug:
-                    input(traceback.format_exc())
+                    print(e.status)
+                account.code = 6
+                return account
+            except Exception as e:
+                await authsession.close()
+                if self.isDebug:
+                    print(traceback.format_exc())
                 account.code = 6
                 return account
             if "access_token" in r2text:

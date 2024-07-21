@@ -168,11 +168,11 @@ class program():
                     ret.append(logpass)
                     seen.add(logpass)
         
-        sys.set_console_title(f"{localizer["parts"]["titles"]["base"]} | {localizer["parts"]["titles"]["accs"]} ({self.count})")
+        sys.set_console_title(f"{localizer["parts"]["titles"]["base"].format(f"v{self.lastver}")} | {localizer["parts"]["titles"]["accs"]} ({self.count})")
         return ret, filename.split("/")[-1]
 
     def main(self) -> None:
-        base = f"{localizer["parts"]["titles"]["base"]} | "
+        base = f"{localizer["parts"]["titles"]["base"].format(f"v{self.lastver}")} | "
         sys.set_console_title(base+localizer["parts"]["titles"]["sett"])
         print(localizer["parts"]["titles"]["sett"])
         settings = sys.load_settings()
@@ -195,10 +195,12 @@ class program():
         if proxylist is None:
             windll.user32.MessageBoxW(0, localizer["tech"]["proxylessalert"], localizer["tech"]["proxylessalerttitle"], 4144)
         scheck = checker.simplechecker(settings, proxylist, self.version, comboname)
+        print(1)
 
         isvalkekersource = False
         if type(accounts) == systems.vlchkrsource:
             isvalkekersource = True
+        print("run")
         asyncio.run(scheck.main(accounts, self.count, isvalkekersource))
         return
 
