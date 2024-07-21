@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 import sys
 import asyncio
 import requests
+import aiohttp
 from requests.adapters import HTTPAdapter
 
 from . import systems
@@ -54,7 +55,7 @@ class Auth():
                 # R1
                 headers = {
                     "Accept-Encoding": "deflate, gzip, zstd",
-                    "user-agent": "dsadasdasdasds",
+                    "User-Agent": "dsadasddsdasasdasds",
                     "Cache-Control": "no-cache",
                     "Accept": "application/json",
                 }
@@ -69,21 +70,29 @@ class Auth():
                     "response_type": "token id_token",
                     "scope": "openid link ban lol_region account",
                 }
+                #client_cert = 'C:\\Users\\balls\\source\\repos\\valchecker\\certificate.crt'
+                #cient_key = 'C:\\Users\\balls\\source\\repos\\valchecker\\private.key'
+                #ssession = aiohttp.ClientSession()
+                ca_bundle = 'C:\\Users\\balls\\source\\repos\\cacert.pem'
+                
+                # ssl_context = ssl.create_default_context(cafile=ca_bundle)
+                # ssl_context.check_hostname = False
+                # ssl_context.verify_mode = ssl.CERT_NONE
+
                 async with authsession.post(
                     Constants.AUTH_URL,
                     json=body,
                     headers=headers,
                     proxy = proxy["http"] if proxy is not None else None
                 ) as r:
-                    pass
                     debugvalue_raw = await r.text()
                     #print(debugvalue_raw)
 
                 # R2
                 data = dict({
-                    'type': str('auth'),
-                    'username': str(username),
-                    'password': str(password)
+                    "type": "auth",
+                    "username": username,
+                    "password": password
                 })
                 async with authsession.put(
                     Constants.AUTH_URL,
