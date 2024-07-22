@@ -76,7 +76,7 @@ class singlelinechecker:
             else:
                 sys.get_country_and_level_only(account)
             if account.region == "N/A" or account.region == "":
-                print("unknown region")
+                print("valorant has never been opened, the account is invalid or you have been ratelimited")
                 continue
 
             check.ranked(account)
@@ -134,7 +134,7 @@ class simplechecker:
 
         self.checked = 0
         self.private = -1
-        self.useAP = bool(settings["antipublic"])
+        self.useAP = False
         if self.useAP:
             self.ap = antipublic.AntiPublic(
                 str(settings["antipublic_token"]), settings["session"]

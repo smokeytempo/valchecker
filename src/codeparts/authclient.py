@@ -96,10 +96,9 @@ class AuthClient:
             ssl_ctx.minimum_version = ssl.TLSVersion.TLSv1
         ssl_ctx.set_alpn_protocols(["http/1.1"])
         ssl_ctx.options |= 1 << 19
-        libssl.SSL_CTX_set_ciphersuites(ssl_ctx_addr, AuthClient.CIPHERS13.encode())
-        libssl.SSL_CTX_set_cipher_list(ssl_ctx_addr, AuthClient.CIPHERS.encode())
-        # setting SSL_CTRL_SET_SIGALGS_LIST
-        libssl.SSL_CTX_ctrl(ssl_ctx_addr, 98, 0, AuthClient.SIGALGS.encode())
+        # libssl.SSL_CTX_set_ciphersuites(ssl_ctx_addr, AuthClient.CIPHERS13.encode())
+        # libssl.SSL_CTX_set_cipher_list(ssl_ctx_addr, AuthClient.CIPHERS.encode())
+        # libssl.SSL_CTX_ctrl(ssl_ctx_addr, 98, 0, AuthClient.SIGALGS.encode())
 
         # print([cipher["name"] for cipher in ssl_ctx.get_ciphers()])
         return ssl_ctx

@@ -4,6 +4,7 @@ import ssl
 import traceback
 from typing import Any
 from datetime import datetime, timedelta
+from random import randint
 
 import sys
 import asyncio
@@ -54,8 +55,8 @@ class Auth():
             try:
                 # R1
                 headers = {
-                    "Accept-Encoding": "deflate, gzip, zstd",
-                    "User-Agent": "dsadasddsdasasdasds",
+                    "Accept-Encoding": "gzip, deflate, br, zstd",
+                    "User-Agent": "dsadasdasdsa",
                     "Cache-Control": "no-cache",
                     "Accept": "application/json",
                 }
@@ -65,7 +66,7 @@ class Auth():
                     "client_id": "riot-client",
                     "code_challenge": "",
                     "code_challenge_method": "",
-                    "nonce": "dsadasdasdasdasd",
+                    "nonce": "dsadasdasdsdsdsddsdsasdasd",
                     "redirect_uri": "http://localhost/redirect",
                     "response_type": "token id_token",
                     "scope": "openid link ban lol_region account",
@@ -94,6 +95,12 @@ class Auth():
                     "type": "auth",
                     "username": username,
                     "password": password
+                }
+                headers = {
+                    "Accept-Encoding": "gzip, deflate, br, zstd",
+                    "User-Agent": "dsadasdsadas",
+                    "Cache-Control": "no-cache",
+                    "Accept": "application/json",
                 }
                 async with authsession.put(
                     Constants.AUTH_URL,
