@@ -2,6 +2,7 @@ import os
 from re import compile
 import ssl
 import traceback
+import cloudscraper
 from typing import Any
 from datetime import datetime, timedelta
 from random import randint
@@ -26,6 +27,7 @@ elif sys.platform == 'linux':
 elif sys.platform == 'darwin':
     asyncio.set_event_loop_policy(asyncio.SelectorEventLoopPolicy())
 
+
 class SSLAdapter(HTTPAdapter):
     def init_poolmanager(self, *a: Any, **k: Any) -> None:
         c = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
@@ -35,19 +37,20 @@ class SSLAdapter(HTTPAdapter):
 
 
 class Auth():
-    def __init__(self, isDebug : bool = False) -> None:
+    def __init__(self, isDebug: bool = False) -> None:
         self.isDebug = bool(isDebug)
         path = str(os.getcwd())
         self.useragent = Constants.RIOTCLIENT
         self.parentpath = str(os.path.abspath(os.path.join(path, os.pardir)))
 
-    async def auth(self, logpass : str = None, username : str =None, password : str =None, proxy=None) -> Account:
+    async def auth(self, logpass: str = None, username: str = None, password: str = None, proxy=None) -> Account:
         account = Account()
         try:
             account.logpass = str(logpass)
             session = requests.Session()
             ac = AuthClient()
             authsession = await ac.createSession()
+            scraper = cloudscraper.create_scraper()
             if username is None:
                 username = logpass.split(':')[0].strip()
                 password = logpass.split(':')[1].strip()
@@ -71,24 +74,30 @@ class Auth():
                     "response_type": "token id_token",
                     "scope": "openid link ban lol_region account",
                 }
-                #client_cert = 'C:\\Users\\balls\\source\\repos\\valchecker\\certificate.crt'
-                #cient_key = 'C:\\Users\\balls\\source\\repos\\valchecker\\private.key'
-                #ssession = aiohttp.ClientSession()
+                # client_cert = 'C:\\Users\\balls\\source\\repos\\valchecker\\certificate.crt'
+                # cient_key = 'C:\\Users\\balls\\source\\repos\\valchecker\\private.key'
+                # ssession = aiohttp.ClientSession()
                 ca_bundle = 'C:\\Users\\balls\\source\\repos\\cacert.pem'
-                
+
                 # ssl_context = ssl.create_default_context(cafile=ca_bundle)
                 # ssl_context.check_hostname = False
                 # ssl_context.verify_mode = ssl.CERT_NONE
 
-                async with authsession.post(
-                    Constants.AUTH_URL,
-                    json=body,
-                    headers=headers,
-                    proxy = proxy["http"] if proxy is not None else None
-                ) as r:
-                    debugvalue_raw = await r.text()
-                    if self.isDebug:
-                        print(debugvalue_raw)
+                # async with authsession.post(
+                #     Constants.AUTH_URL,
+                #     json=body,
+                #     headers=headers,
+                #     proxy=proxy["http"] if proxy is not None else None
+                # ) as r:
+                #     debugvalue_raw = await r.text()
+                #     if self.isDebug:
+                #         print(debugvalue_raw)
+                r = scraper.post(Constants.AUTH_URL, json=body, headers=headers, proxies=proxy)
+                #print(r.text)
+                if self.isDebug:
+                    print(r.text)
+                cookies = r.cookies
+                scraper.cookies.update(cookies)
 
                 # R2
                 data = {
@@ -102,17 +111,23 @@ class Auth():
                     "Cache-Control": "no-cache",
                     "Accept": "application/json",
                 }
-                async with authsession.put(
-                    Constants.AUTH_URL,
-                    json=data,
-                    headers=headers,
-                    proxy = proxy["http"] if proxy is not None else None
-                ) as r:
-                    body = await r.text()
-                    if self.isDebug:
-                        print(body)
-                    data = await r.json()
-                    r2text = str(await r.text())        
+                # async with authsession.put(
+                #     Constants.AUTH_URL,
+                #     json=data,
+                #     headers=headers,
+                #     proxy=proxy["http"] if proxy is not None else None
+                # ) as r:
+                #     body = await r.text()
+                #     if self.isDebug:
+                #         print(body)
+                #     data = await r.json()
+                #     r2text = str(await r.text())
+                r = scraper.put(Constants.AUTH_URL, json=data, headers=headers, proxies=proxy)
+                r2text = r.text
+                #input(r2text)
+                data = r.json()
+                if self.isDebug:
+                    print(r2text)
                 await authsession.close()
             except aiohttp.ClientResponseError as e:
                 await authsession.close()
@@ -121,6 +136,7 @@ class Auth():
                 account.code = 6
                 return account
             except Exception as e:
+                #input(traceback.format_exc())
                 await authsession.close()
                 if self.isDebug:
                     print(traceback.format_exc())
@@ -177,7 +193,7 @@ class Auth():
                 int(register_date) / 1000.0)
             puuid = data['sub']
             try:
-                #input(data)
+                # input(data)
                 data2 = data['ban']
                 # input(data2)
                 data3 = data2['restrictions']
@@ -204,7 +220,7 @@ class Auth():
                         pass
             except Exception as e:
                 # print(Exception)
-                #input(e)
+                # input(e)
                 banuntil = None
                 pass
             try:
@@ -217,7 +233,7 @@ class Auth():
                 # r=session.get('https://email-verification.riotgames.com/api/v1/account/status',headers=headers,json={},proxies=sys.getproxy(self.proxlist)).text
 
                 # mailverif=r.split(',"emailVerified":')[1].split('}')[0]
-                #print(data)
+                # print(data)
                 mailverif = bool(data['email_verified'])
 
             except Exception:
@@ -240,7 +256,7 @@ class Auth():
                 input()
             return account
         except Exception as e:
-            #input(traceback.format_exc())
+            # input(traceback.format_exc())
             account.errmsg = traceback.format_exc()
             account.code = int(2)
             return account
