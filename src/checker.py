@@ -33,14 +33,7 @@ class singlelinechecker:
 
     async def main(self) -> None:
         sys.load_assets()
-        useAP = not self.APtoken == ""
-        if useAP:
-            ap = antipublic.AntiPublic(self.APtoken, self.session)
-            if not ap.test():
-                print(
-                    "Your AntiPublic token is invalid or the server is down. Please ask the dev for a new one (on our discord server)."
-                )
-                useAP = False
+        useAP = False
         authenticate = auth.Auth(self.isDebug)
         while True:
             if self.isDebug:
@@ -235,6 +228,7 @@ class simplechecker:
         try:
             self.threadam = int(
                 input(
+                    
                     f"input number of threads (min 1 max 5000) (proxies: {self.proxycount}) >>>"
                 )
             )

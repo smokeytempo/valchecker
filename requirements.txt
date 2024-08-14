@@ -3,7 +3,7 @@ requests
 colorama
 keyboard
 InquirerPy
-aiohttp
+httpx
 cloudscraper
 clear
 requests[socks]

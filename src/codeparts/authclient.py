@@ -12,14 +12,14 @@ import aiohttp
 
 class AuthClient:
     RIOT_CLIENT_USER_AGENT = token_urlsafe(111)
-    CIPHERS13 = str(":".join(
+    CIPHERS13 = ":".join(
         (
             "TLS_CHACHA20_POLY1305_SHA256",
             "TLS_AES_128_GCM_SHA256",
             "TLS_AES_256_GCM_SHA384",
         )
-    ))
-    CIPHERS = str(":".join(
+    )
+    CIPHERS = ":".join(
         (
             "TLS_AES_256_GCM_SHA384",
             "TLS_CHACHA20_POLY1305_SHA256",
@@ -39,8 +39,8 @@ class AuthClient:
             "DHE-RSA-AES256-SHA256",
             "DHE-RSA-AES128-SHA256",
         )
-    ))
-    SIGALGS = str(":".join(
+    )
+    SIGALGS = ":".join(
         (
             "ecdsa_secp256r1_sha256",
             "rsa_pss_rsae_sha256",
@@ -52,7 +52,7 @@ class AuthClient:
             "rsa_pkcs1_sha512",
             "rsa_pkcs1_sha1",
         )
-    ))
+    )
 
     def __init__(self) -> None:
         self._auth_ssl_ctx = AuthClient.create_riot_auth_ssl_ctx()
@@ -69,7 +69,7 @@ class AuthClient:
     def create_riot_auth_ssl_ctx() -> ssl.SSLContext:
         ssl_ctx = ssl.create_default_context()
 
-        addr = int(id(ssl_ctx) + sys.getsizeof(object()))
+        addr = id(ssl_ctx) + sys.getsizeof(object())
         ssl_ctx_addr = ctypes.cast(addr, ctypes.POINTER(ctypes.c_void_p)).contents
 
         libssl: Optional[ctypes.CDLL] = None
@@ -96,9 +96,9 @@ class AuthClient:
             ssl_ctx.minimum_version = ssl.TLSVersion.TLSv1
         ssl_ctx.set_alpn_protocols(["http/1.1"])
         ssl_ctx.options |= 1 << 19
-        # libssl.SSL_CTX_set_ciphersuites(ssl_ctx_addr, AuthClient.CIPHERS13.encode())
-        # libssl.SSL_CTX_set_cipher_list(ssl_ctx_addr, AuthClient.CIPHERS.encode())
-        # libssl.SSL_CTX_ctrl(ssl_ctx_addr, 98, 0, AuthClient.SIGALGS.encode())
+        libssl.SSL_CTX_set_ciphersuites(ssl_ctx_addr, AuthClient.CIPHERS13.encode())
+        libssl.SSL_CTX_set_cipher_list(ssl_ctx_addr, AuthClient.CIPHERS.encode())
+        libssl.SSL_CTX_ctrl(ssl_ctx_addr, 98, 0, AuthClient.SIGALGS.encode())
 
         # print([cipher["name"] for cipher in ssl_ctx.get_ciphers()])
         return ssl_ctx
@@ -110,9 +110,9 @@ class AuthClient:
             ("sub", "user_id"),
             ("exp", "expires_at"),
         ),
-        **kwargs:any,
+        **kwargs,
     ) -> None:
-        predefined_keys = list([key for key in self.__dict__.keys() if key[0] != "_"])
+        predefined_keys = [key for key in self.__dict__.keys() if key[0] != "_"]
 
         self.__dict__.update(
             (key, val) for key, val in kwargs.items() if key in predefined_keys

@@ -2,21 +2,18 @@ import os
 from re import compile
 import ssl
 import traceback
-import cloudscraper
 from typing import Any
 from datetime import datetime, timedelta
 from random import randint
 
 import sys
 import asyncio
-import requests
-import aiohttp
 from requests.adapters import HTTPAdapter
+import httpx
 
 from . import systems
 from .data import Constants
 from .systems import Account
-from .authclient import AuthClient
 
 syst = systems.system()
 
@@ -46,11 +43,11 @@ class Auth():
     async def auth(self, logpass: str = None, username: str = None, password: str = None, proxy=None) -> Account:
         account = Account()
         try:
-            account.logpass = str(logpass)
-            session = requests.Session()
-            ac = AuthClient()
-            authsession = await ac.createSession()
-            scraper = cloudscraper.create_scraper()
+            account.logpass = logpass
+            sslcontext = httpx.create_ssl_context()
+            sslcontext.set_ciphers(Constants.CIPHERS)
+            sslcontext.set_ecdh_curve(Constants.ECDH_CURVE)
+            client = httpx.Client(verify=sslcontext, proxy=proxy["http"] if proxy is not None else None)
             if username is None:
                 username = logpass.split(':')[0].strip()
                 password = logpass.split(':')[1].strip()
@@ -58,10 +55,14 @@ class Auth():
             try:
                 # R1
                 headers = {
-                    "Accept-Encoding": "gzip, deflate, br, zstd",
-                    "User-Agent": "dsadasdasdsa",
-                    "Cache-Control": "no-cache",
-                    "Accept": "application/json",
+                    "User-Agent": (
+                        "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X)"
+                        " AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.1502.79 Mobile"
+                        " Safari/537.36"
+                    ),
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+                    "Accept-Language": "en-US,en;q=0.9",
+                    "Accept-Encoding": "gzip, deflate"
                 }
                 body = {
                     "acr_values": "",
@@ -69,77 +70,49 @@ class Auth():
                     "client_id": "riot-client",
                     "code_challenge": "",
                     "code_challenge_method": "",
-                    "nonce": "dsadasdasdsdsdsddsdsasdasd",
+                    "nonce": "SYXugqaAL5z7U7iioaTW5Q",
                     "redirect_uri": "http://localhost/redirect",
                     "response_type": "token id_token",
                     "scope": "openid link ban lol_region account",
                 }
-                # client_cert = 'C:\\Users\\balls\\source\\repos\\valchecker\\certificate.crt'
-                # cient_key = 'C:\\Users\\balls\\source\\repos\\valchecker\\private.key'
-                # ssession = aiohttp.ClientSession()
-                ca_bundle = 'C:\\Users\\balls\\source\\repos\\cacert.pem'
 
-                # ssl_context = ssl.create_default_context(cafile=ca_bundle)
-                # ssl_context.check_hostname = False
-                # ssl_context.verify_mode = ssl.CERT_NONE
-
-                # async with authsession.post(
-                #     Constants.AUTH_URL,
-                #     json=body,
-                #     headers=headers,
-                #     proxy=proxy["http"] if proxy is not None else None
-                # ) as r:
-                #     debugvalue_raw = await r.text()
-                #     if self.isDebug:
-                #         print(debugvalue_raw)
-                r = scraper.post(Constants.AUTH_URL, json=body, headers=headers, proxies=proxy)
-                #print(r.text)
+                r = client.post(Constants.AUTH_URL, json=body, headers=headers)
+                debugvalue_raw = r.text
                 if self.isDebug:
-                    print(r.text)
-                cookies = r.cookies
-                scraper.cookies.update(cookies)
+                    print(debugvalue_raw)
+
 
                 # R2
                 data = {
                     "type": "auth",
                     "username": username,
-                    "password": password
+                    "password": password,
+                    "remember": True,
                 }
+                # HUGE thanks to https://github.com/sandbox-pokhara/league-client
                 headers = {
-                    "Accept-Encoding": "gzip, deflate, br, zstd",
-                    "User-Agent": "dsadasdsadas",
-                    "Cache-Control": "no-cache",
-                    "Accept": "application/json",
+                    "User-Agent": (
+                        "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X)"
+                        " AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.1502.79 Mobile"
+                        " Safari/537.36"
+                    ),
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+                    "Accept-Language": "en-US,en;q=0.9",
+                    "Accept-Encoding": "gzip, deflate",
+                    "referer":"https://authenticate.riotgames.com/"
                 }
-                # async with authsession.put(
-                #     Constants.AUTH_URL,
-                #     json=data,
-                #     headers=headers,
-                #     proxy=proxy["http"] if proxy is not None else None
-                # ) as r:
-                #     body = await r.text()
-                #     if self.isDebug:
-                #         print(body)
-                #     data = await r.json()
-                #     r2text = str(await r.text())
-                r = scraper.put(Constants.AUTH_URL, json=data, headers=headers, proxies=proxy)
-                r2text = r.text
-                #input(r2text)
+                r = client.put(Constants.AUTH_URL, json=data, headers=headers)
+                body = r.text
+                input(body)
+                if self.isDebug:
+                    print(body)
                 data = r.json()
-                if self.isDebug:
-                    print(r2text)
-                await authsession.close()
-            except aiohttp.ClientResponseError as e:
-                await authsession.close()
-                if self.isDebug:
-                    print(e.status)
-                account.code = 6
-                return account
+                r2text = r.text
+                client.close()
             except Exception as e:
-                #input(traceback.format_exc())
-                await authsession.close()
+                client.close()
                 if self.isDebug:
-                    print(traceback.format_exc())
+                    print(e)
                 account.code = 6
                 return account
             if "access_token" in r2text:
@@ -173,10 +146,10 @@ class Auth():
                 'Authorization': str(f'Bearer {token}'),
             })
             try:
-                with session.post(Constants.ENTITLEMENT_URL, headers=headers, json={}, proxies=proxy) as r:
+                with client.post(Constants.ENTITLEMENT_URL, headers=headers, json={}) as r:
                     entitlement = r.json()['entitlements_token']
-                r = session.post(Constants.USERINFO_URL,
-                                 headers=headers, json={}, proxies=proxy)
+                r = client.post(Constants.USERINFO_URL,
+                                 headers=headers, json={})
             except Exception as e:
                 account.code = 6
                 return account
@@ -256,7 +229,7 @@ class Auth():
                 input()
             return account
         except Exception as e:
-            # input(traceback.format_exc())
+            print(e)
             account.errmsg = traceback.format_exc()
             account.code = int(2)
             return account
