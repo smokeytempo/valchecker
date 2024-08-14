@@ -103,7 +103,7 @@ class Auth():
                 }
                 r = client.put(Constants.AUTH_URL, json=data, headers=headers)
                 body = r.text
-                input(body)
+                #input(body)
                 if self.isDebug:
                     print(body)
                 data = r.json()
