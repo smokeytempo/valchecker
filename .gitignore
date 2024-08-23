@@ -9,5 +9,5 @@ log.txt
 .vs/
 certificate.crt
 private.key
-proxy.txt
 src/assets/skins.json
+output/

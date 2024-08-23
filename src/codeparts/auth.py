@@ -108,7 +108,6 @@ class Auth():
                     print(body)
                 data = r.json()
                 r2text = r.text
-                client.close()
             except Exception as e:
                 client.close()
                 if self.isDebug:
@@ -146,11 +145,12 @@ class Auth():
                 'Authorization': str(f'Bearer {token}'),
             })
             try:
-                with client.post(Constants.ENTITLEMENT_URL, headers=headers, json={}) as r:
-                    entitlement = r.json()['entitlements_token']
+                r = client.post(Constants.ENTITLEMENT_URL, headers=headers, json={})
+                entitlement = r.json()['entitlements_token']
                 r = client.post(Constants.USERINFO_URL,
                                  headers=headers, json={})
             except Exception as e:
+                #print(e)
                 account.code = 6
                 return account
             # print(r.text)
@@ -227,9 +227,11 @@ class Auth():
                 print(token+"\n-------")
                 print(token_id)
                 input()
+            client.close()
             return account
         except Exception as e:
-            print(e)
+            #print(e)
             account.errmsg = traceback.format_exc()
             account.code = int(2)
+            client.close()
             return account

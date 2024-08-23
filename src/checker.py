@@ -43,7 +43,6 @@ class singlelinechecker:
             if ":" not in logpass:
                 continue
             account = await authenticate.auth(logpass)
-            isPrivate = "N/A"
             if account.banuntil is not None:
                 stff.checkban(account)
             match account.code:
@@ -58,6 +57,8 @@ class singlelinechecker:
                     continue
                 case 4:
                     print("permbanned account")
+                case 6:
+                    print("an unknown error")
             sys.get_region(account)
             if account.region is None:
                 sys.get_region2(account)
@@ -83,7 +84,6 @@ region: {account.region}    country: {account.country}
 rank: {account.rank}    lvl: {account.lvl}
 vp: {account.vp}    rp: {account.rp}
 last game: {account.lastplayed}
-private: {isPrivate}
 https://tracker.gg/valorant/profile/riot/{account.gamename.replace(' ','%20')}%23{account.tagline}/overview
 """)
             if self.checkskins:
@@ -299,7 +299,6 @@ class simplechecker:
                 account = await authenticate.auth(acc, proxy=proxy)
                 if account.banuntil is not None:
                     stff.checkban(account)
-                #input(account.code)
                 match account.code:
                     case 2:
                         with open(f"{self.parentpath}/log.txt", "a") as f:

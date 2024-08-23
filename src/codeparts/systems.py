@@ -40,7 +40,6 @@ class system():
             response = session.put(
                 Constants.REGION_URL, headers=headers, json={"id_token": account.tokenid})
 
-            #print(response.text)
             data = response.json()
             account.region = data['affinities']['live'].lower()
         except Exception as e:
@@ -71,11 +70,8 @@ class system():
             }
             response = session.get(
                 f"https://pd.{progregion}.a.pvp.net/account-xp/v1/players/{account.puuid}", headers={**headers, **Constants.PVPNETHEADERSBASE})
-            #input(response.text)
             lvl = response.json()['Progress']['Level']
-            #input(lvl)
         except Exception as e:
-            #input(e)
             lvl = -1
 
         account.country = country
@@ -92,7 +88,6 @@ class system():
                    "Authorization": f"Bearer {account.token}"}
         userinfo = session.post(
             Constants.USERINFO_URL, headers=headers)
-        #input(userinfo.text)
         userinfo = userinfo.json()
         try:
             try:
