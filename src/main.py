@@ -209,7 +209,7 @@ pr = program()
 if __name__ == '__main__':
     args = s.argv
     if '-d' in args:
-        slchecker = checker.singlelinechecker("", "_debug_session", True)
+        slchecker = checker.singlelinechecker(True)
         asyncio.run(slchecker.main())
         os._exit(0)
     elif '-c' in args:

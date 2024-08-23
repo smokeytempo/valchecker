@@ -176,16 +176,12 @@ class system():
             data = json.load(f)
             cooldown = data['cooldown']
             skip_kr = data['skip_kr']
-            antipublic = data["antipublic"]
-            antipublic_token = data["antipublic_token"]
             check_banned = data["check_banned"]
             precise_rank = data["precise_rank"]
             menu_choices = [
                 Separator(),
                 f'Wait between checking accounts (seconds): {cooldown}',
                 f'Skip korean (kr region) accounts: {skip_kr}',
-                f'Participate in AntiPublic (alpha): {antipublic}',
-                f'AntiPublic token: {antipublic_token}',
                 f'Check banned accounts: {check_banned}',
                 f'Use more accurate rank checker (slower): {precise_rank}',
                 Separator(),
@@ -223,37 +219,20 @@ class system():
                     'No'
                 ]
                 resp = inquirer.select(
-                    message='Do you want to participate in AntiPublic (alpha)?',
-                    choices=vars,
-                    default=vars[0],
-                    pointer='>'
-                ).execute().replace('Yes', 'True').replace('No', 'False')
-                data['antipublic'] = resp
-            elif edit == menu_choices[4]:
-                print('Your AntiPublic token. This only matters if you wish to participate in the AntiPublic alpha test.\nYou can ask for access on our discord server.')
-                resp = input("> ")
-                data['antipublic_token'] = resp
-            elif edit == menu_choices[5]:
-                vars = [
-                    Separator(),
-                    'Yes',
-                    'No'
-                ]
-                resp = inquirer.select(
                     message='Do you want to check permbanned accounts like valid?',
                     choices=vars,
                     default=vars[0],
                     pointer='>'
                 ).execute().replace('Yes', 'True').replace('No', 'False')
                 data['check_banned'] = resp
-            elif edit == menu_choices[6]:
+            elif edit == menu_choices[4]:
                 vars = [
                     Separator(),
                     'Yes',
                     'No'
                 ]
                 resp = inquirer.select(
-                    message='Do you want ValChecker to check the rank even if level is < 20?\nIt\'ll make it slower but more accurate for some accounts',
+                    message='Do you want ValChecker to check the rank even if an account level is < 20?\nIt\'ll make it slower but more accurate for some accounts',
                     choices=vars,
                     default=vars[0],
                     pointer='>'

@@ -1,6 +1,5 @@
 *.pyc
 *.pyo
-output/
 *.vlchkr
 src/assets/skins.json
 src/system/settings.json
@@ -8,3 +7,7 @@ output/sorted.txt
 proxy.txt
 log.txt
 .vs/
+certificate.crt
+private.key
+proxy.txt
+src/assets/skins.json

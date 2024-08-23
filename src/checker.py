@@ -21,10 +21,8 @@ stff = stuff.staff()
 
 
 class singlelinechecker:
-    def __init__(self, APtoken: str = "", session: str = "", isDebug=False) -> None:
+    def __init__(self, isDebug=False) -> None:
         self.isDebug = isDebug
-        self.APtoken = APtoken
-        self.session = session
         self.checkskins = False
         if not self.isDebug:
             self.checkskins = inquirer.confirm(
@@ -33,7 +31,6 @@ class singlelinechecker:
 
     async def main(self) -> None:
         sys.load_assets()
-        useAP = False
         authenticate = auth.Auth(self.isDebug)
         while True:
             if self.isDebug:
@@ -47,8 +44,6 @@ class singlelinechecker:
                 continue
             account = await authenticate.auth(logpass)
             isPrivate = "N/A"
-            if useAP:
-                isPrivate = ap.check(logpass)
             if account.banuntil is not None:
                 stff.checkban(account)
             match account.code:
@@ -127,16 +122,6 @@ class simplechecker:
 
         self.checked = 0
         self.private = -1
-        self.useAP = False
-        if self.useAP:
-            self.ap = antipublic.AntiPublic(
-                str(settings["antipublic_token"]), settings["session"]
-            )
-            if self.ap.test():
-                self.private = 0
-                self.useAP = True
-            else:
-                self.useAP = False
         self.valid = 0
         self.banned = 0
         self.tempbanned = 0
@@ -363,8 +348,6 @@ class simplechecker:
                         continue
                     case _:
                         pass
-                if self.useAP:
-                    account.private = self.ap.check(account.logpass)
                 if account.unverifiedmail and account.banuntil is None and not account.isPermbanned:
                     self.unverifiedmail += 1
                 while True:
@@ -663,14 +646,10 @@ class simplechecker:
         green = Fore.LIGHTGREEN_EX
         red = Fore.LIGHTRED_EX
         space = " "
-        privatepercent = "-1%"
-        if self.useAP:
-            privatepercent = float(self.private / self.valid * 100 if self.valid != 0 else 0.0)
-            privatepercent = f"{str(round(privatepercent,1))}%"
         percent = float(self.valid / self.checked * 100 if self.checked != 0 else 0.0)
         percent = f"{str(round(percent,1))}%"
         ctypes.windll.kernel32.SetConsoleTitleW(
-            f"ValChecker {self.version}  |  Checked {self.checked}/{self.count}  |  {self.cpmtext} CPM  |  Hitrate {percent}  |  Private Rate {privatepercent}  |  Est. time: {self.esttime}  |  {self.comboname}"
+            f"ValChecker {self.version}  |  Checked {self.checked}/{self.count}  |  {self.cpmtext} CPM  |  Hitrate {percent}  |  Est. time: {self.esttime}  |  {self.comboname}"
         )
         os.system("cls")
         print(f"""
@@ -692,7 +671,7 @@ class simplechecker:
 {cyan} ┏━ Not main ━━━━━━━━━━━━━━━━━━━━━━━━━━┓ ┃ [{reset}>{cyan}] {reset}Unranked      >>:{cyan}[{green}{self.ranks['unranked']}{cyan}]{space * (18 - len(str(self.ranks['unranked'])))}┃ ┃ [{reset}>{cyan}] {reset}165-200         >>:{cyan}[{green}{self.skinsam['165-200']}{cyan}]{space * (29 - len(str(self.skinsam['165-200'])))}┃
 {cyan} ┃ [{reset}>{cyan}] {reset}With Skins       >>:{cyan}[{green}{self.skins}{cyan}]{space * (10 - len(str(self.skins)))}┃ ┃ [{reset}>{cyan}] {reset}Iron          >>:{cyan}[{green}{self.ranks['iron']}{cyan}]{space * (18 - len(str(self.ranks['iron'])))}┃ ┃ [{reset}>{cyan}] {reset}200+            >>:{cyan}[{green}{self.skinsam['200+']}{cyan}]{space * (29 - len(str(self.skinsam['200+'])))}┃
 {cyan} ┃ [{reset}>{cyan}] {reset}Unverified Mail  >>:{cyan}[{green}{self.unverifiedmail}{cyan}]{space * (10 - len(str(self.unverifiedmail)))}┃ ┃ [{reset}>{cyan}] {reset}Bronze        >>:{cyan}[{green}{self.ranks['bronze']}{cyan}]{space * (18 - len(str(self.ranks['bronze'])))}┃ ┃                                                       ┃
-{cyan} ┃ [{reset}>{cyan}] {reset}Private          >>:{cyan}[{green}{self.private}{cyan}] ({privatepercent}){space * (7 - len(str(self.private)) - len(str(privatepercent)))}┃ ┃ [{reset}>{cyan}] {reset}Silver        >>:{cyan}[{green}{self.ranks['silver']}{cyan}]{space * (18 - len(str(self.ranks['silver'])))}┃ ┃                                                       ┃
+{cyan} ┃                                     ┃ ┃ [{reset}>{cyan}] {reset}Silver        >>:{cyan}[{green}{self.ranks['silver']}{cyan}]{space * (18 - len(str(self.ranks['silver'])))}┃ ┃                                                       ┃
 {cyan} ┃                                     ┃ ┃ [{reset}>{cyan}] {reset}Gold          >>:{cyan}[{green}{self.ranks['gold']}{cyan}]{space * (18 - len(str(self.ranks['gold'])))}┃ ┃                                                       ┃
 {cyan} ┃                                     ┃ ┃ [{reset}>{cyan}] {reset}Platinum      >>:{cyan}[{green}{self.ranks['platinum']}{cyan}]{space * (18 - len(str(self.ranks['platinum'])))}┃ ┃                                                       ┃
 {cyan} ┃                                     ┃ ┃ [{reset}>{cyan}] {reset}Diamond       >>:{cyan}[{green}{self.ranks['diamond']}{cyan}]{space * (18 - len(str(self.ranks['diamond'])))}┃ ┃                                                       ┃
