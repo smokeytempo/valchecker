@@ -230,8 +230,7 @@ class Auth():
             client.close()
             return account
         except Exception as e:
-            #print(e)
+            #input(e)
             account.errmsg = traceback.format_exc()
             account.code = int(2)
-            client.close()
             return account
