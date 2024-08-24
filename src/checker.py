@@ -12,7 +12,7 @@ from InquirerPy import inquirer
 
 from colorama import Fore
 
-from codeparts import auth, checkers, stuff, systems, antipublic
+from codeparts import auth, checkers, stuff, systems
 from codeparts.systems import vlchkrsource
 
 check = checkers.checkers()
@@ -121,7 +121,6 @@ class simplechecker:
         self.cpmtext = str(self.cpm)
 
         self.checked = 0
-        self.private = -1
         self.valid = 0
         self.banned = 0
         self.tempbanned = 0
@@ -459,7 +458,6 @@ class simplechecker:
 ║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
 ║ Creation date: {account.registerdate}{space*(61-len(f' Creation date: {account.registerdate}'))}║
 ║ Gamename: {account.gamename}#{account.tagline}{space*(61-len(f' Gamename: {account.gamename}#{account.tagline}'))}║
-║ Private: {account.private}{space*(61-len(f' Private: {account.private}'))}║
 ╠═════════════════════════════════════════════════════════════╣
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
@@ -485,7 +483,6 @@ class simplechecker:
 ║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
 ║ Creation date: {account.registerdate}{space*(61-len(f' Creation date: {account.registerdate}'))}║
 ║ Gamename: {account.gamename}#{account.tagline}{space*(61-len(f' Gamename: {account.gamename}#{account.tagline}'))}║
-║ Private: {account.private}{space*(61-len(f' Private: {account.private}'))}║
 ╠═════════════════════════════════════════════════════════════╣
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
@@ -510,7 +507,6 @@ class simplechecker:
 ║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
 ║ Creation date: {account.registerdate}{space*(61-len(f' Creation date: {account.registerdate}'))}║
 ║ Gamename: {account.gamename}#{account.tagline}{space*(61-len(f' Gamename: {account.gamename}#{account.tagline}'))}║
-║ Private: {account.private}{space*(61-len(f' Private: {account.private}'))}║
 ╠═════════════════════════════════════════════════════════════╣
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
@@ -542,7 +538,6 @@ class simplechecker:
 ║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
 ║ Creation date: {account.registerdate}{space*(61-len(f' Creation date: {account.registerdate}'))}║
 ║ Gamename: {account.gamename}#{account.tagline}{space*(61-len(f' Gamename: {account.gamename}#{account.tagline}'))}║
-║ Private: {account.private}{space*(61-len(f' Private: {account.private}'))}║
 ╠═════════════════════════════════════════════════════════════╣
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
@@ -593,7 +588,6 @@ class simplechecker:
 ║ Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}{space*(61-len(f' Valorant Points: {vp} | Radianite: {rp} | Skins: {skinscount}'))}║
 ║ Creation date: {account.registerdate}{space*(61-len(f' Creation date: {account.registerdate}'))}║
 ║ Gamename: {account.gamename}#{account.tagline}{space*(61-len(f' Gamename: {account.gamename}#{account.tagline}'))}║
-║ Private: {account.private}{space*(61-len(f' Private: {account.private}'))}║
 ╠═════════════════════════════════════════════════════════════╣
 {skinsformatted}
 ╚═════════════════════════════════════════════════════════════╝
@@ -614,8 +608,6 @@ class simplechecker:
                     )
                 self.err += 1
             self.checked += 1
-            if account.private:
-                self.private += 1
             self.printinfo()
             time.sleep(self.cooldown)
             break
