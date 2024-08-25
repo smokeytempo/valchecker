@@ -62,7 +62,6 @@ class program():
             colors) + char for char in localizer["parts"]["titles"]["base"].format(f"v{self.lastver}")]
         print(sys.get_spaces_to_center(localizer["parts"]["titles"]["base"].format(f"v{self.lastver}")) +
               (''.join(colored_name))+colorama.Fore.RESET)
-        print(sys.center(f'v{self.version}'))
 
         if self.lastver != self.version:
             print(sys.center(localizer["tech"]["nextver"]))

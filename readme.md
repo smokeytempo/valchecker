@@ -23,4 +23,7 @@ This software was originally designed to collect information using the RiotGames
 - You may only use the Software with Valorant accounts for which you have legal access and ownership.
 - You shall not use the Software in any way that violates any applicable law, regulation, or third-party rights, including Riot Games' terms of service.
 
+## Third-Party Content
+The only official distribution of the Software is available at [https://github.com/LIL-JABA/valchecker](https://github.com/LIL-JABA/valchecker). The Developer is not responsible for the content, functionality, or consequences of using any copies, forks, or modifications of the Software obtained from other sources.
+
 By using this software, you acknowledge that you have read, understood, and agree to be bound by these terms and conditions. If you do not agree to the terms, you must not use the software.
