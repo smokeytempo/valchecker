@@ -1,7 +1,6 @@
 import asyncio
 import concurrent
 import ctypes
-import datetime
 import os
 import time
 from typing import Union
@@ -37,7 +36,7 @@ class singlelinechecker:
                 input("hit enter")
                 logpass = "valcheckerdebug:Fuckyou1337!"
             else:
-                logpass = input('account (login:password) or "E" to exit >>>')
+                logpass = input('account (login:password) or "E" to exit >>> ')
             if logpass == "E":
                 break
             if ":" not in logpass:
@@ -208,16 +207,17 @@ class simplechecker:
             open(f"{self.outpath}/record.vlchkr", "w").close()
             vlchkr = systems.vlchkrsource(f"{self.outpath}/record.vlchkr")
             vlchkr.savefile()
-
-        try:
-            self.threadam = int(
-                input(
-                    
-                    f"input number of threads (min 1 max 5000) (proxies: {self.proxycount}) >>>"
+        while True:
+            try:
+                self.threadam = int(
+                    input(
+                        
+                        f"input number of threads (min 1 max 5000) (proxies: {self.proxycount}) >>>"
+                    )
                 )
-            )
-        except ValueError:
-            self.threadam = 1
+                break
+            except ValueError:
+                print("invalid input",flush=True)
         self.threadam = int((
             self.threadam
             if 5000 > self.threadam > 0
@@ -451,7 +451,7 @@ class simplechecker:
                         file.write(f"""
 ╔═════════════════════════════════════════════════════════════╗
 ║            | {account.logpass} |{space*(49-len(f'| {account.logpass} |'))}║
-║ Permanently banned {space*(61-len(f' Permanently banned'))}║
+║ Permanently banned {space*(61-len(' Permanently banned'))}║
 ║                                                             ║
 ║ Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}{space*(61-len(f' Full Access: {unverifmail} | Level: {lvl} | Region: {reg} , {country}'))}║
 ║ Rank: {rank} | Last Played: {lastplayed}{space*(61-len(f' Rank: {rank} | Last Played: {lastplayed}'))}║

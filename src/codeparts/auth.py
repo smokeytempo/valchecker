@@ -4,7 +4,6 @@ import ssl
 import traceback
 from typing import Any
 from datetime import datetime, timedelta
-from random import randint
 
 import sys
 import asyncio
@@ -149,8 +148,8 @@ class Auth():
                 entitlement = r.json()['entitlements_token']
                 r = client.post(Constants.USERINFO_URL,
                                  headers=headers, json={})
-            except Exception as e:
-                #print(e)
+            except Exception as _e:
+                #print(_e)
                 account.code = 6
                 return account
             # print(r.text)
@@ -191,9 +190,9 @@ class Auth():
                     else:
                         banuntil = None
                         pass
-            except Exception as e:
+            except Exception as _e:
                 # print(Exception)
-                # input(e)
+                # input(_e)
                 banuntil = None
                 pass
             try:
@@ -229,8 +228,8 @@ class Auth():
                 input()
             client.close()
             return account
-        except Exception as e:
-            #input(e)
+        except Exception as _e:
+            #input(_e)
             account.errmsg = traceback.format_exc()
             account.code = int(2)
             return account
