@@ -6,12 +6,13 @@ from concurrent.futures import ThreadPoolExecutor
 import ctypes
 import requests
 import os
-from colorama import Fore, Style
+from colorama import Fore, Style, Back
 
 
 class ProxyChecker:
     def get_proxy_judge(self):
         default_proxy_judge = "http://api.ipify.org/"
+        return default_proxy_judge
         prompt = "> Enter Proxy Judge (Leave Empty For Default: {}): ".format(default_proxy_judge)
         proxy_judge = input(prompt).strip()
 
@@ -55,6 +56,7 @@ class ProxyChecker:
 
     def get_trueResponse_code(self):
         default_response_code = 200
+        return default_response_code
         prompt = f'> Enter Response Code To Check (Leave Empty For Default: {default_response_code}): '
         response_code = input(prompt).strip()
 
@@ -112,7 +114,9 @@ class ProxyChecker:
             #await asyncio.gather(*tasks)
 
         print(Fore.LIGHTGREEN_EX + 'Total ' + str(len(self.goods)) + ' GOOD Proxies Found')
-        print(Fore.LIGHTRED_EX + 'And ' + str(len(self.proxies) - len(self.goods)) + ' are bad')
+        print(Fore.LIGHTRED_EX + 'And ' + str(len(self.proxies) - len(self.goods)) + ' are bad' + Fore.RESET)
+        print(f"{Back.RED}PLEASE NOTE THAT THIS TOOL ONLY CHECKS IF YOUR PROXIES ARE ONLINE OR NOT{Back.RESET}\n\
+{Back.RED}IT DOES NOT GUARANTEE THAT THEY WILL WORK WITH THE CHECKER{Back.RESET}")
         return self.goods
 
     def check_proxy_code(self,proxy):

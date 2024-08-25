@@ -1,3 +1,4 @@
 # put https proxy in IP:PORT (LOGIN:PASSWORD@IP:PORT) format
 # put socks5 proxy in socks5://IP:PORT (socks5://LOGIN:PASSWORD@IP:PORT) format
+# run "pip install httpx[socks]" (without the quotes) in your cmd if you are using socks5 proxies
 # for more info check https://liljaba1337.gitbook.io/valchecker/usage/proxies
