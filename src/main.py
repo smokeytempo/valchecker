@@ -1,5 +1,4 @@
 import asyncio
-import ctypes
 import os
 import random
 import sys as s
@@ -96,8 +95,7 @@ class program():
             self.main()
             input(localizer["parts"]["checker"]["finished"])
         elif res == menu_choices[2]:
-            settings = sys.load_settings()
-            slchecker = checker.singlelinechecker(settings["antipublic_token"] if settings["antipublic"] is True else "", settings["session"])
+            slchecker = checker.singlelinechecker(isDebug=False)
             asyncio.run(slchecker.main())
         elif res == menu_choices[3]:
             sys.edit_settings()
@@ -111,7 +109,7 @@ class program():
             print(f'''
     valchecker v{self.version} by liljaba1337
 
-    Cleaned and Modified by WeCanCodeTrust
+    Clesinglelinecheckered and Modified by WeCanCodeTrust
     yo whatsup
 
     translated into {localizer["metadata"]["name"]} by {localizer["metadata"]["by"]}
@@ -198,7 +196,7 @@ class program():
         print(1)
 
         isvalkekersource = False
-        if type(accounts) == systems.vlchkrsource:
+        if type(accounts) is systems.vlchkrsource:
             isvalkekersource = True
         print("run")
         asyncio.run(scheck.main(accounts, self.count, isvalkekersource))

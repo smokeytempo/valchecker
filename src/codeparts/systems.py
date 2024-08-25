@@ -2,7 +2,6 @@ import asyncio
 import json
 import os
 import certifi
-import re
 import string
 import random
 import time
@@ -71,10 +70,10 @@ class system():
             response = session.get(
                 f"https://pd.{progregion}.a.pvp.net/account-xp/v1/players/{account.puuid}", headers={**headers, **Constants.PVPNETHEADERSBASE})
             lvl = response.json()['Progress']['Level']
-        except Exception as e:
+        except Exception as _e:
             lvl = -1
 
-        account.country = country
+        account.country = country   
         account.lvl = lvl
 
     @staticmethod
@@ -94,7 +93,7 @@ class system():
                 region = userinfo['region']['id']
                 fixedregion = Constants.LOL2REG[region]
                 country = userinfo['country'].upper()
-            except:
+            except Exception as _e:
                 country = userinfo['country'].upper()
                 cou3 = Constants.A2TOA3[country]
                 fixedregion = Constants.COU2REG[cou3]
@@ -103,8 +102,8 @@ class system():
             if progregion in ['latam', 'br']:
                 progregion = 'na'
             # input(progregion)
-        except Exception as e:
-            # input(e)
+        except Exception as _e:
+            # input(_e)
             fixedregion = 'N/A'
             country = 'N/A'
         # lvl
@@ -117,8 +116,8 @@ class system():
                 f"https://pd.{progregion}.a.pvp.net/account-xp/v1/players/{account.puuid}", headers={**headers, **Constants.PVPNETHEADERSBASE})
             #input(response.text)
             lvl = response.json()['Progress']['Level']
-        except Exception as e:
-            #input(e)
+        except Exception as _e:
+            #input(_e)
             lvl = -1
 
         account.region = fixedregion
@@ -133,7 +132,7 @@ class system():
             f.close()
             data['session'] = system.generate_random_string(10)
             return data
-        except:
+        except FileNotFoundError:
             print("can't find settings.json\nplease reinstall the ValChecker\n")
             return False
 
@@ -262,7 +261,7 @@ class system():
 
     def getproxy(self, proxlist):
         try:
-            if proxlist == None:
+            if proxlist is None:
                 return None
             elif len(proxlist) == 0:
                 return None
@@ -270,8 +269,8 @@ class system():
                 self.num = 0
             nextproxy = proxlist[self.num]
             self.num += 1
-        except Exception as e:
-            # input(e)
+        except Exception as _e:
+            # input(_e)
             nextproxy = None
         return nextproxy
 

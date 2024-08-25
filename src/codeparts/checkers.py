@@ -41,8 +41,8 @@ class checkers():
                 skinlist.append(skinname)
 
             account.skins = skinlist
-        except Exception as e:
-            #print(e)
+        except Exception as _e:
+            #print(_e)
             account.skins = ['N/A']
 
     def balance(self, account) -> None:
