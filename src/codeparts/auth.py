@@ -4,7 +4,9 @@ import ssl
 import traceback
 from typing import Any
 from datetime import datetime, timedelta
+import base64
 
+import json
 import sys
 import asyncio
 from requests.adapters import HTTPAdapter
@@ -72,7 +74,7 @@ class Auth():
                     "nonce": "SYXugqaAL5z7U7iioaTW5Q",
                     "redirect_uri": "http://localhost/redirect",
                     "response_type": "token id_token",
-                    "scope": "openid link ban lol_region account",
+                    "scope": "openid link ban lol_region account email_verified locale region",
                 }
 
                 r = client.post(Constants.AUTH_URL, json=body, headers=headers)
@@ -233,3 +235,14 @@ class Auth():
             account.errmsg = traceback.format_exc()
             account.code = int(2)
             return account
+
+    async def decode(self, account:Account) -> bool:
+        # thanks nummy :3
+        parts = account.token.split(".")
+        if len(parts) != 3:
+            return False
+        payload = parts[1]
+        payload += "=" * ((4 - len(payload) % 4) % 4)
+        decoded = base64.urlsafe_b64decode(payload)
+        account.decodedtoken = json.loads(decoded)
+        return True

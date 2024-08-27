@@ -56,8 +56,11 @@ class singlelinechecker:
                     continue
                 case 4:
                     print("permbanned account")
+                    continue
                 case 6:
                     print("an unknown error")
+                    continue
+            await authenticate.decode(account)
             sys.get_region(account)
             if account.region is None:
                 sys.get_region2(account)
@@ -349,8 +352,10 @@ class simplechecker:
                 if account.unverifiedmail and account.banuntil is None and not account.isPermbanned:
                     self.unverifiedmail += 1
                 while True:
+                    success = await authenticate.decode(account)
+                    if success:
+                        sys.process_token_data(account)
                     sys.get_region(account)
-                    #input(account.region)
                     if account.region is None:
                         with open(
                         f"{self.parentpath}/log.txt",

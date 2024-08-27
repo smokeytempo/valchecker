@@ -77,6 +77,18 @@ class system():
         account.lvl = lvl
 
     @staticmethod
+    def process_token_data(account) -> bool:
+        try:
+            #account.country = account.decodedtoken["country"]
+            #account.region = Constants.COU2REG[Constants.A2TOA3[account.country]]
+            account.age = account.decodedtoken["age"]
+            #account.gamename = account.decodedtoken["acct"]["game_name"]
+            #account.tagline = account.decodedtoken["acct"]["tag_line"]
+            return True
+        except:
+            return False
+
+    @staticmethod
     def get_region2(account) -> None:
         # reg + country
         session = requests.Session()
@@ -358,9 +370,9 @@ class system():
 class Account:
     errmsg: str = None
     logpass: str = None
-    private: bool = None
     code: int = None
     token: str = None
+    decodedtoken: dict = None
     tokenid: str = None
     entt: str = None
     puuid: str = None
@@ -372,6 +384,7 @@ class Account:
     lvl: int = None
     rank: str = None
     skins: list[str] = None
+    age: int = None
     vp: int = None
     rp: int = None
     lastplayed: datetime = None
