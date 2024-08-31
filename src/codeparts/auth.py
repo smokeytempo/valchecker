@@ -100,7 +100,7 @@ class Auth():
                     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
                     "Accept-Language": "en-US,en;q=0.9",
                     "Accept-Encoding": "gzip, deflate",
-                    "referer":"https://www.riotgames.com/"
+                    "referer":"https://riotgames.com/"
                 }
                 r = client.put(Constants.AUTH_URL, json=data, headers=headers)
                 body = r.text
