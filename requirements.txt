@@ -8,3 +8,4 @@ cloudscraper
 clear
 requests[socks]
 pywin32
+aiohttp
