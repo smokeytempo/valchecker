@@ -4,13 +4,16 @@ import ssl
 import traceback
 from typing import Any
 from datetime import datetime, timedelta
+from secrets import token_urlsafe, token_hex
 import base64
 
 import json
+import aiohttp
 import sys
 import asyncio
 from requests.adapters import HTTPAdapter
 import httpx
+from .authclient import RiotAuth
 
 from . import systems
 from .data import Constants
@@ -45,72 +48,76 @@ class Auth():
         account = Account()
         try:
             account.logpass = logpass
-            sslcontext = httpx.create_ssl_context()
-            sslcontext.set_ciphers(Constants.CIPHERS)
-            sslcontext.set_ecdh_curve(Constants.ECDH_CURVE)
-            client = httpx.Client(verify=sslcontext, proxy=proxy["http"] if proxy is not None else None)
-            if username is None:
-                username = logpass.split(':')[0].strip()
-                password = logpass.split(':')[1].strip()
+            _authclient = RiotAuth()
+            #sslcontext = httpx.create_ssl_context()
+            #sslcontext.set_ciphers(Constants.CIPHERS)
+            #sslcontext.set_ecdh_curve(Constants.ECDH_CURVE)
+            client = httpx.Client(proxy=proxy["http"] if proxy is not None else None)
+            _logpass = logpass.split(":")
+            username = _logpass[0]
+            password = _logpass[1]
 
             try:
                 # R1
+                conn = aiohttp.TCPConnector(ssl=_authclient._auth_ssl_ctx)
+                authsession =  aiohttp.ClientSession(connector=conn)
+
                 headers = {
-                    "User-Agent": (
-                        "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X)"
-                        " AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.1502.79 Mobile"
-                        " Safari/537.36"
-                    ),
-                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-                    "Accept-Language": "en-US,en;q=0.9",
-                    "Accept-Encoding": "gzip, deflate"
-                }
+                            "Accept-Encoding": "deflate, gzip, zstd",
+                            # "user-agent": RiotAuth.RIOT_CLIENT_USER_AGENT % "rso-auth",
+                            "user-agent": RiotAuth.RIOT_CLIENT_USER_AGENT,
+                            "Cache-Control": "no-cache",
+                            "Accept": "application/json",
+                        }
+
                 body = {
                     "acr_values": "",
                     "claims": "",
                     "client_id": "riot-client",
                     "code_challenge": "",
                     "code_challenge_method": "",
-                    "nonce": "SYXugqaAL5z7U7iioaTW5Q",
+                    "nonce": token_urlsafe(16),
                     "redirect_uri": "http://localhost/redirect",
                     "response_type": "token id_token",
                     "scope": "openid link ban lol_region account email_verified locale region",
                 }
-
-                r = client.post(Constants.AUTH_URL, json=body, headers=headers)
-                debugvalue_raw = r.text
+                r = await authsession.post(Constants.AUTH_URL,json=body,headers=headers,proxy=proxy["http"] if proxy is not None else None)
+                debugvalue_raw = await r.text()
+                #print(debugvalue_raw)
                 if self.isDebug:
                     print(debugvalue_raw)
 
 
                 # R2
                 data = {
+                    "language": "en_US",
+                    "password": password,
+                    "region": None,
+                    "remember": False,
                     "type": "auth",
                     "username": username,
-                    "password": password,
-                    "remember": True,
                 }
                 # HUGE thanks to https://github.com/sandbox-pokhara/league-client
                 headers = {
-                    "User-Agent": (
-                        "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X)"
-                        " AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.1502.79 Mobile"
-                        " Safari/537.36"
-                    ),
+                    "User-Agent": "Mozilla/5.0 (iPhone; CU iPhone OS 11_0 like Mac OS X) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.1502.79 Mobile Safari/537.36",
                     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
                     "Accept-Language": "en-US,en;q=0.9",
                     "Accept-Encoding": "gzip, deflate",
-                    "referer":"https://riotgames.com/"
+                    "Content-Type":"application/json",
+                    "Connection":"keep-alive",
+                    "Host":"auth.riotgames.com",
+                    "referer":f"https://{token_hex(5)}.riotgames.com/"
                 }
-                r = client.put(Constants.AUTH_URL, json=data, headers=headers)
-                body = r.text
-                #input(body)
+                r = await authsession.put(Constants.AUTH_URL, json=data, headers=headers, proxy=proxy["http"] if proxy is not None else None)
+                r2text = await r.text()
+                #input(r2text)
                 if self.isDebug:
-                    print(body)
-                data = r.json()
-                r2text = r.text
+                    print(r2text)
+                data = await r.json()
+                await authsession.close()
             except Exception as e:
-                client.close()
+                #input(e)
+                await authsession.close()
                 if self.isDebug:
                     print(e)
                 account.code = 6

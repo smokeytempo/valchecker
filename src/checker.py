@@ -34,7 +34,7 @@ class singlelinechecker:
         while True:
             if self.isDebug:
                 input("hit enter")
-                logpass = "valcheckerdebug:Fuckyou1337!"
+                logpass = "valcheckerdebug:hentai123xd??"
             else:
                 logpass = input('account (login:password) or "E" to exit >>> ')
             if logpass == "E":
