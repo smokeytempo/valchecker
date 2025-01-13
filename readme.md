@@ -1,7 +1,7 @@
 <h1 align="center">
   DEPRECATED
 </h1>
-This program does not work anymore after the addition of captchas. The code sucks and contains a lot of trash, as it was one of my first attempts at programming. I will never update this most likely, but if you want to open a pull request, ask me something or use this code somewhere else, feel free to do so.
+This program does not work anymore after the addition of captchas. The code sucks and contains a lot of trash, as it was one of my first attempts at programming. I will never update this most likely, but if you want to open a pull request, ask me something or use this code somewhere else, feel free to do so. Join the discord server below to contact me.
 
 <h1 align="center">
   Valkeker
