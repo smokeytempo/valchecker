@@ -98,7 +98,7 @@ We welcome contributions! Follow these steps:
 
 ## 📜 License & Terms  
 
-This project is licensed under the **Apache-2.0 License**. See [LICENSE](LICENSE) for details.  
+This project is licensed under the **MIT License**. See [LICENSE](LICENSE) for details.  
 
 ---
 
