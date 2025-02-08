@@ -1,11 +1,5 @@
-urllib3
-requests
-colorama
-keyboard
-InquirerPy
-httpx
-cloudscraper
-clear
-requests[socks]
-pywin32
-aiohttp
+httpx>=0.24.0  
+rich>=13.4.2  
+PyYAML>=6.0  
+tenacity>=8.2.2  
+numpy>=1.24.0  
